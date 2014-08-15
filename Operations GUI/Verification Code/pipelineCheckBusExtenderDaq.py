@@ -1,5 +1,6 @@
 import subprocess
 import shlex
+import fnmatch
 
 proc1 = subprocess.Popen(shlex.split('ps aux'), stdout=subprocess.PIPE)
 proc2 = subprocess.Popen(shlex.split('grep busExtender'), stdin=proc1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
