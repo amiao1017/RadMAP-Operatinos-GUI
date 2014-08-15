@@ -4,7 +4,7 @@ import fnmatch
 
 proc1 = subprocess.Popen(shlex.split('ps aux'), stdout=subprocess.PIPE)
 proc2 = subprocess.Popen(shlex.split('grep python'), stdin=proc1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-proc3 = subprocess.Popen(shlex.split('wc -l'), stdin=proc1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+proc3 = subprocess.Popen(shlex.split('wc -l'), stdin=proc2.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 proc1.stdout.close()
 proc2.stdout.close()
