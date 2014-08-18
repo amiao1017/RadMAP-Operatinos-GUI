@@ -25,19 +25,45 @@ while True:
 
 	if dbCommand == sta:
 		if system_state == 0:
+            while weather_state = 0:
+                #start weather app
+                #verify weather app
+                #if verification true
+                    weather_state = 1
+            while GPS_state = 0:
+                #start GPS
+                #verify GPS started
+                #if verification true
+                    GPS_state = 1
+            
+            
 			#subprocess.Popen("setMistiConfig", cwd=r"path\\to\\setMistiConfig", stdout = subprocess.PIPE)
 			#verify setMistiConfig
 			#subprocess.Popen("createDirs.bat", cwd=r"C:\\path\\to\\createDirs.bat", stdout = subprocess.PIPE)
 			#verify createDirs
 			while lidar_state = 0:
-					#run startVelodynePort and verify
-					lidar_state = 1 #if verification is true
-
-
-			#starboard lidar and verification
-			#
-
-
+                #run startVelodynePort and verify
+                #if verification case is true
+                    lidar_state = 1 #if verification is true
+            while lidar_state = 1:
+                #run startVelodyneStarboard and verify
+                #if verification case is true
+                    lidar_state = 2
+            while ladybug_state = 0:
+                #run startLadybugPort and verify
+                #if verification true
+                    ladybug_state = 1
+            while ladybug_state = 1:
+                #run startLadybugStarboad and verify
+                #if verification true
+                    ladybug_state = 2
+            while arduino_state = 0:
+                #run startArduino and verify
+                #if verification true
+                    arduino_state = 1
+            if (weather_state == 1) and (GPS_state == 1) and (lidar_state == 2) and (ladybug_state == 2) and (arduino_state == 2):
+                system_state = 1
+            
 
 
 	#based on what the start script returns may want to use subprocess.callback() and use resulting info for data verification
