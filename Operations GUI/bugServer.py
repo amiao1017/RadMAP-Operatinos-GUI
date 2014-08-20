@@ -7,6 +7,7 @@ context = zmq.Context()
 dbSocket = context.socket(zmq.REP)
 dbSocket.connect("tcp://localhost:5108")
 
+
 createDirs_state = 0 #0 if directories to be saved into not set up, 1 if set
 weather_state = 0 #0 if weather not started, 1 if started
 GPS_state = 0 #0 if Novatel GPS not started, 1 if started
@@ -39,11 +40,8 @@ while True:
     GPS_state = 1
     
     
-    startCapture = subprocess.Popen("setMistiConfig", cwd=r"E:", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
-    if createDirs_state == 0:
-    createDirs = subprocess.Popen("createDirs.bat", cwd=r"E:", stdout = subprocess.PIPE) #set up the directories
-    #verify createDirs
-    createDirs_state = 1
+    
+
     if createDirs_state == 1 and system_state == 1:
     #verify data for Lidars, Ladybugs, and Arduino
     #socket send data/string/verification message
@@ -52,7 +50,11 @@ while True:
         dbCommand = dbSocket.recv()
 
         if dbCommand == sta:
-            if system_state == 0: #effectively runs the startCapture.bat file
+            if createDirs_state == 0:
+                createDirs = subprocess.Popen("createDirsGUI.bat", cwd=r"", stdout = subprocess.PIPE) #set up the directories
+                #verify createDirs
+                createDirs_state = 1
+            if system_state == 0: 
                 if weather_state == 0:
                     #verify weather app
                     if: #verification true
@@ -69,7 +71,7 @@ while True:
                         #verify GPS started
                         #if verification true
                         GPS_state = 1
-                if createDirs_state == 1:
+                if createDirs_state == 1: #effectively runs the startCapture.bat file
                     #run startVelodynePort and verify
                     #run startVelodyneStarboard and verify
                     #run startLadybugPort and verify
