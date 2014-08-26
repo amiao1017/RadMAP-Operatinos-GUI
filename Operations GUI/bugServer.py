@@ -78,19 +78,14 @@ while True:
                 if createDirs_state == 1: #effectively runs the startCapture.bat file
                     if !velodynePortStarted: #run startVelodynePort and verify
                         startVelodynePort = subprocess.Popen(shlex.split("start startVelodynePortGUI lidar\port 1"), cwd=r"Path\\to\\startVelodynePortGUI", stdout = subprocess.PIPE)
-                        velodynePortStarted = verifyProcess(startVelodynePort, VERIFICATION_STRING) #might need delay before this 
                     if !velodyneStarboardStarted: #run startVelodyneStarboard and verify
                         startVelodyneStarboard = subprocess.Popen("start startVelodyneStarboardGUI lidar\starboard 1", cwd=r"Path\\to\\startVelodyneStarboardGUI", stdout = subprocess.PIPE)
-                        velodyneStarboardStarted = verifyProcess(startVelodyneStarboard, VERIFICATION_STRING) #might need delay before this
                     if !ladybugPortStarted: #run startLadybugPort and verify
                         startLadybugPort = subprocess.Popen("start startLadybugPort ladybug\port 1", cwd=r"Path\\to\\startLadybugPortGUI", stdout = subprocess.PIPE)
-                        ladybugPortStarted = verifyProcess(startLadybugPort, VERIFICATION_STRING) #might need delay before this
                     if !ladybugStarboardStarted: #run startLadybugStarboad and verify
                         startLadybugStarboad = subprocess.Popen("start startLadybugStarboard ladybug\starboard 1", cwd=r"Path\\to\\startLadybugStarboardGUI", stdout = subprocess.PIPE)
-                        ladybugStarboardStarted = verifyProcess(startLadybugStarboad, VERIFICATION_STRING) #might need delay before this
                     if !arduinoStarted: #run startArduino and verify
                         startArduino = subprocess.Popen("start startArduino time_sync_files 1", cwd=r"Path\\to\\startArduinoGUI", stdout = subprocess.PIPE)
-                        arduinoStarted = verifyProcess(startArduino, VERIFICATION_STRING) #might need delay before this
                     if velodynePortStarted and velodyneStarboardStarted and ladybugPortStarted and ladybugStarboardStarted and arduinoStarted: #if all verification true
                         system_state = 1
                 
