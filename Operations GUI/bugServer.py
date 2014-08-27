@@ -19,39 +19,83 @@ velodyneStarboardStarted = False
 ladybugPortStarted = False
 ladybugStarboardStarted = False
 arduinoStarted = False
+weatherStarted = False
+GpsStarted = False
 
 
 processes = [] #list of all the processes running
 iterations = 0 #number of iterations through loop. used to index list of processes for verification 
+
 #States
 createDirs_state = 0 #0 if directories to be saved into not set up, 1 if set. if 1, ladybugs, lidar and arduino can be started
 system_state = 0 #0 if sta command not received
                  #1 if sta command received and Lidar/Ladybug/Arduino collecting data
-weather_state = 0
-GPS_state = 0
 
 
 while True:
+
+    if dbSocket.poll(milliseconds) != 0:
+        dbCommand = dbSocket.recv()
+
+        for cmd in dbCommand:
+            if cmd == "STA":
+                if createDirs_state == 0:
+                    createDirs = subprocess.Popen("createDirsGUI.bat", cwd=r"Path\\to\\createDirsGui", stdout = subprocess.PIPE) #set up the directories
+                    #verify createDirs
+                    date = datetime.now()
+                    filename = date.strftime("Run_%Y%m%d_%H" + "%M%S")
+                    checkFilename = glob.glob(filename)
+                    if checkFilename[0] == filename:
+                        createDirs_state = 1
+            if system_state == 0: 
+                if createDirs_state == 1: #data for lidar, ladybug, arduino can be saved in proper folders
+                    if cmd == "startLidar":
+                        if !velodynePortStarted: #run startVelodynePort and verify
+                            startVelodynePort = subprocess.Popen(shlex.split("start startVelodynePortGUI lidar\port 1"), cwd=r"Path\\to\\startVelodynePortGUI", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+                            processes.append(startVelodynePort)
+                        if !velodyneStarboardStarted: #run startVelodyneStarboard and verify
+                            startVelodyneStarboard = subprocess.Popen("start startVelodyneStarboardGUI lidar\starboard 1", cwd=r"Path\\to\\startVelodyneStarboardGUI", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+                            processes.append(startVelodyneStarboard)
+                    if cmd == "startLadybug":
+                        if !ladybugPortStarted: #run startLadybugPort and verify
+                            startLadybugPort = subprocess.Popen("start startLadybugPortGUI ladybug\port 1", cwd=r"Path\\to\\startLadybugPortGUI", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+                            processes.append(startLadybugPort)
+                        if !ladybugStarboardStarted: #run startLadybugStarboad and verify
+                            startLadybugStarboard = subprocess.Popen("start startLadybugStarboardGUI ladybug\starboard 1", cwd=r"Path\\to\\startLadybugStarboardGUI", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+                            processes.append(startLadybugStarboard)
+                    if cmd == "startArduino":
+                        if !arduinoStarted: #run startArduino and verify
+                            startArduino = subprocess.Popen("start startArduinoGUI time_sync_files 1", cwd=r"Path\\to\\startArduinoGUI", stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+                            processes.append(startArduino)
+            if cmd == "startGps":
+                startGps = subprocess.Popen(shlex.split("startGPSscript"), cwd=r"Path\\to\\startGPSscript",  stdin = subprocess.PIPE, stdout = subprocess.PIPE)
+            if cmd == "startWeather":
+                startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdin = subprocess.PIPE,, stdout = subprocess.PIPE)
+                
+        if dbCommand == stp:
+            if system_state == 1:
+                #input q then y
+                #stopArduino
+                #stopLidar
+                #stopLadybug
+                #stopWeather
+                #stopGps
+
+        if dbCommand == save: #data offload
+            subprocess.call(#insert bug save script name here#)
+
     #Verification if the different sensors are running
-    if weather_state == 0:
+    if !weatherStarted == 0:
         #verify weather app
         if: #verification true
-            weather_state = 1
-        else: #start weather app
-            #verify weather app
-            #if verification true
-            weather_state = 1
-    if GPS_state == 0:
+            weatherStarted = 1
+    if !Gps_started:
         #verify GPS started
         if: #verification true
-            GPS_state = 1
-        else: #start GPS
-            #verify GPS started
-            #if verification true
-            GPS_state = 1
+            Gps_started = True
     
     #Verification of Lidar, Ladybug, Arduino
-    if len(processes):
+    if len(processes) != 0:
         line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
         if (line.find("time_len: ") != -1): #arduino verification
             dbSocket.send("Arduino - " + line[line.find("time_len: "): ]
@@ -78,48 +122,6 @@ while True:
         iterations += 1
         if velodynePortStarted and velodyneStarboardStarted and ladybugPortStarted and ladybugStarboardStarted and arduinoStarted: #if all verification true
             system_state = 1
-
-
-    if dbSocket.poll(milliseconds) != 0:
-        dbCommand = dbSocket.recv()
-
-        for cmd in dbCommand:
-            if cmd == "STA":
-                if createDirs_state == 0:
-                    createDirs = subprocess.Popen("createDirsGUI.bat", cwd=r"Path\\to\\createDirsGui", stdout = subprocess.PIPE) #set up the directories
-                    #verify createDirs
-                    date = datetime.now()
-                    filename = date.strftime("Run_%Y%m%d_%H%M%S")
-                    checkFilename = glob.glob(filename)
-                    if checkFilename[0] == filename:
-                        createDirs_state = 1
-            if system_state == 0: 
-                if createDirs_state == 1: #data for lidar, ladybug, arduino can be saved in proper folders
-                    if cmd == "startLidar":
-                        if !velodynePortStarted: #run startVelodynePort and verify
-                            startVelodynePort = subprocess.Popen(shlex.split("start startVelodynePortGUI lidar\port 1"), cwd=r"Path\\to\\startVelodynePortGUI", stdout = subprocess.PIPE)
-                            processes.append(startVelodynePort)
-                        if !velodyneStarboardStarted: #run startVelodyneStarboard and verify
-                            startVelodyneStarboard = subprocess.Popen("start startVelodyneStarboardGUI lidar\starboard 1", cwd=r"Path\\to\\startVelodyneStarboardGUI", stdout = subprocess.PIPE)
-                            processes.append(startVelodyneStarboard)
-                    if cmd == "startLadybug":
-                        if !ladybugPortStarted: #run startLadybugPort and verify
-                            startLadybugPort = subprocess.Popen("start startLadybugPortGUI ladybug\port 1", cwd=r"Path\\to\\startLadybugPortGUI", stdout = subprocess.PIPE)
-                            processes.append(startLadybugPort)
-                        if !ladybugStarboardStarted: #run startLadybugStarboad and verify
-                            startLadybugStarboard = subprocess.Popen("start startLadybugStarboardGUI ladybug\starboard 1", cwd=r"Path\\to\\startLadybugStarboardGUI", stdout = subprocess.PIPE)
-                            processes.append(startLadybugStarboard)
-                    if cmd == "startArduino":
-                        if !arduinoStarted: #run startArduino and verify
-                            startArduino = subprocess.Popen("start startArduinoGUI time_sync_files 1", cwd=r"Path\\to\\startArduinoGUI", stdout = subprocess.PIPE)
-                            processes.append(startArduino)
-
-                
-        if dbCommand == stp:
-            if system_state == 1:
-
-        if dbCommand == save: #data offload
-            subprocess.call(#insert bug save script name here#)
 
 #function to generate outputs of processes line by line. Returns a boolean True if verified or breaks and returns false because process is not running
 def verifyProcess(process, verification_string): #process is a subprocess. verification_string is a string that shows that the process has started collecting data correctly
