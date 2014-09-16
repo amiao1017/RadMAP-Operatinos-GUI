@@ -2,6 +2,7 @@ from __future__ import division
 from Tkinter import *
 from datetime import datetime, date, time
 from string import whitespace
+from PIL import Image, ImageTk
 import os, sys, glob, Tkconstants,tkFileDialog,glob,tkFont,subprocess,zmq,time
 
 context = zmq.Context()
@@ -53,8 +54,7 @@ class operationsApp(Tk):
 		self.startGps = IntVar()
 		self.startNeutrons = IntVar()
 		self.startHyperSpec = IntVar()
-		self.stopLidar = IntVar()
-		self.stopLadybug = IntVar()
+		self.stopCapture = IntVar()
 		self.stopWeather = IntVar()
 		self.stopGps = IntVar()
 		self.stopNeutrons = IntVar()
@@ -76,6 +76,9 @@ class operationsApp(Tk):
 		self.ladybugDataCheck = StringVar()
 		self.lidarDataCheck = StringVar()
 		self.timestampedNotes = StringVar()
+		self.dataOffloadNotes = StringVar()
+		self.notesVar = StringVar()
+		self.fileName = StringVar()
 		self.fileOpened = False
 		self.noteSaved = False
 		self.multipleFiles = 0
@@ -102,7 +105,7 @@ class operationsApp(Tk):
 		#space.grid(column=3,row=0)
 
 		self.elapsedTimeGrid = Label(self)
-		self.elapsedTimeGrid.grid(column=5,row=0)
+		self.elapsedTimeGrid.grid(column=1,row=0)
 
 		self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 		self.displayElapsedTimeLabel.grid(column=0,row=0)
@@ -149,11 +152,8 @@ class operationsApp(Tk):
 		indStop = Label(self.startGrid)
 		indStop.grid(column=1,row=2)
 
-		self.stopLidarCheck = Checkbutton(indStop,variable=self.stopLidar,text="Stop Lidar", command = self.stopLidarClick)
-		self.stopLidarCheck.pack()
-
-		self.stopLadybugCheck = Checkbutton(indStop,variable=self.stopLadybug,text="Stop Ladybug", command = self.stopLadybugClick)
-		self.stopLadybugCheck.pack()
+		self.stopCaptureCheck = Checkbutton(indStop,variable=self.stopCapture,text="Stop Capture", command = self.stopCaptureClick)
+		self.stopCaptureCheck.pack()
 
 		self.stopWeatherCheck = Checkbutton(indStop,variable=self.stopWeather,text="Stop Weather", command = self.stopWeatherClick)
 		self.stopWeatherCheck.pack()
@@ -246,7 +246,7 @@ class operationsApp(Tk):
 		verificationHyperSpec.pack()
 
 		self.dataCheckGrid = Label(self)
-		self.dataCheckGrid.grid(column=1,row=3)
+		self.dataCheckGrid.grid(column=0,row=2)
 
 		weatherDataCheckGrid = Label(self.dataCheckGrid)
 		weatherDataCheckGrid.grid(column=0,row=0)
@@ -275,7 +275,7 @@ class operationsApp(Tk):
 		self.arduinoDataCheckEntry.grid(column=1,row=0)
 
 		ladybugDataCheckGrid = Label(self.dataCheckGrid)
-		ladybugDataCheckGrid.grid(column=2,row=0)
+		ladybugDataCheckGrid.grid(column=0,row=1)
 
 		ladybugDataCheckLabel = Label(ladybugDataCheckGrid,text="Ladybugs:")
 		ladybugDataCheckLabel.grid(column=0,row=0)
@@ -288,7 +288,7 @@ class operationsApp(Tk):
 		self.ladybugDataCheckEntry.grid(column=1,row=0)
 
 		lidarDataCheckGrid = Label(self.dataCheckGrid)
-		lidarDataCheckGrid.grid(column=3,row=0)
+		lidarDataCheckGrid.grid(column=1,row=1)
 
 		lidarDataCheckLabel = Label(lidarDataCheckGrid,text="Lidars:")
 		lidarDataCheckLabel.grid(column=0,row=0)
@@ -300,27 +300,67 @@ class operationsApp(Tk):
 		self.lidarDataCheckEntry = Label(lidarDataCheckGrid, textvariable=self.lidarDataCheck)
 		self.lidarDataCheckEntry.grid(column=1,row=0)
 
+		self.mapPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/BerkeleyCA.gif")
+
+		self.mapLabel = Label(self, image=self.mapPhoto)
+		self.mapLabel.image = self.mapPhoto
+		self.mapLabel.grid(column=1,row=1)
+
+		self.waterfallPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/waterfallExample.jpg")
+
+		self.waterfallLabel = Label(self, image=self.waterfallPhoto)
+		self.waterfallLabel.image = self.waterfallPhoto
+		self.waterfallLabel.grid(column=1,row=3)
+
 		self.timestampedNotesGrid = Label(self,anchor="w")
-		self.timestampedNotesGrid.grid(column=0,row=4)
+		self.timestampedNotesGrid.grid(column=0,row=3)
 
 		timestampedNotesLabel = Label(self.timestampedNotesGrid,text="Notes:")
-		timestampedNotesLabel.pack(side = LEFT)
+		timestampedNotesLabel.grid(column=0,row=0)
 		labelUnderlinedNotes = tkFont.Font(timestampedNotesLabel,timestampedNotesLabel.cget("font"))
 		labelUnderlinedNotes.configure(underline = True)
 		timestampedNotesLabel.configure(font=labelUnderlinedNotes)
 
 		#self.timestampedNotes.set("Insert Notes Here")
 		self.timestampedNotesEntry = Entry(self.timestampedNotesGrid, textvariable=self.timestampedNotes)
-		self.timestampedNotesEntry.pack(side = LEFT)
+		self.timestampedNotesEntry.grid(column=1,row=0)
 		self.timestampedNotesEntry.bind("<Return>", self.setTimestampedNotesEnter)
 		self.timestampedNotesEntry.bind("<Button-1>", lambda number: self.entryClicked(2))
 		self.timestampedNotesEntry.insert(0,"Insert Notes Here")
 
 		self.timestampedNotesButton = Button(self.timestampedNotesGrid,text="Save Note",activebackground="blue",activeforeground="white",relief=RAISED, command = self.setTimestampedNotes)
-		self.timestampedNotesButton.pack(side = LEFT)
+		self.timestampedNotesButton.grid(column=2,row=0) 
 
-		self.resetButton = Button(self, text="New Session",activebackground="blue",activeforeground="white",relief=RAISED, command = self.resetClicked)
-		self.resetButton.grid(column=5,row=4)
+		self.timestampedNotesDisplay = Label(self.timestampedNotesGrid, anchor=S, textvariable=self.notesVar, bg="white", relief=RAISED, width = 36, height=15, wraplength=275)
+		self.timestampedNotesDisplay.grid(column=0,row=1,columnspan=3)
+
+		self.timestampedNotesDisplayButton = Button(self.timestampedNotesGrid,text="Display Notes",activebackground="blue",activeforeground="white",relief=RAISED, command = self.timestampedNotesDisplay)
+		self.timestampedNotesDisplayButton.grid(column=0,row=2, columnspan=3) 
+
+		self.dataOffloadGrid = Label(self,anchor="w")
+		self.dataOffloadGrid.grid(column=0,row=4)
+
+		#dataOffloadLabel = Label(self.dataOffloadGrid,text="File Name:")
+		#dataOffloadLabel.pack(side = LEFT)
+		#labelUnderlinedNotes = tkFont.Font(dataOffloadLabel,dataOffloadLabel.cget("font"))
+		#labelUnderlinedNotes.configure(underline = True)
+		#dataOffloadLabel.configure(font=labelUnderlinedNotes)
+
+		#self.timestampedNotes.set("Insert Notes Here")
+		#self.dataOffloadEntry = Entry(self.dataOffloadGrid, textvariable=self.dataOffloadNotes)
+		#self.dataOffloadEntry.pack(side = LEFT)
+		#self.dataOffloadEntry.bind("<Return>", self.dataOffloadEnter)
+		#self.dataOffloadEntry.bind("<Button-1>", lambda number: self.entryClicked(2))
+		#self.dataOffloadEntry.insert(0,"Save File Name")
+
+		self.dataOffloadButton = Button(self.dataOffloadGrid,text="Save Files",activebackground="blue",activeforeground="white",relief=RAISED, command = self.setTimestampedNotes)
+		self.dataOffloadButton.pack(side = LEFT)	
+
+		#self.resetLabel = Label(self)
+		#self.resetLabel.grid(column=1, row=4)	
+
+		self.resetButton = Button(self.dataOffloadGrid, text="New Session",activebackground="blue",activeforeground="white",relief=RAISED, command = self.resetClicked)
+		self.resetButton.pack()
 
 	def entryClicked(self, number):
 		if self.clickedOperator == False:
@@ -582,25 +622,19 @@ class operationsApp(Tk):
 			#subprocess.Popen(shlex.split("Set up Dbus Monitor call"))
 			#daqSocket.send("dBusMon")
 			#mageSocket.send("dBusMon")
-			#subprocess.Popen(shlex.split("Start MISTI call"))
+			#subprocess.Popen(shlex.split("Satrt MISTI call"))
 			#daqSocket.send("startMISTI")
 			#mageSocket.send("startMISTI")
 			#subprocess.Popen(shlex.split("Run.py call"))
-			#bugSocket.send(self.startList)
+			#bugSocket.send(startList.self)
 			#hsSocket.send(self.startList)
 			#liqSocket.send(self.startList)	
 
-	def stopLidarClick(self):
+	def stopCaptureClick(self):
 		if self.stopLidar.get() == 1:
-			self.stopList.append("stopLidar")
+			self.stopList.append("stopCapture")
 		elif self.stopLidar.get() == 0:
-			self.stopList.remove("stopLidar")
-
-	def stopLadybugClick(self):
-		if self.stopLadybug.get() == 1:
-			self.stopList.append("stopLadybug")
-		elif self.stopLadybug.get() == 0:
-			self.stopList.remove("stopLadybug")
+			self.stopList.remove("stopCapture")
 
 	def stopWeatherClick(self):
 		if self.stopWeather.get() == 1:
@@ -643,24 +677,32 @@ class operationsApp(Tk):
 			else:
 				operatorName = self.operator.get()
 				operatorName = operatorName.translate(None,whitespace)
-				self.fileName = "/Users/rmeyer/Documents/RadMAP Tests/%s%s" %(operatorName,self.currentClock.strftime('%m%d%y'))
-				if not glob.glob("%s.txt" %self.fileName): 
-					self.f = open("%s.txt" %self.fileName, "w")
+				self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+				if not glob.glob('%s.txt' %self.fileName):
+					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
-					self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
-					self.f.close()
+					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.noteSaved = True
 				else:
 					self.multipleFiles += 1
-					self.fileName = "%s.%d" %(self.fileName, self.multipleFiles)
-					self.f = open("%s.txt" %self.fileName, "w")
+					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
-					self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.f.close()
 					self.noteSaved = True
 		else:
-			self.f = open("%s.txt" %self.fileName, "a")
-			self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+			self.f = open('%s' %self.fileName, "a")
+			self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+			self.f = open('%s' %self.fileName)
+			self.notesVar.set(self.f.read())
 			self.f.close()
 			self.noteSaved = True
 
@@ -679,30 +721,44 @@ class operationsApp(Tk):
 			else:
 				operatorName = self.operator.get()
 				operatorName = operatorName.translate(None,whitespace)
-				self.fileName = "/Users/rmeyer/Documents/RadMAP Tests/%s%s" %(operatorName,self.currentClock.strftime('%m%d%y'))
-				if not glob.glob("%s.txt" %self.fileName): 
-					self.f = open("%s.txt" %self.fileName, "w")
+				self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+				if not glob.glob('%s.txt' %self.fileName): 
+					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
 					self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.f.close()
 					self.noteSaved = True
 				else:
 					self.multipleFiles += 1
-					self.fileName = "%s.%d" %(self.fileName, self.multipleFiles)
-					self.f = open("%s.txt" %self.fileName, "w")
+					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
-					self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.f.close()
 					self.noteSaved = True
 		else:
-			self.f = open("%s.txt" %self.fileName, "a")
-			self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+			self.f = open('%s' %self.fileName, "a")
+			self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+			self.f = open('%s' %self.fileName)
+			self.notesVar.set(self.f.read())
 			self.f.close()
 			self.noteSaved = True
 
 		#elif self.noteSaved == True:
 		#	self.timestampedNotesEntry.set("Note Already Saved: Ready for Next Entry")
+
+	def timestampedNotesDisplay(self):
+		return
 	
+	def dataOffloadEnter(self,event):
+		return
 
 	def resetClicked(self):
 		self.operatorGrid.grid_forget()
@@ -719,6 +775,16 @@ class operationsApp(Tk):
 		popUpLabel.pack()
 		#popUpLabelQuit = Button(popUp, text="Close", command=popUp.destroy())
 		#popUpLabelQuit.pack()
+
+	#def getNotes(self,txt,name):
+	#	try:
+	#		with open(name,"r") as f:
+	#			txt.set(f.read())
+	#	except IOError as e:
+	#		print e
+	#	else:
+	#		self.after(1000,lambda:getNotes(self,txt,name))
+
 
 if __name__ == "__main__":
 	app = operationsApp(None)
