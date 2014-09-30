@@ -3,7 +3,7 @@ from Tkinter import *
 from datetime import datetime, date, time
 from string import whitespace
 from PIL import Image, ImageTk
-import os, sys, glob, Tkconstants,tkFileDialog,glob,tkFont,subprocess,zmq,time
+import os, sys, glob, Tkconstants,tkFileDialog,tkMessageBox,glob,tkFont,subprocess,zmq,time
 
 context = zmq.Context()
 
@@ -353,7 +353,7 @@ class operationsApp(Tk):
 		#self.dataOffloadEntry.bind("<Button-1>", lambda number: self.entryClicked(2))
 		#self.dataOffloadEntry.insert(0,"Save File Name")
 
-		self.dataOffloadButton = Button(self.dataOffloadGrid,text="Save Files",activebackground="blue",activeforeground="white",relief=RAISED, command = self.setTimestampedNotes)
+		self.dataOffloadButton = Button(self.dataOffloadGrid,text="Save Files",activebackground="blue",activeforeground="white",relief=RAISED, command = self.saveData)
 		self.dataOffloadButton.pack(side = LEFT)	
 
 		#self.resetLabel = Label(self)
@@ -363,7 +363,7 @@ class operationsApp(Tk):
 		self.resetButton.pack()
 
 	def entryClicked(self, number):
-		if self.clickedOperator == False:
+		if self.clickedOperator == False:		#Clicked can be thought of as saved. savedOpterator
 			if number == 1:
 				self.entryOperator.delete(0, END)
 				self.clickedOperator = True
@@ -398,7 +398,7 @@ class operationsApp(Tk):
 			self.displayClock.after(200, app.tick)
 		elif self.systemClicked.get() == 2:
 			elapsedTimeGrid = Label(self)
-			elapsedTimeGrid.grid(column=5,row=0)
+			elapsedTimeGrid.grid(column=1,row=0)
 			self.displayElapsedTimeLabel = Label(elapsedTimeGrid, text="Time Since Start of Session:")
 			self.displayElapsedTimeLabel.grid(column=0,row=0)
 			labelUnderlined = tkFont.Font(self.displayElapsedTimeLabel,self.displayElapsedTimeLabel.cget("font"))
@@ -419,22 +419,36 @@ class operationsApp(Tk):
 				if self.fileOpened == False:
 					operatorName = self.operator.get()
 					operatorName = operatorName.translate(None,whitespace)
-					self.fileName = "/Users/rmeyer/Documents/RadMAP Tests/%s%s" %(operatorName,self.currentClock.strftime('%m%d%y'))
-					if not glob.glob("%s.txt" %self.fileName): 
-						self.f = open("%s.txt" %self.fileName, "w")
+					self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+					if glob.glob("%s.txt" %self.fileName): 
+						if glob.glob(('%sv*.txt' %self.fileName)):
+							fileList = glob.glob(('%sv*.txt' %self.fileName))
+							fileListLength = len(fileList)
+							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
+						else:
+							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+						self.f = open('%s' %self.fileName)
+						self.notesVar.set(self.f.read())
 						self.f.close()
 					else:
-						self.multipleFiles += 1
-						self.fileName = "%s.%d" %(self.fileName, self.multipleFiles)
-						self.f = open("%s.txt" %self.fileName, "w")
+						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+						self.f = open('%s' %self.fileName)
+						self.notesVar.set(self.f.read())
 						self.f.close()
 				else:
-					self.f = open("%s.txt" %self.fileName, "a")
+					self.f = open("%s" %self.fileName, "a")
 					self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.f.close()
 
 				self.systemClicked.set(1)
@@ -442,7 +456,7 @@ class operationsApp(Tk):
 				self.elapsedTimeGrid.grid_forget()
 				self.elapsedTimeGrid = Label(self)
 
-				self.elapsedTimeGrid.grid(column=5,row=0)
+				self.elapsedTimeGrid.grid(column=1,row=0)
 				self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 				self.displayElapsedTimeLabel.grid(column=0,row=0)
 				
@@ -481,22 +495,36 @@ class operationsApp(Tk):
 				if self.fileOpened == False:
 					operatorName = self.operator.get()
 					operatorName = operatorName.translate(None,whitespace)
-					self.fileName = "/Users/rmeyer/Documents/RadMAP Tests/%s%s" %(operatorName,self.currentClock.strftime('%m%d%y'))
-					if not glob.glob("%s.txt" %self.fileName): 
-						self.f = open("%s.txt" %self.fileName, "w")
+					self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+					if glob.glob("%s.txt" %self.fileName): 
+						if glob.glob(('%sv*.txt' %self.fileName)):
+							fileList = glob.glob(('%sv*.txt' %self.fileName))
+							fileListLength = len(fileList)
+							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
+						else:
+							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+						self.f = open('%s' %self.fileName)
+						self.notesVar.set(self.f.read())
 						self.f.close()
 					else:
-						self.multipleFiles += 1
-						self.fileName = "%s.%d" %(self.fileName, self.multipleFiles)
-						self.f = open("%s.txt" %self.fileName, "w")
+						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+						self.f = open('%s' %self.fileName)
+						self.notesVar.set(self.f.read())
 						self.f.close()
 				else:
-					self.f = open("%s.txt" %self.fileName, "a")
+					self.f = open("%s" %self.fileName, "a")
 					self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
+					self.f = open('%s' %self.fileName)
+					self.notesVar.set(self.f.read())
 					self.f.close()
 
 				self.systemClicked.set(1)
@@ -504,7 +532,7 @@ class operationsApp(Tk):
 				self.elapsedTimeGrid.grid_forget()
 				self.elapsedTimeGrid = Label(self)
 
-				self.elapsedTimeGrid.grid(column=5,row=0)
+				self.elapsedTimeGrid.grid(column=1,row=0)
 				self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 				self.displayElapsedTimeLabel.grid(column=0,row=0)
 				
@@ -576,14 +604,16 @@ class operationsApp(Tk):
 	def mainStopClick(self):
 		if self.systemClicked.get() == 1:
 			
-			self.f = open("%s.txt" %self.fileName, "a")
+			self.f = open("%s" %self.fileName, "a")
 			self.f.write("%s: Session Ended \n" %self.currentClock.strftime('%H:%M:%S'))
+			self.f = open('%s' %self.fileName)
+			self.notesVar.set(self.f.read())
 			self.f.close()
 
 			self.systemClicked.set(2)
 			self.stopTime = time.time()
 			self.tick()
-			if self.fileOpened == True:
+			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
 			self.stopList = ["STO", "stopArduino", "stopLidar", "stopLadybug", "stopWeather", "stopGps", "stopNeutrons", "stopHyperSpec"]
 			
@@ -606,14 +636,16 @@ class operationsApp(Tk):
 	def indStopClick(self):
 		if self.systemClicked.get() == 1 and self.stopList != []:
 
-			self.f = open("%s.txt" %self.fileName, "a")
+			self.f = open("%s" %self.fileName, "a")
 			self.f.write("%s: Session Ended \n" %self.currentClock.strftime('%H:%M:%S'))
+			self.f = open('%s' %self.fileName)
+			self.notesVar.set(self.f.read())
 			self.f.close()
 
 			self.systemClicked.set(2)
 			self.stopTime = time.time()
 			self.tick()
-			if self.fileOpened == True:
+			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
 			self.stopList.insert(0, "STO")
 			#subprocess.Popen(shlex.split("Set up Dbus call"))
@@ -661,10 +693,18 @@ class operationsApp(Tk):
 			self.stopList.remove("stopHyperSpec")
 
 	def gammaHVClick(self):
-		print "Gamma Ray HV Clicked"
-
+		result = tkMessageBox.askquestion("Turn Gamma HV On/Off", "Are You Sure?", icon="warning")
+		if result == "yes":
+			print "Gamma Ray HV Clicked"
+		else:
+			return
+		
 	def neutronHVClick(self):
-		print "Neutron Ray HV Clicked"	
+		result = tkMessageBox.askquestion("Turn Neutron Hv On/Off", "Are You Sure?", icon="warning")
+		if result == "yes":
+			print "Neutron Ray HV Clicked"	
+		else:
+			return
 
 	def setTimestampedNotes(self):
 		self.clickedNotes = False
@@ -678,17 +718,24 @@ class operationsApp(Tk):
 				operatorName = self.operator.get()
 				operatorName = operatorName.translate(None,whitespace)
 				self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
-				if not glob.glob('%s.txt' %self.fileName):
-					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+				if glob.glob('%s.txt' %self.fileName):
+					if glob.glob(('%sv*.txt' %self.fileName)):
+						fileList = glob.glob(('%sv*.txt' %self.fileName))
+						fileListLength = len(fileList)
+						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
+					else:
+						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
 					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
 					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
 					self.f = open('%s' %self.fileName)
 					self.notesVar.set(self.f.read())
+					self.f.close()
+					self.timestampedNotesEntry.delete(0,END)
 					self.noteSaved = True
 				else:
-					self.multipleFiles += 1
 					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
 					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
 					self.f = open('%s' %self.fileName, "w")
@@ -697,13 +744,15 @@ class operationsApp(Tk):
 					self.f = open('%s' %self.fileName)
 					self.notesVar.set(self.f.read())
 					self.f.close()
-					self.noteSaved = True
+					self.timestampedNotesEntry.delete(0,END)
+					self.noteSaved = True					
 		else:
 			self.f = open('%s' %self.fileName, "a")
 			self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
 			self.f = open('%s' %self.fileName)
 			self.notesVar.set(self.f.read())
 			self.f.close()
+			self.timestampedNotesEntry.delete(0,END)
 			self.noteSaved = True
 
 		#elif self.noteSaved == True:
@@ -711,63 +760,30 @@ class operationsApp(Tk):
 		
 
 	def setTimestampedNotesEnter(self,event):
-		self.clickedNotes = False
-		if self.systemClicked.get() == 0:
-			self.currentClock = datetime.now()
-		#if self.noteSaved == False:
-		if self.fileOpened == False:
-			if self.operator.get() == "Enter Operator Name Here":
-				self.noOperator()
-			else:
-				operatorName = self.operator.get()
-				operatorName = operatorName.translate(None,whitespace)
-				self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
-				if not glob.glob('%s.txt' %self.fileName): 
-					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
-					self.f = open('%s' %self.fileName, "w")
-					self.fileOpened = True
-					self.f.write("%s: %s \n" %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
-					self.f = open('%s' %self.fileName)
-					self.notesVar.set(self.f.read())
-					self.f.close()
-					self.noteSaved = True
-				else:
-					self.multipleFiles += 1
-					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
-					self.f = open('%s' %self.fileName, "w")
-					self.fileOpened = True
-					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
-					self.f = open('%s' %self.fileName)
-					self.notesVar.set(self.f.read())
-					self.f.close()
-					self.noteSaved = True
-		else:
-			self.f = open('%s' %self.fileName, "a")
-			self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
-			self.f = open('%s' %self.fileName)
-			self.notesVar.set(self.f.read())
-			self.f.close()
-			self.noteSaved = True
-
-		#elif self.noteSaved == True:
-		#	self.timestampedNotesEntry.set("Note Already Saved: Ready for Next Entry")
+		self.setTimestampedNotes()
 
 	def timestampedNotesDisplay(self):
 		return
 	
-	def dataOffloadEnter(self,event):
-		return
+	def saveData(self):
+		result = tkMessageBox.askquestion("Save Data", "Are You Sure?", icon="warning")
+		if result == "yes":
+			return
+		else:
+			return
 
 	def resetClicked(self):
-		self.operatorGrid.grid_forget()
-		self.elapsedTimeGrid.grid_forget()
-		self.startGrid.grid_forget()
-		self.resetButton.grid_forget()
-		self.dataCheckGrid.grid_forget()
-		self.timestampedNotesGrid.grid_forget()
-		self.initialize()
+		result = tkMessageBox.askquestion("New Session", "Are You Sure?", icon="warning")
+		if result == "yes":
+			self.operatorGrid.grid_forget()
+			self.elapsedTimeGrid.grid_forget()
+			self.startGrid.grid_forget()
+			self.resetButton.grid_forget()
+			self.dataCheckGrid.grid_forget()
+			self.timestampedNotesGrid.grid_forget()
+			self.initialize()
+		else:
+			return
 
 	def noOperator(self):
 		popUp = Toplevel()
