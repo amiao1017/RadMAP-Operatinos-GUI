@@ -45,7 +45,7 @@ while True:
     print "Verifying GPS and weather"
     
     
-    if dbSocket.poll(milliseconds) != 0:
+    if dbSocket.poll() != 0:
         dbCommand = dbSocket.recv()
         
         for cmd in dbCommand:
