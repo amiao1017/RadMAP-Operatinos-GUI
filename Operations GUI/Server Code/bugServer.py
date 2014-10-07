@@ -45,7 +45,7 @@ while True:
     print "Verifying GPS and weather"
     
     
-    if dbSocket.poll() != 0:
+    if dbSocket.poll() != 0: #potentially add a timeout to the socket poll
         dbCommand = dbSocket.recv()
         
         for cmd in dbCommand:
