@@ -45,7 +45,7 @@ while True:
     print "Verifying GPS and weather"
     
     
-    if dbSocket.poll(milliseconds) != 0:
+    if dbSocket.poll() != 0: #potentially add a timeout to the socket poll
         dbCommand = dbSocket.recv()
         
         for cmd in dbCommand:
@@ -63,7 +63,7 @@ while True:
             if system_state == 0:
                 if createDirs_state == 1: #data for lidar, ladybug, arduino can be saved in proper folders
                     if cmd == "startLidar":
-                        if !velodynePortStarted: #run startVelodynePort and verify
+                        if velodynePortStarted == False: #run startVelodynePort and verify
                             # startVelodynePort = subprocess.Popen(shlex.split("start startVelodynePortGUI lidar\port 1"), cwd=r"Path\\to\\startVelodynePortGUI", stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                             # processes.append(startVelodynePort)
                             print "Starting Port Lidar"
@@ -72,7 +72,7 @@ while True:
                         else:
                             print "Port Lidar already running"
                             dbSocket.send("Port Lidar already running")
-                        if !velodyneStarboardStarted: #run startVelodyneStarboard and verify
+                        if velodyneStarboardStarted == False: #run startVelodyneStarboard and verify
                             # startVelodyneStarboard = subprocess.Popen("start startVelodyneStarboardGUI lidar\starboard 1", cwd=r"Path\\to\\startVelodyneStarboardGUI", stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                             # processes.append(startVelodyneStarboard)
                             print "Starting Starboard Lidar"
@@ -82,7 +82,7 @@ while True:
                             print "Starboard Lidar already started"
                             dbSocket.send("Starboard Lidar already started")
                     if cmd == "startLadybug":
-                        if !ladybugPortStarted: #run startLadybugPort and verify
+                        if ladybugPortStarted == False: #run startLadybugPort and verify
                             # startLadybugPort = subprocess.Popen("start startLadybugPortGUI ladybug\port 1", cwd=r"Path\\to\\startLadybugPortGUI", stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                             # processes.append(startLadybugPort)
                             print "Starting Port Ladybug"
@@ -91,7 +91,7 @@ while True:
                         else:
                             print "Port Ladybug already started"
                             dbSocket.send("Port Ladybug already started")
-                        if !ladybugStarboardStarted: #run startLadybugStarboad and verify
+                        if ladybugStarboardStarted == False: #run startLadybugStarboad and verify
                             # startLadybugStarboard = subprocess.Popen("start startLadybugStarboardGUI ladybug\starboard 1", cwd=r"Path\\to\\startLadybugStarboardGUI", stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                             # processes.append(startLadybugStarboard)
                             print "Starting Starboard Ladybug"
@@ -101,7 +101,7 @@ while True:
                             print "Starboard Ladybug already started"
                             dbSocket.send("Starboard Ladybug already started")
                     if cmd == "startArduino":
-                        if !arduinoStarted: #run startArduino and verify
+                        if arduinoStarted == False: #run startArduino and verify
                             # startArduino = subprocess.Popen("start startArduinoGUI time_sync_files 1", cwd=r"Path\\to\\startArduinoGUI", stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                             # processes.append(startArduino)
                             print "Starting Arduino"
@@ -111,7 +111,7 @@ while True:
                             print "Arduino already started"
                             dbSocket.send("Arduino already started")
             if cmd == "startGps":
-                if !GpsStarted:
+                if GpsStarted == False:
                     # startGps = subprocess.Popen(shlex.split("startGPSscript"), cwd=r"Path\\to\\startGPSscript",  stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                     print "Starting GPS"
                     dbSocket.send("Starting gps")
@@ -120,7 +120,7 @@ while True:
                     print "GPS already started"
                     dbSocket.send("GPS already started")
             if cmd == "startWeather":
-                if !weatherStarted:
+                if weatherStarted == False:
                     #startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdout = subprocess.PIPE,, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                     print "Starting weather"
                     dbSocket.send("Starting weather")
@@ -178,13 +178,13 @@ while True:
                     else:
                         print "Arduino already stopped"
                         dbSocket.send("Arduino already stopped")
-                if (!ladybugPortStarted) and (!ladybugStarboardStarted) and (!velodyneStarboardStarted) and (!velodynePortStarted) and (!arduinoStarted):
+                if (ladybugPortStarted == False) and (ladybugStarboardStarted == False) and (velodyneStarboardStarted == False) and (velodynePortStarted == False) and (arduinoStarted == False):
                     system_state = 0
             #stopWeather
             #stopGps
             
-            if cmd == save: #data offload
-                subprocess.call(#insert bug save script name here#)
+            #if cmd == save: #data offload
+                #subprocess.call(#insert bug save script name here#)
                                 
                                 #Verification of Lidar, Ladybug, Arduino
     print "Verifying Lidar, Ladybug, and Arduino"
