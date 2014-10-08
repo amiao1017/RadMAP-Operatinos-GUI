@@ -4,6 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <assert.h>
+#include <pthread.h>
 
 #include "resonon_imager_pgr.h"
 #include "resonon_imager_base.h"

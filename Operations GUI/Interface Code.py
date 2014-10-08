@@ -300,17 +300,17 @@ class operationsApp(Tk):
 		self.lidarDataCheckEntry = Label(lidarDataCheckGrid, textvariable=self.lidarDataCheck)
 		self.lidarDataCheckEntry.grid(column=1,row=0)
 
-		self.mapPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/BerkeleyCA.gif")
+		#self.mapPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/BerkeleyCA.gif")
 
-		self.mapLabel = Label(self, image=self.mapPhoto)
-		self.mapLabel.image = self.mapPhoto
-		self.mapLabel.grid(column=1,row=1)
+		#self.mapLabel = Label(self, image=self.mapPhoto)
+		#self.mapLabel.image = self.mapPhoto
+		#self.mapLabel.grid(column=1,row=1)
 
-		self.waterfallPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/waterfallExample.jpg")
+		#self.waterfallPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/waterfallExample.jpg")
 
-		self.waterfallLabel = Label(self, image=self.waterfallPhoto)
-		self.waterfallLabel.image = self.waterfallPhoto
-		self.waterfallLabel.grid(column=1,row=3)
+		#self.waterfallLabel = Label(self, image=self.waterfallPhoto)
+		#self.waterfallLabel.image = self.waterfallPhoto
+		#self.waterfallLabel.grid(column=1,row=3)
 
 		self.timestampedNotesGrid = Label(self,anchor="w")
 		self.timestampedNotesGrid.grid(column=0,row=3)
