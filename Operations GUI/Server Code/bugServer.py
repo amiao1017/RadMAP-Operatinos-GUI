@@ -4,6 +4,7 @@ import glob
 from datetime import datetime, date, time
 import shlex
 import string
+from Tkinter import Tk
 
 
 
@@ -121,6 +122,12 @@ while True:
                     dbSocket.send("GPS already started")
             if cmd == "startWeather":
                 if weatherStarted == False:
+                    # logfile_path = filename + '/gps/logfile.gps' #set the path for the logfile to be saved with gps data collection
+                    # x = Tk()
+                    # x.withdraw()
+                    # x.clipboard_clear()
+                    # x.clipboard_append(logfile_path)
+                    # x.destroy()
                     #startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdout = subprocess.PIPE,, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                     print "Starting weather"
                     dbSocket.send("Starting weather")
