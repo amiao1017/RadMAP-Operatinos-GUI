@@ -177,7 +177,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	delete [] myData.first;		//is this cleaning the proper memory?
 }
 
-void writeThread(void *)
+DWORD WINAPI writeThread(LPVOID pParam)
 {
 	while (myStatus == 0)
 	{
