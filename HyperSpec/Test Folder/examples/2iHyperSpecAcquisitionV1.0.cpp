@@ -104,6 +104,8 @@ int main()
 
    		std::cout << "\nThread Created" << std::endl;
 
+   		bool grabbingFrames = FALSE;
+
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
 		// Start recording the data
@@ -111,7 +113,11 @@ int main()
 		while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
 			std::cout << "\nRecording Data" << std::endl;
-			imager.start_frame_grabbing();
+			if(!grabbingFrames)
+			{
+				imager.start_frame_grabbing();
+				grabbingFrames = TRUE;
+			}
 			buffer = new unsigned short[cubesize];
 			if (buffer == 0)
 			{
@@ -127,9 +133,13 @@ int main()
 				counter++;
 			}
 			std::pair<unsigned short *, int> myPair = std::make_pair(buffer,counter);
+			std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
+			std::cout << "\nGot Mutex" << std::endl;
 			myQueue.push(myPair);						//put buffer to queue
+			std::cout << "\nPushed pair to queue" << std::endl;
 			ReleaseMutex(myMutex);						//Release Mutex
+    		std::cout << "\nReleased Mutex" << std::endl;
     	}
     	myStatus = 1;
     	WaitForSingleObject(myThread,INFINITE);
@@ -137,6 +147,7 @@ int main()
        	CloseHandle(myMutex);
 
 		imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
+		grabbingFrames = FALSE;
 		imager.disconnect(); 			//disconnect
 
 		return EXIT_SUCCESS;
@@ -152,6 +163,7 @@ int main()
 
 void makeCube(std::pair<unsigned short *,int> myData)
 {
+	std::cout << "\nmakeCube successfully called\n" << std::endl;
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	header_filename = filename + ".hdr";
 	std::ofstream outfile(header_filename.c_str());
@@ -181,8 +193,8 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	cubefile.open(filename.c_str(), std::ios::out | std::ios::binary);
 	//cubefile.write((const char*) buffer, cubesize * sizeof(unsigned short));
 	cubefile.write((const char*) myData.first, framesize * myData.second * sizeof(unsigned short));
-		cubefile.close();
-		std::cout << "Done." << std::endl;
+	cubefile.close();
+	std::cout << "Done." << std::endl;
 
 	// free allocated resources
 	delete [] myData.first;		//is this cleaning the proper memory?
@@ -192,13 +204,19 @@ void writeThread(void *)
 {
 	while (myStatus == 0)
 	{
-		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?				
+		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
+		std::cout << "\nWrite thread owns Mutex" << std::endl;			
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
-			std::pair<unsigned short *, int> myData = myQueue.front(); 
+			std::cout << "\nQueue not empty" << std::endl;
+			std::pair<unsigned short *, int> myData = myQueue.front();
+			std::cout << "\nGot pair from queue" << std::endl; 
 			myQueue.pop();
+			std::cout << "\nPop data from queue" << std::endl;
 			ReleaseMutex(myMutex);
+			std::cout << "\nRelased Mutex" << std::endl;
 			makeCube(myData);
+			std::cout << "\nmakeCube called" << std::endl;
 		}
 		else
 		{
