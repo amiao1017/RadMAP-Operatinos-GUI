@@ -124,6 +124,11 @@ int main()
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
        	CloseHandle(myMutex);
+
+		imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
+		imager.disconnect(); 			//disconnect
+
+		return EXIT_SUCCESS;
 		
 	} catch (std::exception const & e)
 	{
@@ -132,12 +137,6 @@ int main()
 			delete [] buffer;
 		exit(EXIT_FAILURE);
 	}
-
-	imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
-	imager.disconnect(); 			//disconnect
-
-	return EXIT_SUCCESS;
-
 }
 
 void makeCube(std::pair<unsigned short *,int> myData)
