@@ -115,9 +115,9 @@ int main()
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
 			}
-			
+			std::pair<unsigned short *, int> myPair = <buffer,counter>;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
-			myQueue.push(std::pair<buffer,counter>);						//put buffer to queue
+			myQueue.push(myPair);						//put buffer to queue
 			ReleaseMutex(myMutex);						//Release Mutex
     	}
     	myStatus = 1;
