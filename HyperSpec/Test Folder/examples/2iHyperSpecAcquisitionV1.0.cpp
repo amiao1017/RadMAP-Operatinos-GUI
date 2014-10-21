@@ -81,6 +81,8 @@ int main()
 		framesize = imager.get_band_count() * imager.get_sample_count();
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
+
+		std::cout << "\nFramesize computed" << std::endl;
 	
 		myMutex = CreateMutex(NULL, FALSE, NULL);
 		if (myMutex == NULL) 
@@ -89,12 +91,16 @@ int main()
        		exit(EXIT_FAILURE);
    		}
 
+   		std::cout << "\nMutex Created" << std::endl;
+
    		myThread = (HANDLE)_beginthread(writeThread, 0, NULL);	//makeCube called here
 		if( myThread == NULL )
     	{
-       		printf("CreateThread error: %d\n", GetLastError());
+       		printf("_beginthread error: %d\n", GetLastError());
        		exit(EXIT_FAILURE);
    		}
+
+   		std::cout << "\nThread Created" << std::endl;
 
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
