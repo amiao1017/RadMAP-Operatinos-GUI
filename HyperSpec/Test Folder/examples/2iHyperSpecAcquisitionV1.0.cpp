@@ -107,7 +107,8 @@ int main()
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
 		// Start recording the data
-		while(cmd == "str")
+		//while(cmd == "str")
+		while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
 			std::cout << "\nRecording Data" << std::endl;
 			imager.start_frame_grabbing();
@@ -119,7 +120,7 @@ int main()
 			}
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
-			while (counter < LINE_COUNT && cmd == "str")
+			while (counter < LINE_COUNT) // && cmd == "str")			//start command commented out. eventually uncomment
 			{
 				imager.get_frame(&buffer[counter * framesize]);
 				std::cout << "Line " << counter + 1 << std::endl;
