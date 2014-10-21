@@ -21,8 +21,6 @@ int cubesize; //size of complete datacube in records (number of elements in arra
 std::queue<std::pair<unsigned short *, int>> myQueue;
 HANDLE myMutex;
 
-
-
 void makeCube(void *);
 int counter = 0;
 int myStatus = 0;
