@@ -18,7 +18,7 @@ std::string header_filename; // header filename is the same with '.hdr' appended
 std::string cmd;
 int framesize; //size of a single frame in records (number of elements in array)
 int cubesize; //size of complete datacube in records (number of elements in array)
-std::queue<std::pair<unsigned short *, int>> myQueue;
+std::queue<std::pair<unsigned short *, int> > myQueue;
 HANDLE myMutex;
 HANDLE myThread;
 
@@ -88,7 +88,7 @@ int main()
        		exit(EXIT_FAILURE);
    		}
 
-   		myThread = CreateThread(NULL, 0, writeThread, NULL, 0, NULL);	//makeCube called here
+   		myThread = (HANDLE)_beginthread(writeThread, 0, NULL);	//makeCube called here
 		if( myThread == NULL )
     	{
        		printf("CreateThread error: %d\n", GetLastError());
