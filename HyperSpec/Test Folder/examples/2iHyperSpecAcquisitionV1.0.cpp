@@ -197,8 +197,7 @@ void writeThread(void *)
 	}
 	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
-		std::pair<unsigned short *, int> myData;
-		myData = myQueue.pop();
+		std::pair<unsigned short *, int> myData = myQueue.pop();
 		makeCube(myData);
 	} 
 }
