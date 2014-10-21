@@ -182,7 +182,7 @@ void writeThread(void *)
 {
 	while (myStatus == 0)
 	{
-		mutexStatus = WaitForSingleObject(myMutex,INFINITE);		//ownMutex?				
+		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?				
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			std::pair<unsigned short *, int> myData;
