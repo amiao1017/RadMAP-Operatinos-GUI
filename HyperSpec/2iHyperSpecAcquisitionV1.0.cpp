@@ -116,8 +116,8 @@ int main()
 				counter++;
 			}
 			
-			mutexStatus = WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
-			myQueue.push(<buffer,counter>);						//put buffer to queue
+			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
+			myQueue.push(std::pair<buffer,counter>);						//put buffer to queue
 			ReleaseMutex(myMutex);						//Release Mutex
     	}
     	myStatus = 1;
