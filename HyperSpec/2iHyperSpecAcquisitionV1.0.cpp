@@ -20,8 +20,10 @@ int framesize; //size of a single frame in records (number of elements in array)
 int cubesize; //size of complete datacube in records (number of elements in array)
 std::queue<std::pair<unsigned short *, int>> myQueue;
 HANDLE myMutex;
+HANDLE myThread;
 
-void makeCube(void *);
+void writeThread(void *);
+
 int counter = 0;
 int myStatus = 0;
 
@@ -95,7 +97,7 @@ int main()
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
 		// Start recording the data
-		while(cmd == str)
+		while(cmd == "str")
 		{
 			std::cout << "\nRecording Data" << std::endl;
 			imager.start_frame_grabbing();
