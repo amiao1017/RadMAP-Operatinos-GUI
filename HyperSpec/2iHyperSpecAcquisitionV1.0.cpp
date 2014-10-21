@@ -78,14 +78,14 @@ int main()
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 	
-		myMutex = CreateMutex(NULL, FALSE, myMutex);
+		myMutex = CreateMutex(NULL, FALSE, NULL);
 		if (myMutex == NULL) 
     	{
       		printf("CreateMutex error: %d\n", GetLastError());
        		exit(EXIT_FAILURE);
    		}
 
-   		myThread = CreateThread(NULL, 0, writeThread, NULL, 0, myThread);	//makeCube called here
+   		myThread = CreateThread(NULL, 0, writeThread, NULL, 0, NULL);	//makeCube called here
 		if( myThread == NULL )
     	{
        		printf("CreateThread error: %d\n", GetLastError());
