@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <assert.h>
 #include <windows.h>
+#include <process.h>
 #include <stdio.h>
 #include <queue>
 
@@ -185,7 +186,8 @@ void writeThread(void *)
 		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?				
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
-			std::pair<unsigned short *, int> myData = myQueue.pop(); 
+			std::pair<unsigned short *, int> myData = myQueue.front(); 
+			myQueue.pop();
 			ReleaseMutex(myMutex);
 			makeCube(myData);
 		}
@@ -197,7 +199,8 @@ void writeThread(void *)
 	}
 	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
-		std::pair<unsigned short *, int> myData = myQueue.pop();
+		std::pair<unsigned short *, int> myData = myQueue.front();
+		myQueue.pop();
 		makeCube(myData);
 	} 
 }
