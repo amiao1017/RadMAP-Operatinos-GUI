@@ -13,11 +13,11 @@ daqSocket.connect("tcp://localhost:5106")
 mageSocket = context.socket(zmq.REQ)
 mageSocket.connect("tcp://localhost:5107")
 bugSocket = context.socket(zmq.REQ)
-bugSocket.connect("tcp://localhost:5108")
+bugSocket.connect("tcp://192.168.100.42:5108")
 liqSocket = context.socket(zmq.REQ)
-liqSocket.connect("tcp://localhost:5109")
+liqSocket.connect("tcp://192.168.100.23:5109")
 hsSocket = context.socket(zmq.REQ)
-hsSocket.connect("tcp://localhost:5110")
+hsSocket.connect("tcp://192.168.100.43:5110")
 
 class operationsApp(Tk):
 
