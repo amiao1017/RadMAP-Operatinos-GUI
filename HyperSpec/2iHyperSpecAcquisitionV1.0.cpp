@@ -78,7 +78,7 @@ int main()
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 	
-		myMutex = CreateMutex(Null, FALSE, queueKey);
+		myMutex = CreateMutex(NULL, FALSE, myMutex);
 		if (myMutex == NULL) 
     	{
       		printf("CreateMutex error: %d\n", GetLastError());
