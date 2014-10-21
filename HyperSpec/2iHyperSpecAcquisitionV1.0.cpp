@@ -31,11 +31,6 @@ int main()
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
 	try
 	{
-		//allocate memory for datacube
-		framesize = imager.get_band_count() * imager.get_sample_count();
-		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
-		cubesize = framesize * LINE_COUNT;
-
 		// Initialize imager.
 		Resonon::Pika2I imager;
 		imager.connect(); //Be prepared to catch exceptions if the imager is not physically connected to the computer
@@ -78,6 +73,10 @@ int main()
 		std::cout << " [min: " << imager.get_window_start_sample();
 		std::cout << ", max: " << imager.get_window_end_sample() - 1 << "]" << "\n";
 		
+		//allocate memory for datacube
+		framesize = imager.get_band_count() * imager.get_sample_count();
+		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
+		cubesize = framesize * LINE_COUNT;
 	
 		myMutex = CreateMutex(Null, FALSE, queueKey);
 		if (myMutex == NULL) 
