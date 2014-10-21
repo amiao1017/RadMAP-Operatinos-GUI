@@ -27,6 +27,8 @@ void writeThread(void *);
 int counter = 0;
 int myStatus = 0;
 
+Resonon::Pika2I imager;
+
 int main()
 {
 	unsigned short * buffer;
@@ -34,7 +36,6 @@ int main()
 	try
 	{
 		// Initialize imager.
-		Resonon::Pika2I imager;
 		imager.connect(); //Be prepared to catch exceptions if the imager is not physically connected to the computer
 
 		// Set spectral calibration info
