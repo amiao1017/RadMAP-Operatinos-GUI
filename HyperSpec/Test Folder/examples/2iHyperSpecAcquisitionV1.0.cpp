@@ -76,6 +76,8 @@ int main()
 		std::cout << std::setw(18) << "Samples: " << imager.get_sample_count();
 		std::cout << " [min: " << imager.get_window_start_sample();
 		std::cout << ", max: " << imager.get_window_end_sample() - 1 << "]" << "\n";
+
+		std::cout << "\nImage status printed but framesize not computed" << std::endl;
 		
 		//allocate memory for datacube
 		framesize = imager.get_band_count() * imager.get_sample_count();
