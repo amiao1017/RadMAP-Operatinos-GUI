@@ -204,4 +204,3 @@ void writeThread(void *)
 		makeCube(myData);
 	} 
 }
-
