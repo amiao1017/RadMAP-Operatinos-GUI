@@ -140,6 +140,7 @@ int main()
 			std::cout << "\nPushed pair to queue" << std::endl;
 			ReleaseMutex(myMutex);						//Release Mutex
     		std::cout << "\nReleased Mutex" << std::endl;
+    		counter = 0;
     	}
     	myStatus = 1;
     	WaitForSingleObject(myThread,INFINITE);
