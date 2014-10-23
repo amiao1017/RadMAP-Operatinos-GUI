@@ -26,11 +26,7 @@ HANDLE myThread;
 void writeThread(void *);
 
 int counter = 0;
-<<<<<<< HEAD
-int myStatus = 0;
-=======
 int stpReceived = 0;
->>>>>>> b2f22fd55eb18c68014f54389a187d573a99fe7e
 int calls = 0;
 
 Resonon::Pika2I imager;
@@ -114,11 +110,8 @@ int main()
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
 		// Start recording the data
-<<<<<<< HEAD
-		//while(stpReceived == 1)
-=======
+
 		//while(stpReceived == 0)
->>>>>>> b2f22fd55eb18c68014f54389a187d573a99fe7e
 		while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
 			std::cout << "\nRecording Data" << std::endl;
@@ -135,11 +128,8 @@ int main()
 			}
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
-<<<<<<< HEAD
-			while (counter < LINE_COUNT) // && stpReceived == 1)			//start command commented out. eventually uncomment
-=======
+
 			while (counter < LINE_COUNT) // && stpReceived == 0)			//start command commented out. eventually uncomment
->>>>>>> b2f22fd55eb18c68014f54389a187d573a99fe7e
 			{
 				imager.get_frame(&buffer[counter * framesize]);
 				std::cout << "Line " << counter + 1 << std::endl;
@@ -235,16 +225,13 @@ void writeThread(void *)
 {
 	while (stpReceived == 0)
 	{
-<<<<<<< HEAD
 		if (_kbhit()) {
 			char key = _getch();
 			if (key == 'q' || key == 'Q') {
 				stpReceived == 1;
 			}
 		}
-=======
-		
->>>>>>> b2f22fd55eb18c68014f54389a187d573a99fe7e
+
 		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
 		std::cout << "\nWrite thread owns Mutex" << std::endl;			
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
