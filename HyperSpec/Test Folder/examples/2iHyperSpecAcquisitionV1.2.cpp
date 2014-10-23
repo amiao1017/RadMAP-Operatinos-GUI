@@ -143,7 +143,6 @@ int main()
     		std::cout << "\nReleased Mutex" << std::endl;
     		counter = 0;
     	}
-    	stpReceived = 1;
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
        	CloseHandle(myMutex);
@@ -224,6 +223,7 @@ void writeThread(void *)
 {
 	while (stpReceived == 0)
 	{
+		
 		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
 		std::cout << "\nWrite thread owns Mutex" << std::endl;			
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
