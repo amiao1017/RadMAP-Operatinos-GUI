@@ -204,7 +204,9 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	//write data file
 	std::ofstream cubefile;
 	std::string saveName;
+	std::string stringCalls;
 	saveName = filename;
+	stringCalls = std::to_string(calls);
 	saveName.append(calls);
 	saveName.append("-");
 	saveName.append(fileDay);
