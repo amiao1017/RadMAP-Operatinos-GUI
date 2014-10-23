@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <queue>
 #include <time.h>
+#include <conio.h>
 
 #include "resonon_imager_pgr.h"
 #include "resonon_imager_base.h"
@@ -31,7 +32,7 @@ int calls = 0;
 
 Resonon::Pika2I imager;
 
-int main()
+int main(int argc, char* argv[])
 {
 	unsigned short * buffer;
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
