@@ -174,7 +174,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	char fileDay [100];
 	strftime(fileDay,100,"%Y%M%j",timeinfo);
 	char fileTime [100];
-	strftime(fileTime,100,%H:%M:%S)
+	strftime(fileTime,100,"%H:%M:%S",timeinfo);
 	std::cout << "\nmakeCube successfully called\n" << std::endl;
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	header_filename = filename + ".hdr";
