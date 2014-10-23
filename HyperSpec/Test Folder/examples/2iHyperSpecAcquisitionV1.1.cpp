@@ -172,7 +172,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	time (&rawtime);
 	timeinfo = localtime(&rawtime);
 	char fileDay [100];
-	strftime(fileDay,100,%Y%M%j);
+	strftime(fileDay,100,"%Y%M%j",timeinfo);
 	char fileTime [100];
 	strftime(fileTime,100,%H:%M:%S)
 	std::cout << "\nmakeCube successfully called\n" << std::endl;
