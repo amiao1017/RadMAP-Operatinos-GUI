@@ -17,7 +17,6 @@
 const int LINE_COUNT = 1000; //size of datacube to record
 const std::string filename = "2iHyperSpecDataCube"; //location to save datacube
 std::string header_filename; // header filename is the same with '.hdr' appended, see below
-std::string cmd;
 int framesize; //size of a single frame in records (number of elements in array)
 int cubesize; //size of complete datacube in records (number of elements in array)
 std::queue<std::pair<unsigned short *, int> > myQueue;
@@ -111,7 +110,7 @@ int main()
    		//start thread that looks at buffer and pops and saves datacube if data exists
 
 		// Start recording the data
-		//while(cmd == "str")
+		//while(stpReceived == 1)
 		while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
 			std::cout << "\nRecording Data" << std::endl;
@@ -128,7 +127,7 @@ int main()
 			}
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
-			while (counter < LINE_COUNT) // && cmd == "str")			//start command commented out. eventually uncomment
+			while (counter < LINE_COUNT) // && stpReceived == 1)			//start command commented out. eventually uncomment
 			{
 				imager.get_frame(&buffer[counter * framesize]);
 				std::cout << "Line " << counter + 1 << std::endl;
@@ -144,7 +143,6 @@ int main()
     		std::cout << "\nReleased Mutex" << std::endl;
     		counter = 0;
     	}
-    	myStatus = 1;
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
        	CloseHandle(myMutex);
@@ -223,8 +221,14 @@ void makeCube(std::pair<unsigned short *,int> myData)
 
 void writeThread(void *)
 {
-	while (myStatus == 0)
+	while (stpReceived == 0)
 	{
+		if (_kbhit()) {
+			char key = _getch();
+			if (key == 'q' || key == 'Q') {
+				stpReceived == 1;
+			}
+		}
 		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
 		std::cout << "\nWrite thread owns Mutex" << std::endl;			
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
