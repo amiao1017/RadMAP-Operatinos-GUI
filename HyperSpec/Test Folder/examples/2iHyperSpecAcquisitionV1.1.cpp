@@ -207,7 +207,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::string stringCalls;
 	saveName = filename;
 	stringCalls = std::to_string(calls);
-	saveName.append(calls);
+	saveName.append(stringCalls);
 	saveName.append("-");
 	saveName.append(fileDay);
 	saveName.append(".bil");			
