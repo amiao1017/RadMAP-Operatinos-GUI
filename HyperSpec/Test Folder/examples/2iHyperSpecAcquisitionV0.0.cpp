@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		// Initialize imager.
-		imager.connect(); //Be prepared to catch exceptions if the imager is not physically connected to the computer
+		/*imager.connect(); //Be prepared to catch exceptions if the imager is not physically connected to the computer
 
 		// Set spectral calibration info
 		imager.set_slope(1.0447);
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 
-		std::cout << "\nFramesize computed" << std::endl;
+		std::cout << "\nFramesize computed" << std::endl;*/
 	
 		myMutex = CreateMutex(NULL, FALSE, NULL);
 		if (myMutex == NULL) 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		while(stpReceived == 0)
 		//while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
-			std::cout << "\nRecording Data" << std::endl;
+			/*std::cout << "\nRecording Data" << std::endl;
 			if(!grabbingFrames)
 			{
 				imager.start_frame_grabbing();
@@ -137,23 +137,23 @@ int main(int argc, char* argv[])
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
 			}
-			std::pair<unsigned short *, int> myPair = std::make_pair(buffer,counter);
+			std::pair<unsigned short *, int> myPair = std::make_pair(buffer,counter);*/
 			std::cout << "\nMade data pair" << std::endl;
-			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
+			/*WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			std::cout << "\nGot Mutex" << std::endl;
 			myQueue.push(myPair);						//put buffer to queue
 			std::cout << "\nPushed pair to queue" << std::endl;
 			ReleaseMutex(myMutex);						//Release Mutex
     		std::cout << "\nReleased Mutex" << std::endl;
-    		counter = 0;
+    		counter = 0;*/
     	}
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
        	CloseHandle(myMutex);
 
-		imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
+		/*imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
 		grabbingFrames = FALSE;
-		imager.disconnect(); 			//disconnect
+		imager.disconnect();*/ 			//disconnect
 
 		return EXIT_SUCCESS;
 		
@@ -185,7 +185,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	saveName.append("-");
 	saveName.append(fileDay);
 	std::cout << "\nmakeCube successfully called\n" << std::endl;
-	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
+	/*std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	header_filename = saveName + ".hdr";
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
@@ -216,7 +216,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	cubefile.open(saveName.c_str(), std::ios::out | std::ios::binary);
 	//cubefile.write((const char*) buffer, cubesize * sizeof(unsigned short));
 	cubefile.write((const char*) myData.first, framesize * myData.second * sizeof(unsigned short));
-	cubefile.close();
+	cubefile.close();*/
 	std::cout << "Done." << std::endl;
 
 	// free allocated resources
@@ -234,9 +234,9 @@ void writeThread(void *)
 			}
 		}
 
-		WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
+		//WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
 		std::cout << "\nWrite thread owns Mutex" << std::endl;			
-		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
+		/*if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			std::cout << "\nQueue not empty" << std::endl;
 			std::pair<unsigned short *, int> myData = myQueue.front();
@@ -252,12 +252,13 @@ void writeThread(void *)
 		{
 		ReleaseMutex(myMutex);						
 		Sleep(1000);
-		}
+		}*/
 	}
-	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
+	/*while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
 		std::pair<unsigned short *, int> myData = myQueue.front();
 		myQueue.pop();
 		makeCube(myData);
-	} 
+	} */
+	exit(EXIT_SUCCESS);
 }
