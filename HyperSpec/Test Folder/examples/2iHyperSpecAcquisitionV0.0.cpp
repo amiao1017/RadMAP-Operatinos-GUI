@@ -231,8 +231,10 @@ void writeThread(void *)
 		if (_kbhit()) {	
 			std::cout << "\nQUIT" << std::endl;					//didnt work
 			char key = _getch();
+			std::cout << key << std::endl;
 			if (key == 'q' || key == 'Q') {
 				stpReceived == 1;
+				std::cout << "\nThe Program Should HAve Ended" << std::endl;
 			}
 		}
 		else
