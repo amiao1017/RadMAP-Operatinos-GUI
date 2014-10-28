@@ -178,6 +178,8 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	char fileTime [100];
 	strftime(fileTime,100,"%H:%M:%S",timeinfo);
 	std::string saveName;
+	std::string cubeSaveName;
+	std::string directoryName;
 	std::string stringCalls;
 	saveName = filename;
 	stringCalls = std::to_string(calls);
@@ -186,7 +188,11 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	saveName.append(fileDay);
 	std::cout << "\nmakeCube successfully called\n" << std::endl;
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
-	header_filename = saveName + ".hdr";
+	if (calls <= 1)
+	{
+		directoryName = "./" + fileDay + fileTime + "/";
+	}
+	header_filename = directoryName + saveName + ".hdr";
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileTime << " On " << fileDay << "\n";
@@ -212,8 +218,8 @@ void makeCube(std::pair<unsigned short *,int> myData)
 
 	//write data file
 	std::ofstream cubefile;	
-	saveName = saveName +".bil";		
-	cubefile.open(saveName.c_str(), std::ios::out | std::ios::binary);
+	cubeSaveName = directoryName + saveName + ".bil";		
+	cubefile.open(cubeSaveName.c_str(), std::ios::out | std::ios::binary);
 	//cubefile.write((const char*) buffer, cubesize * sizeof(unsigned short));
 	cubefile.write((const char*) myData.first, framesize * myData.second * sizeof(unsigned short));
 	cubefile.close();
