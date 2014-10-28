@@ -234,8 +234,9 @@ void writeThread(void *)
 			char key = _getch();
 			std::cout << key << std::endl;
 			if (key == 'q' || key == 'Q') {
-				stpReceived == 1;
+				stpReceived = 1;
 				std::cout << "\nThe Program Should HAve Ended" << std::endl;
+				std::cout << stpReceived << std::endl;
 			}
 		}
 		else
