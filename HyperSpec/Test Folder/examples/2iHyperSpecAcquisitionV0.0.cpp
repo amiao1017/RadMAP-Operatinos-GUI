@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 				counter++;
 			}
 			std::pair<unsigned short *, int> myPair = std::make_pair(buffer,counter);*/
-			std::cout << "\nMade data pair" << std::endl;
+			std::cout << "\nMain Loop" << std::endl;
 			/*WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			std::cout << "\nGot Mutex" << std::endl;
 			myQueue.push(myPair);						//put buffer to queue
@@ -232,6 +232,8 @@ void writeThread(void *)
 			if (key == 'q' || key == 'Q') {
 				stpReceived == 1;
 			}
+		else
+		std::cout << "\nNo Key Stroke" << std::endl;		
 		}
 
 		//WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
