@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
 			}
 			std::pair<unsigned short *, int> myPair = std::make_pair(buffer,counter);*/
 			std::cout << "\nMain Loop" << std::endl;
-			Sleep(1000);
+			Sleep(500);
 			/*WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			std::cout << "\nGot Mutex" << std::endl;
 			myQueue.push(myPair);						//put buffer to queue
@@ -228,7 +228,8 @@ void writeThread(void *)
 {
 	while (stpReceived == 0)
 	{
-		if (_kbhit()) {						//didnt work
+		if (_kbhit()) {	
+			std::cout << "\nQUIT" << std::endl;					//didnt work
 			char key = _getch();
 			if (key == 'q' || key == 'Q') {
 				stpReceived == 1;
@@ -236,11 +237,13 @@ void writeThread(void *)
 		}
 		else
 		{
-		std::cout << "\nNo Key Stroke" << std::endl;		
+		std::cout << "\nNo Key Stroke" << std::endl;	
+		Sleep(500);	
 		}
 
 		//WaitForSingleObject(myMutex,INFINITE);		//ownMutex?	
-		std::cout << "\nWrite thread owns Mutex" << std::endl;			
+		std::cout << "\nWrite thread owns Mutex" << std::endl;
+		Sleep(500);			
 		/*if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			std::cout << "\nQueue not empty" << std::endl;
