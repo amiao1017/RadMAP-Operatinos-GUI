@@ -190,9 +190,14 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	if (calls <= 1)
 	{
-		directoryName = "./" + fileDay + fileTime + "/";
+		directoryName = "./";
+		directoryName.append(fileDay);
+		directoryName.append(fileTime);
+		directoryName.append("/");
 	}
-	header_filename = "%s%s.hdr" %(directoryName, saveName);
+	header_filename = directoryName;
+	header_filename.append(saveName);
+	header_filename.append(".hdr");
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileTime << " On " << fileDay << "\n";
