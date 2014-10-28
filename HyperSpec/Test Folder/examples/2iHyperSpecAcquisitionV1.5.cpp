@@ -192,7 +192,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	{
 		directoryName = "./" + fileDay + fileTime + "/";
 	}
-	header_filename = directoryName + saveName + ".hdr";
+	header_filename = "%s%s.hdr" %(directoryName, saveName);
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileTime << " On " << fileDay << "\n";
