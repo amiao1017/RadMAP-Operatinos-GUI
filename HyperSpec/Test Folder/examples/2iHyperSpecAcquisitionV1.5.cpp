@@ -154,8 +154,6 @@ int main(int argc, char* argv[])
 		imager.stop_frame_grabbing();	 
 		grabbingFrames = FALSE;
 		imager.disconnect(); 			//disconnect
-
-		return 0;
 		
 	} catch (std::exception const & e)
 	{
@@ -164,6 +162,7 @@ int main(int argc, char* argv[])
 			delete [] buffer;
 		exit(EXIT_FAILURE);
 	}
+	return 0;
 }
 
 void makeCube(std::pair<unsigned short *,int> myData)
