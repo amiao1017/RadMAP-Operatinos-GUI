@@ -192,14 +192,14 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	if (calls <= 1)
 	{
-		directoryName = "./";
+		directoryName = ".\\";
 		directoryName.append(fileDay);
 		directoryName.append(directoryTime);
 		//directoryName.append("/");
 	}
-	CreateDirectoryA(directoryName,NULL);
+	CreateDirectoryA(directoryName.c_str(),NULL);
 	header_filename = directoryName;
-	header_filename.append("/");
+	header_filename.append("\\");
 	header_filename.append(saveName);
 	header_filename.append(".hdr");
 	std::ofstream outfile(header_filename.c_str());
@@ -227,7 +227,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 
 	//write data file
 	std::ofstream cubefile;	
-	cubeSaveName = directoryName + "/" + saveName + ".bil";		
+	cubeSaveName = directoryName + "\\" + saveName + ".bil";		
 	cubefile.open(cubeSaveName.c_str(), std::ios::out | std::ios::binary);
 	//cubefile.write((const char*) buffer, cubesize * sizeof(unsigned short));
 	cubefile.write((const char*) myData.first, framesize * myData.second * sizeof(unsigned short));
