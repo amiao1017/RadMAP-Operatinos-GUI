@@ -18,6 +18,7 @@
 
 const int LINE_COUNT = 1000; //size of datacube to record
 const std::string filename = "2iHyperSpecDataCube"; //location to save datacube
+std::string directoryName;
 std::string header_filename; // header filename is the same with '.hdr' appended, see below
 int framesize; //size of a single frame in records (number of elements in array)
 int cubesize; //size of complete datacube in records (number of elements in array)
@@ -177,9 +178,10 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	strftime(fileDay,100,"%Y%m%d",timeinfo);
 	char fileTime [100];
 	strftime(fileTime,100,"%H:%M:%S",timeinfo);
+	char directoryTime [100];
+	strftime(directoryTime,100,"%H%M%S",timeinfo);
 	std::string saveName;
 	std::string cubeSaveName;
-	std::string directoryName;
 	std::string stringCalls;
 	saveName = filename;
 	stringCalls = std::to_string(calls);
@@ -192,7 +194,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	{
 		directoryName = "./";
 		directoryName.append(fileDay);
-		directoryName.append(fileTime);
+		directoryName.append(directoryTime);
 		directoryName.append("/");
 	}
 	header_filename = directoryName;
@@ -271,4 +273,6 @@ void writeThread(void *)
 		myQueue.pop();
 		makeCube(myData);
 	} 
+exit(EXIT_SUCCESS);
+
 }
