@@ -115,7 +115,6 @@ int main(int argc, char* argv[])
 		// Start recording the data
 
 		while(stpReceived == 0)
-		//while (TRUE)				//start command commented out here and in below while loop. eventually uncomment
 		{
 			std::cout << "\nRecording Data" << std::endl;
 			if(!grabbingFrames)
@@ -132,7 +131,7 @@ int main(int argc, char* argv[])
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
 
-			while (counter < LINE_COUNT) // && stpReceived == 0)			//start command commented out. eventually uncomment
+			while (counter < LINE_COUNT)  && stpReceived == 0)			
 			{
 				imager.get_frame(&buffer[counter * framesize]);
 				std::cout << "Line " << counter + 1 << std::endl;
@@ -152,7 +151,7 @@ int main(int argc, char* argv[])
        	CloseHandle(myThread);
        	CloseHandle(myMutex);
 
-		imager.stop_frame_grabbing();	//probably not the correct place but when code ends need to stop taking data and 
+		imager.stop_frame_grabbing();	 
 		grabbingFrames = FALSE;
 		imager.disconnect(); 			//disconnect
 
@@ -235,7 +234,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::cout << "Done." << std::endl;
 
 	// free allocated resources
-	delete [] myData.first;		//is this cleaning the proper memory?
+	delete [] myData.first;		
 }
 
 void writeThread(void *)
