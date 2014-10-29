@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
 
-			while (counter < LINE_COUNT)  && stpReceived == 0)			
+			while (counter < LINE_COUNT  && stpReceived == 0)			
 			{
 				imager.get_frame(&buffer[counter * framesize]);
 				std::cout << "Line " << counter + 1 << std::endl;
