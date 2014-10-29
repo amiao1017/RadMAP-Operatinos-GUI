@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
 		grabbingFrames = FALSE;
 		imager.disconnect(); 			//disconnect
 
-		return EXIT_SUCCESS;
+		return 0;
 		
 	} catch (std::exception const & e)
 	{
