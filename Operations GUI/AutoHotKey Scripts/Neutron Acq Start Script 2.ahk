@@ -1,9 +1,9 @@
 Run, C:\LiquidScintArray\sis3320_sis3302_sis3320_NeutronGamma_with-SIS3150USB-WINUSB\sis3302_sis3320_NeutronGamma.exe
+SetTitleMatchMode 2
 WinWait, Load Configuration File, 
 IfWinNotActive, Load Configuration File, , WinActivate, Load Configuration File, 
 WinWaitActive, Load Configuration File, 
-MouseClick, left,  246,  289
-Sleep, 100
+Send, {CTRLDOWN}v{CTRLUP}
 MouseClick, left,  637,  398
 Sleep, 100
 WinWait, Demo Application SIS3302 / SIS3320 / SIS3320-250 ADC  Neutron/Gamma  - 4. June 2011 - SIS3150USB-WinUSB driver, 
