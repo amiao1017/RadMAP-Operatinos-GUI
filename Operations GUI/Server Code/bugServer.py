@@ -113,6 +113,12 @@ while True:
                             dbSocket.send("Arduino already started")
             if cmd == "startGps":
                 if GpsStarted == False:
+                    # logfile_path = filename + '/gps/logfile.gps' #set the path for the logfile to be saved with gps data collection
+                    # x = Tk()
+                    # x.withdraw()
+                    # x.clipboard_clear()
+                    # x.clipboard_append(logfile_path)
+                    # x.destroy()
                     # startGps = subprocess.Popen(shlex.split("startGPSscript"), cwd=r"Path\\to\\startGPSscript",  stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                     print "Starting GPS"
                     dbSocket.send("Starting gps")
@@ -122,12 +128,6 @@ while True:
                     dbSocket.send("GPS already started")
             if cmd == "startWeather":
                 if weatherStarted == False:
-                    # logfile_path = filename + '/gps/logfile.gps' #set the path for the logfile to be saved with gps data collection
-                    # x = Tk()
-                    # x.withdraw()
-                    # x.clipboard_clear()
-                    # x.clipboard_append(logfile_path)
-                    # x.destroy()
                     #startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdout = subprocess.PIPE,, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
                     print "Starting weather"
                     dbSocket.send("Starting weather")

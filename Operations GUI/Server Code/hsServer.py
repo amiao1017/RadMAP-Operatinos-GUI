@@ -14,21 +14,22 @@ while True:
 
 	if dbCommand == 'STA':
 		if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
-            hyperSpecAcquisition = subprocess.Popen(shlex.split("2iHyperSpecAcquisitionV1.2.exe"), stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
+            #hyperSpecAcquisition = subprocess.Popen(shlex.split("2iHyperSpecAcquisitionV1.2.exe"), stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
             #check cwd
+            print "HyperSpec Acquisition starting"
             HyperSpecAcqStarted = True
         else:
             print "HyperSpec Acquisition already running"
 		
 	if dbCommand == 'STO':
-		if HyperSpecAcqStarted: #stop lidars if started
-            startVelodynePort.communicate(input = 'q')
+		if HyperSpecAcqStarted: #stop HyperSpec if started
+            #hyperSpecAcquisition.communicate(input = 'q')
             print "Stopping HyperSpec Acquisition"
             HyperSpecAcqStarted = False
         else:
             print "HyperSpec Acquisition already stopped"
 	
-	if dbCommand == save:
-		subprocess.call(#insert hs save script name here#)
+    #if dbCommand == save:
+
 		
 	
