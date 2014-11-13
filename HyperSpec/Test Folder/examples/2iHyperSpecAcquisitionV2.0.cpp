@@ -16,7 +16,7 @@
 #include "resonon_imager_base.h"
 
 
-const int LINE_COUNT = 100; //size of datacube to record
+const int LINE_COUNT = 1000; //size of datacube to record
 const std::string filename = "2iHyperSpecDataCube"; //location to save datacube
 std::string directoryName;
 std::string header_filename; // header filename is the same with '.hdr' appended, see below
