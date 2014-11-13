@@ -149,11 +149,15 @@ int main(int argc, char* argv[])
     	}
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
+       	std::cout << "Thread Closed" << std::endl;
        	CloseHandle(myMutex);
+       	std::cout << "Mutex Closed" << std::endl;
 
-		imager.stop_frame_grabbing();	 
+		imager.stop_frame_grabbing();
+		std::cout << "Frame Grabbing Stopped" << std::endl;	 
 		grabbingFrames = FALSE;
 		imager.disconnect(); 			//disconnect
+		std::cout << "Imager Disconnected" << std::endl;
 		
 	} catch (std::exception const & e)
 	{
