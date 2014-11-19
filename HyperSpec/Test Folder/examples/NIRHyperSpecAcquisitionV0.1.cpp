@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 		std::cout << " [min: " << imager.get_min_integration_time();
 		std::cout << ", max: " << imager.get_max_integration_time() << "]" << "\n";
 		//std::cout << std::setw(18) << "Gain: " << imager.get_gain();							//potential crash point
-		std::cout << " [min: " << imager.get_min_gain();
-		std::cout << ", max: " << imager.get_max_gain() << "]" << "\n";
+		//std::cout << " [min: " << imager.get_min_gain();
+		//std::cout << ", max: " << imager.get_max_gain() << "]" << "\n";
 		std::cout << std::setw(18) << "Bands: " << imager.get_band_count();
 		std::cout << " [min: " << imager.get_window_start_band();
 		std::cout << ", max: " << imager.get_window_end_band() - 1 << "]" << "\n";
