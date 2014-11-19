@@ -12,7 +12,7 @@
 #include <conio.h>
 #include <string>
 
-#include "resonon_imager_pgr.h"
+#include "resonon_imager_x.h"
 #include "resonon_imager_base.h"
 
 
