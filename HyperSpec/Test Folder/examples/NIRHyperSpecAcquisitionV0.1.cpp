@@ -17,7 +17,7 @@
 
 
 const int LINE_COUNT = 1000; //size of datacube to record
-const std::string filename = "2iHyperSpecDataCube"; //location to save datacube
+const std::string filename = "NIRHyperSpecDataCube"; //location to save datacube
 std::string directoryName;
 std::string header_filename; // header filename is the same with '.hdr' appended, see below
 int framesize; //size of a single frame in records (number of elements in array)
@@ -32,7 +32,7 @@ int counter = 0;
 int stpReceived = 0;
 int calls = 0;
 
-Resonon::Pika2I imager;
+Resonon::PikaNIR imager;
 
 int main(int argc, char* argv[])
 {
@@ -42,20 +42,20 @@ int main(int argc, char* argv[])
 	{
 		// Initialize imager.
 		imager.connect(); //Be prepared to catch exceptions if the imager is not physically connected to the computer
+		//imager.set_calibration_file("XEVA3986_TrueNUC_LG_RT_3986.xca"); // replace this filename with the calibration file that comes with your imager
 
 		// Set spectral calibration info
-		imager.set_slope(1.0447);
-		imager.set_intercept(393.28);
+		imager.set_slope(5.419);
+		imager.set_intercept(650.11);
 
 		// Set Windowing, here we are using the default windowing.  If default settings are used, this call is not
-		// required, but it is shown here for completeness.  The default windowing for a Pika 2I uses the full camera
-        // frame of 240 bands by 640 samples.
-		imager.set_window_bounds(0, 240, 0, 640);
+		// required, but it is shown here for completeness.  The default windowing for a Pika NIR uses the full camera
+        // frame of 256 bands by 320 samples.
+		imager.set_window_bounds(0, 256, 0, 320);
 
 		// Set Camera properties
-		imager.set_framerate(100.0); //Hz					
-		imager.set_integration_time(7.0); //milliseconds	
-		imager.set_gain(0.0); //dB 						
+		imager.set_framerate(100.0); //Hz
+		imager.set_integration_time(7.0); //milliseconds				
 
 		imager.set_external_trigger();
 		
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 		std::cout << std::setw(18) << "Integration Time: "  << imager.get_integration_time();
 		std::cout << " [min: " << imager.get_min_integration_time();
 		std::cout << ", max: " << imager.get_max_integration_time() << "]" << "\n";
-		std::cout << std::setw(18) << "Gain: " << imager.get_gain();
+		std::cout << std::setw(18) << "Gain: " << imager.get_gain();							//potential crash point
 		std::cout << " [min: " << imager.get_min_gain();
 		std::cout << ", max: " << imager.get_max_gain() << "]" << "\n";
 		std::cout << std::setw(18) << "Bands: " << imager.get_band_count();
@@ -215,7 +215,6 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	outfile << "lines = " << LINE_COUNT << "\n";
 	outfile << "framerate = " << imager.get_framerate() << "\n";
 	outfile << "shutter = " << imager.get_integration_time() << "\n";
-	outfile << "gain = " << imager.get_gain() << "\n";
 	outfile << "wavelength = {";
 	outfile << std::setprecision(5);
 	for(int i = imager.get_window_start_band(); i < imager.get_window_end_band(); i++)
