@@ -14,8 +14,9 @@ while True:
 
 	if dbCommand == 'STA':
 		if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
-            #hyperSpecAcquisition = subprocess.Popen(shlex.split("2iHyperSpecAcquisitionV1.2.exe"), stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
+            #2iAcquisition = subprocess.Popen(shlex.split("2iHyperSpecAcquisitionV2.0.exe"), stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
             #check cwd
+            #NIRAcquitision = subprocess.Popen(shlex.split("NIRHyperSpecAcquisitionV1.0.exe"), stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
             print "HyperSpec Acquisition starting"
             HyperSpecAcqStarted = True
         else:
@@ -23,7 +24,8 @@ while True:
 		
 	if dbCommand == 'STO':
 		if HyperSpecAcqStarted: #stop HyperSpec if started
-            #hyperSpecAcquisition.communicate(input = 'q')
+            #2iAcquisition.communicate(input = 'q')
+            #NIRAcquisition.communicate(input = 'q')
             print "Stopping HyperSpec Acquisition"
             HyperSpecAcqStarted = False
         else:
