@@ -29,13 +29,8 @@ Sleep, 100
 Send, {CTRLDOWN}v{CTRLUP} ;paste the path to the log file
 MouseClick, left,  559,  451
 Sleep, 100
-WinWait, Options, 
-IfWinNotActive, Options, , WinActivate, Options, 
-WinWaitActive, Options, 
-MouseClick, left,  545,  453
-Sleep, 100
-WinWait, NovAtel CDU, 
-IfWinNotActive, NovAtel CDU, , WinActivate, NovAtel CDU, 
-WinWaitActive, NovAtel CDU, 
-MouseClick, left,  729,  267
+WinWait, CONFIG - Logging Control, 
+IfWinNotActive, CONFIG - Logging Control, , WinActivate, CONFIG - Logging Control, 
+WinWaitActive, CONFIG - Logging Control, 
+MouseClick, left,  362,  69
 Sleep, 100
