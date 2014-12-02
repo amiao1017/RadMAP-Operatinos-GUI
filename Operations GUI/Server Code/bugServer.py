@@ -20,7 +20,6 @@ velodyneStarboardStarted = False
 ladybugPortStarted = False
 ladybugStarboardStarted = False
 arduinoStarted = False
-weatherStarted = False
 GpsStarted = False
 
 
@@ -46,7 +45,7 @@ while True:
     print "Verifying GPS and weather"
     
     
-    if dbSocket.poll() != 0: #potentially add a timeout to the socket poll
+    if dbSocket.poll(1000) != 0: #potentially add a timeout to the socket poll
         dbCommand = dbSocket.recv()
         
         for cmd in dbCommand:
@@ -126,15 +125,6 @@ while True:
                 else:
                     print "GPS already started"
                     dbSocket.send("GPS already started")
-            if cmd == "startWeather":
-                if weatherStarted == False:
-                    #startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdout = subprocess.PIPE,, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
-                    print "Starting weather"
-                    dbSocket.send("Starting weather")
-                    weatherStarted = True
-                else:
-                    print "Weather already started"
-                    dbSocket.send("weather already started")
             #if cmd == "STO":
             if system_state == 1: #input q then y
                 if cmd == "stopLidar":
@@ -187,18 +177,17 @@ while True:
                         dbSocket.send("Arduino already stopped")
                 if (ladybugPortStarted == False) and (ladybugStarboardStarted == False) and (velodyneStarboardStarted == False) and (velodynePortStarted == False) and (arduinoStarted == False):
                     system_state = 0
-            #stopWeather
             #stopGps
             
             #if cmd == save: #data offload
                 #subprocess.call(#insert bug save script name here#)
                                 
-                                #Verification of Lidar, Ladybug, Arduino
+    #Verification of Lidar, Ladybug, Arduino
     print "Verifying Lidar, Ladybug, and Arduino"
     if len(processes) != 0:
         line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
         if (line.find("time_len: ") != -1): #arduino verification
-            dbSocket.send("Arduino - " + line[line.find("time_len: "): ]
+            dbSocket.send("Arduino - " + line[line.find("time_len: "): ])
             if (not arduinoStarted):
                 arduinoStarted = True
         if (line.find("Images: ") != -1): #Ladybug Verification
