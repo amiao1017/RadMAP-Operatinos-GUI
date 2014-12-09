@@ -172,16 +172,25 @@ int main(int argc, char* argv[])
 void makeCube(std::pair<unsigned short *,int> myData)
 {
 	calls++;
-	time_t rawtime;
-	struct tm * timeinfo;
-	time (&rawtime);
-	timeinfo = localtime(&rawtime);
+	timeval curTime;
+	gettimeofday(&curTime, NULL);
+	int milli = curTime.tv_usec / 1000;
+	//time_t rawtime;
+	//struct tm * timeinfo;
+	//time (&rawtime);
+	//timeinfo = localtime(&rawtime);
+	timeinfo = localtime(&curTime.tv_sec)
 	char fileDay [100];
+	//strftime(fileDay,100,"%Y%m%d",timeinfo);
 	strftime(fileDay,100,"%Y%m%d",timeinfo);
+	char timeBufferC [100];
+	strftime(timeBufferC,100,"%H:%M:%S",timeinfo);		//fileTime has colons
 	char fileTime [100];
-	strftime(fileTime,100,"%H:%M:%S",timeinfo);
+	sprintf(fileTime, "%s:%d", timeBufferC, milli);
+	char timeBuffer [100];
+	strftime(timeBuffer,100,"%H%M%S",timeinfo);	//directoryTime is for filename so no colons
 	char directoryTime [100];
-	strftime(directoryTime,100,"%H%M%S",timeinfo);
+	sprintf(directoryTime, "%s%d", timeBuffer, milli);
 	std::string saveName;
 	std::string cubeSaveName;
 	std::string stringCalls;
