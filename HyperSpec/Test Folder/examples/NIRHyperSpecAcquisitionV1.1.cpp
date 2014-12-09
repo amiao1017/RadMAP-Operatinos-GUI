@@ -176,7 +176,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	GetSystemTime(&st);
 	GetLocalTime(&lt);
 
-	std::string fileDayST = "%02d%02d%02d" %(st.wYear,st.wMonth,st.wDay);
+	char fileDayST [100] = "%02d%02d%02d" %(st.wYear,st.wMonth,st.wDay);
 	std::string fileDayLT = "%02d%02d%02d" %(lt.wYear,lt.wMonth,lt.wDay);
 
 	std::cout << "ST looks like " << fileDayST << "\n" << "LT looks like " << fileDayLT << "\n" << std::endl;
