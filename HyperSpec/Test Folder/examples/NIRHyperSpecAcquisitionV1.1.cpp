@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <queue>
 #include <time.h>
+#include <sys/time.h>
 #include <conio.h>
 #include <string>
 
@@ -190,7 +191,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	char timeBuffer [100];
 	strftime(timeBuffer,100,"%H%M%S",timeinfo);	//directoryTime is for filename so no colons
 	char directoryTime [100];
-	sprintf(directoryTime, "%s%d", timeBuffer, milli);
+	sprintf(directoryTime, "%s%d", timeBuffer, milli);	//pos %03d for leading zeros
 	std::string saveName;
 	std::string cubeSaveName;
 	std::string stringCalls;
