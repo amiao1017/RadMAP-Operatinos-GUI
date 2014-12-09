@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <queue>
 #include <time.h>
-#include <sys/time.h>
 #include <conio.h>
 #include <string>
 
@@ -173,7 +172,26 @@ int main(int argc, char* argv[])
 void makeCube(std::pair<unsigned short *,int> myData)
 {
 	calls++;
-	timeval curTime;
+	SYSTEMTIME st, lt;
+	GetSystemTime(&st);
+	GetLocalTime(&lt);
+
+	std::string fileDayST = "%02d%02d%02d" %(st.wYear,st.wMonth,st.wDay);
+	std::string fileDayLT = "%02d%02d%02d" %(lt.wYear,lt.wMonth,lt.wDay);
+
+	std::cout << "ST looks like " << fileDayST << "\n" << "LT looks like " << fileDayLT << "\n" << std::endl;
+
+	std::string fileTimeST = "%02d:%02d:%02d.%03d" %(st.wHour,st.wMinute,st.wSecond,st.wMilliseconds);
+	std::string fileTimeLT = "%02d:%02d:%02d.%03d" %(lt.wHour,lt.wMinute,lt.wSecond,lt.wMilliseconds);
+
+	std::cout << "ST looks like " << fileTimeST << "\n" << "LT looks like " << fileTimeLT << "\n" << std::endl;
+
+	std::string directoryTimeST = "%02d%02d%02d%03d" %(st.wHour,st.wMinute,st.wSecond,st.wMilliseconds);
+	std::string directoryTimeLT = "%02d%02d%02d%03d" %(lt.wHour,lt.wMinute,lt.wSecond,lt.wMilliseconds);
+
+	std::cout << "ST looks like " << directoryTimeST << "\n" << "LT looks like " << directoryTimeLT << "\n" << std::endl;
+
+	/*timeval curTime;
 	gettimeofday(&curTime, NULL);
 	int milli = curTime.tv_usec / 1000;
 	//time_t rawtime;
@@ -191,7 +209,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	char timeBuffer [100];
 	strftime(timeBuffer,100,"%H%M%S",timeinfo);	//directoryTime is for filename so no colons
 	char directoryTime [100];
-	sprintf(directoryTime, "%s%d", timeBuffer, milli);	//pos %03d for leading zeros
+	sprintf(directoryTime, "%s%d", timeBuffer, milli);	//pos %03d for leading zeros*/
 	std::string saveName;
 	std::string cubeSaveName;
 	std::string stringCalls;
@@ -199,14 +217,14 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	stringCalls = std::to_string(calls);
 	saveName.append(stringCalls);
 	saveName.append("-");
-	saveName.append(fileDay);
+	saveName.append(fileDayST);
 	//std::cout << "\nmakeCube successfully called\n" << std::endl;
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	if (calls <= 1)
 	{
 		directoryName = ".\\";
-		directoryName.append(fileDay);
-		directoryName.append(directoryTime);
+		directoryName.append(fileDayST);
+		directoryName.append(directoryTimeST);
 		//directoryName.append("/");
 	}
 	CreateDirectoryA(directoryName.c_str(),NULL);
@@ -216,7 +234,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	header_filename.append(".hdr");
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
-	outfile << "File created at " << fileTime << " On " << fileDay << "\n";
+	outfile << "File created at " << fileTimeST << " On " << fileDayST << "\n";
 	outfile << "interleave = bil\n";
 	outfile << "data type = 12\n";
 	outfile << "bit depth = 12\n";
