@@ -176,8 +176,10 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	GetSystemTime(&st);
 	GetLocalTime(&lt);
 
-	char fileDayST [100] = "%02d%02d%02d" %(st.wYear,st.wMonth,st.wDay);
-	std::string fileDayLT = "%02d%02d%02d" %(lt.wYear,lt.wMonth,lt.wDay);
+	char fileDayST [100];
+	sprintf(fileDayST, "%02d%02d%02d", st.wYear, st.wMonth, st.wDay);
+	char fileDayLT [100];
+	sprintf(fileDayLT, "%02d%02d%02d", lt.wYear, lt.wMonth, lt.wDay);
 
 	std::cout << "ST looks like " << fileDayST << "\n" << "LT looks like " << fileDayLT << "\n" << std::endl;
 
