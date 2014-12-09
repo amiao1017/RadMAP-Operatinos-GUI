@@ -183,13 +183,17 @@ void makeCube(std::pair<unsigned short *,int> myData)
 
 	std::cout << "ST looks like " << fileDayST << "\n" << "LT looks like " << fileDayLT << "\n" << std::endl;
 
-	std::string fileTimeST = "%02d:%02d:%02d.%03d" %(st.wHour,st.wMinute,st.wSecond,st.wMilliseconds);
-	std::string fileTimeLT = "%02d:%02d:%02d.%03d" %(lt.wHour,lt.wMinute,lt.wSecond,lt.wMilliseconds);
+	char fileTimeST [100];
+	sprintf(fileTimeST, "%02d:%02d:%02d.%03d", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	char fileTimeLT [100];
+	sprintf(fileTimeLT, "%02d:%02d:%02d.%03d", lt.wHour, lt.wMinute, lt.wSecond, lt.wMilliseconds);
 
 	std::cout << "ST looks like " << fileTimeST << "\n" << "LT looks like " << fileTimeLT << "\n" << std::endl;
 
-	std::string directoryTimeST = "%02d%02d%02d%03d" %(st.wHour,st.wMinute,st.wSecond,st.wMilliseconds);
-	std::string directoryTimeLT = "%02d%02d%02d%03d" %(lt.wHour,lt.wMinute,lt.wSecond,lt.wMilliseconds);
+	char directoryTimeST [100];
+	sprintf(directoryTimeST, "%02d%02d%02d%03d", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	char directoryTimeLT [100];
+	sprintf(directoryTimeLT, "%02d%02d%02d%03d", lt.wHour, lt.wMinute, lt.wSecond, lt.wMilliseconds);
 
 	std::cout << "ST looks like " << directoryTimeST << "\n" << "LT looks like " << directoryTimeLT << "\n" << std::endl;
 
