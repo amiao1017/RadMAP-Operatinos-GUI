@@ -20,7 +20,6 @@ velodyneStarboardStarted = False
 ladybugPortStarted = False
 ladybugStarboardStarted = False
 arduinoStarted = False
-weatherStarted = False
 GpsStarted = False
 
 
@@ -46,7 +45,7 @@ while True:
     print "Verifying GPS and weather"
     
     
-    if dbSocket.poll() != 0: #potentially add a timeout to the socket poll
+    if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
         dbCommand = dbSocket.recv()
         
         for cmd in dbCommand:
@@ -126,15 +125,6 @@ while True:
                 else:
                     print "GPS already started"
                     dbSocket.send("GPS already started")
-            if cmd == "startWeather":
-                if weatherStarted == False:
-                    #startWeather = subprocess.Popen(shlex.split("startWeatherscript"), cwd=r"Path\\to\\startWeatherscript",  stdout = subprocess.PIPE,, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
-                    print "Starting weather"
-                    dbSocket.send("Starting weather")
-                    weatherStarted = True
-                else:
-                    print "Weather already started"
-                    dbSocket.send("weather already started")
             #if cmd == "STO":
             if system_state == 1: #input q then y
                 if cmd == "stopLidar":
@@ -187,39 +177,38 @@ while True:
                         dbSocket.send("Arduino already stopped")
                 if (ladybugPortStarted == False) and (ladybugStarboardStarted == False) and (velodyneStarboardStarted == False) and (velodynePortStarted == False) and (arduinoStarted == False):
                     system_state = 0
-            #stopWeather
             #stopGps
             
             #if cmd == save: #data offload
                 #subprocess.call(#insert bug save script name here#)
                                 
-                                #Verification of Lidar, Ladybug, Arduino
+    #Verification of Lidar, Ladybug, Arduino
     print "Verifying Lidar, Ladybug, and Arduino"
-    # if len(processes) != 0:
-    #     line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
-    #     if (line.find("time_len: ") != -1): #arduino verification
-    #         dbSocket.send("Arduino - " + line[line.find("time_len: "): ]
-    #         if !arduinoStarted:
-    #       arduinoStarted = True
-    #     if (line.find("Images: ") != -1): #Ladybug Verification
-    #               if (line.find("11291123") != -1): #port ladybug
-    #               dbSocket.send("Port Ladybug - " + line[line.find("Images: "): line.find(" | MB")])
-    #               if !velodynePortStarted:
-    #               velodynePortStarted = True
-    #               if (line.find("11260640") != -1): #starboard ladybug
-    #               dbSocket.send("Starboard Ladybug - " + line[line.find("Images: "): line.find(" | MB")])
-    #               if !velodyneStarboardStarted:
-    #               velodyneStarboardStarted = True
-    #               if ((line.find("Packets captured: ") != -1):
-    #                   if (line.find("711024488") != -1): #starboard lidar
-    #                   dbSocket.send("Starboard Lidar - " + line[line.find("Packets captured: "): ])
-    #                   if !ladybugStarboardStarted:
-    #                   ladybugStarboardStarted = True
-    #                   if (line.find("711024572") != -1): #port lidar
-    #                   dbSocket.send("Port Lidar - " + line[line.find("Packets captured: "): ])
-    #                   if !ladybugPortStarted:
-    #                   ladybugPortStarted = True
-    #                   iterations += 1
+    if len(processes) != 0:
+        line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
+        if (line.find("time_len: ") != -1): #arduino verification
+            dbSocket.send("Arduino - " + line[line.find("time_len: "): ])
+            if (not arduinoStarted):
+                arduinoStarted = True
+        if (line.find("Images: ") != -1): #Ladybug Verification
+            if (line.find("11291123") != -1): #port ladybug
+                dbSocket.send("Port Ladybug - " + line[line.find("Images: "): line.find(" | MB")])
+                if (not velodynePortStarted):
+                    velodynePortStarted = True
+            if (line.find("11260640") != -1): #starboard ladybug
+                dbSocket.send("Starboard Ladybug - " + line[line.find("Images: "): line.find(" | MB")])
+                if (not velodyneStarboardStarted):
+                    velodyneStarboardStarted = True
+        if ((line.find("Packets captured: ") != -1)):
+            if (line.find("711024488") != -1): #starboard lidar
+                dbSocket.send("Starboard Lidar - " + line[line.find("Packets captured: "): ])
+                if (not ladybugStarboardStarted):
+                    ladybugStarboardStarted = True
+            if (line.find("711024572") != -1): #port lidar
+                dbSocket.send("Port Lidar - " + line[line.find("Packets captured: "): ])
+                if (not ladybugPortStarted):
+                ladybugPortStarted = True
+        iterations += 1
     if velodynePortStarted and velodyneStarboardStarted and ladybugPortStarted and ladybugStarboardStarted and arduinoStarted: #if all verification true
         system_state = 1
                                                   
