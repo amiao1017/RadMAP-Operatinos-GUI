@@ -176,7 +176,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	gettimeofday(&curTime, NULL);
 	int milli = curTime.tv_usec / 1000;
 	//time_t rawtime;
-	//struct tm * timeinfo;
+	struct tm * timeinfo;
 	//time (&rawtime);
 	//timeinfo = localtime(&rawtime);
 	timeinfo = localtime(&curTime.tv_sec)
