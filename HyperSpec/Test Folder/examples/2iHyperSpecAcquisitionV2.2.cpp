@@ -196,7 +196,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::cout << "Recording Complete\nWriting Datacube to Disk" << std::endl;			//write an ENVI compatible header file
 	if (calls <= 1)
 	{
-		directoryName = ".\\2i";
+		directoryName = ".\\2i_";
 		directoryName.append(fileDay);
 		directoryName.append(directoryTime);
 		//directoryName.append("/");
