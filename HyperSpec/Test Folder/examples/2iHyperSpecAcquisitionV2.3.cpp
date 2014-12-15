@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 	exit(EXIT_SUCCESS);
 }
 
-void makeCube(std::pair<unsigned short *,int> myData)
+void makeCube(std::tuple<unsigned short *, int, std::string> myData)
 {
 	calls++;
 	SYSTEMTIME fileTime;
@@ -269,7 +269,7 @@ void writeThread(void *)
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			//std::cout << "\nQueue not empty" << std::endl;
-			std::pair<unsigned short *, int> myData = myQueue.front();
+			std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
 			//std::cout << "\nGot pair from queue" << std::endl; 
 			myQueue.pop();
 			//std::cout << "\nPop data from queue" << std::endl;
@@ -286,7 +286,7 @@ void writeThread(void *)
 	}
 	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
-		std::pair<unsigned short *, int> myData = myQueue.front();
+		std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
 		myQueue.pop();
 		makeCube(myData);
 	} 
