@@ -90,6 +90,8 @@ int main(int argc, char* argv[])
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 
+		trashcan = unsigned short[cubesize];
+
 		std::cout << "\nFramesize computed" << std::endl;
 	
 		myMutex = CreateMutex(NULL, FALSE, NULL);
@@ -121,7 +123,7 @@ int main(int argc, char* argv[])
 			std::cout << "\nRecording Data" << std::endl;
 			if(!grabbingFrames)
 			{
-				imager.start_frame_grabbing();
+				imager.start_frame_grabbing(&trashcan[counter * framesize]);
 				grabbingFrames = TRUE;
 			}
 			buffer = new unsigned short[cubesize];
