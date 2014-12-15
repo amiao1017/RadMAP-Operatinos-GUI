@@ -183,6 +183,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string> myData)
 {
 	calls++;
 	SYSTEMTIME fileTime;
+	GetLocalTime(&fileTime);
 
 	char fileDay [100];
 	sprintf(fileDay, "%02d%02d%02d", fileTime.wYear, fileTime.wMonth, fileTime.wDay);
