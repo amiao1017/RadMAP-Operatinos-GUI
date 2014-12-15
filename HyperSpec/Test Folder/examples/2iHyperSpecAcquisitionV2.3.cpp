@@ -11,6 +11,7 @@
 #include <time.h>
 #include <conio.h>
 #include <string>
+#include <tuple>
 
 #include "resonon_imager_pgr.h"
 #include "resonon_imager_base.h"
@@ -145,7 +146,7 @@ int main(int argc, char* argv[])
 			char acqTime [100];
 			sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_pair(buffer,counter,acqTime);
+			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,acqTime);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
@@ -216,7 +217,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileCreationTime << " On " << fileDay << "\n";
-	outfile << "First line acquired at " << myData.third << "\n";
+	outfile << "First line acquired at " << std::get<2>(myData) << "\n";
 	outfile << "interleave = bil\n";
 	outfile << "data type = 12\n";
 	outfile << "bit depth = 12\n";
@@ -242,7 +243,7 @@ void makeCube(std::pair<unsigned short *,int> myData)
 	cubeSaveName = directoryName + "\\" + saveName + ".bil";		
 	cubefile.open(cubeSaveName.c_str(), std::ios::out | std::ios::binary);
 	//cubefile.write((const char*) buffer, cubesize * sizeof(unsigned short));
-	cubefile.write((const char*) myData.first, framesize * myData.second * sizeof(unsigned short));
+	cubefile.write((const char*) std::get<0>(myData), framesize * std::get<1>(myData) * sizeof(unsigned short));
 	cubefile.close();
 	
 
