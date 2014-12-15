@@ -248,7 +248,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string> myData)
 	
 
 	// free allocated resources
-	delete [] myData.first;	
+	delete [] std::get<0>(myData);	
 	//std::cout << "Buffer Deleted" << std::endl;
 	std::cout << "Done." << std::endl;	
 }
