@@ -91,8 +91,6 @@ int main(int argc, char* argv[])
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 
-		trashcan = unsigned short[cubesize];
-
 		std::cout << "\nFramesize computed" << std::endl;
 	
 		myMutex = CreateMutex(NULL, FALSE, NULL);
@@ -133,6 +131,13 @@ int main(int argc, char* argv[])
 				std::cerr << "Error: memory could not be allocated for datacube";
 				exit(EXIT_FAILURE);
 			}
+
+			trashcan = new unsigned short[cubesize];
+			if (trashcan == 0)
+			{
+				std::cerr << "Error: memory could not be allocated for datacube";
+				exit(EXIT_FAILURE);
+			}
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
 			SYSTEMTIME acquisitionTime;
@@ -168,6 +173,7 @@ int main(int argc, char* argv[])
 			ReleaseMutex(myMutex);						//Release Mutex
     		//std::cout << "\nReleased Mutex" << std::endl;
     		counter = 0;
+    		delete [] trashcan;
     	}
     	WaitForSingleObject(myThread,INFINITE);
        	CloseHandle(myThread);
@@ -186,6 +192,7 @@ int main(int argc, char* argv[])
 		std::cerr << "Error: " << e.what();
 		if (free_buffer == true)
 			delete [] buffer;
+			delete [] trashcan;
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
