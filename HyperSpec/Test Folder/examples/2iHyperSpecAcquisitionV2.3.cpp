@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
 			}
-			std::string acqTime;
+			char acqTime [100];
 			sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 
 			std::tuple<unsigned short *, int, std::string> myTuple = std::make_pair(buffer,counter,acqTime);
