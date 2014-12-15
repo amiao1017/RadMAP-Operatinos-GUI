@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
 				while (counter == 0)
 				{
 					GetLocalTime(&acquisitionTime);
+					break;
 				}
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
