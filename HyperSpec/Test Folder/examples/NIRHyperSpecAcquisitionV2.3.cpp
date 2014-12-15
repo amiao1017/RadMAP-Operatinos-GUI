@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 			std::cout << "\nRecording Data" << std::endl;
 			if(!grabbingFrames)
 			{
-				imager.start_frame_grabbing(&trashcan[counter * framesize]);
+				imager.start_frame_grabbing());
 				grabbingFrames = TRUE;
 			}
 			buffer = new unsigned short[cubesize];
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
 
 			while (discardBool == 0)			//First line of NIR seems to come without triggering and is not data
 			{
-				imager.get_frame();
+				imager.get_frame((&trashcan[counter * framesize]);
 				std::cout << "Garage line discarded" << std::endl;
 				discardBool = 1;
 				break;
