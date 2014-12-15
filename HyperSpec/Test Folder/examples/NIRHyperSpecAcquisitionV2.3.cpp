@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 			std::cout << "\nRecording Data" << std::endl;
 			if(!grabbingFrames)
 			{
-				imager.start_frame_grabbing());
+				imager.start_frame_grabbing();
 				grabbingFrames = TRUE;
 			}
 			buffer = new unsigned short[cubesize];
