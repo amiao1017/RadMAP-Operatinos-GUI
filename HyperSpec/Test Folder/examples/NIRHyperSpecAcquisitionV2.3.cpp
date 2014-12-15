@@ -39,6 +39,7 @@ Resonon::PikaNIR imager;
 int main(int argc, char* argv[])
 {
 	unsigned short * buffer;
+	unsigned short * trashcan;
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
 	try
 	{
