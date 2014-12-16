@@ -24,5 +24,5 @@ for files in headers:
 			firstLineTime = line.split('at')[1]
 			firstLineTime = firstLineTime.split(' ')[1]
 			doc = open('%s.txt' %docName, 'a')
-			doc.write('%s,%s,%d' %(fileTime, firstLineTime, counter))
+			doc.write('%s,%s,%d\n' %(fileTime, firstLineTime, counter))
 			doc.close()
