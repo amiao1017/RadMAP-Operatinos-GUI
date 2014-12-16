@@ -6,7 +6,7 @@ counter = 0
 headerName = os.getcwd()
 docName = "TimeTest_%s" %headerName.split('/')[(len(headerName.split('/'))-1)]
 if glob.glob('%s.txt' %docName):
-	if glob.glob('%sv*.txt'):
+	if glob.glob('%sv*.txt' docName):
 		versionList = glob.glob('%sv*.txt' %docName)
 		versionListLength = len(versionList)
 		docName = '%sv%s' %(docName, (versionListLength + 2))
