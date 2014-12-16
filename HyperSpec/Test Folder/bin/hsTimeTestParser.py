@@ -22,3 +22,4 @@ for files in headers:
 			firstLineTime = substr.split(' ')[1]
 			doc = open('%s.txt' %docName, 'a')
 			doc.write('%s,%s' %(fileTime, firstLineTime)
+			doc.close()
