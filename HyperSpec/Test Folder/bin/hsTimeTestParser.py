@@ -17,7 +17,7 @@ headers = glob.glob('*.hdr')
 for files in headers:
 	f = open(files, 'r')
 	for line in f:
-		counter++
+		counter = counter + 1
 		if "File created at" in line:
 			fileTime = line.split(' ')[3]
 		if "First line acquired" in line:
