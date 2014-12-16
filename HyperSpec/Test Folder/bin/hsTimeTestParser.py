@@ -19,7 +19,7 @@ for files in headers:
 			fileTime = line.split(' ')[3]
 		if "First line acquired" in line:
 			firstLineTime = line.split('at')[1]
-			firstLineTime = substr.split(' ')[1]
+			firstLineTime = firstLineTime.split(' ')[1]
 			doc = open('%s.txt' %docName, 'a')
 			doc.write('%s,%s' %(fileTime, firstLineTime))
 			doc.close()
