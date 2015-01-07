@@ -89,6 +89,8 @@ int main(int argc, char* argv[])
 		assert (framesize * sizeof(unsigned short) == imager.get_frame_buffer_size_in_bytes());
 		cubesize = framesize * LINE_COUNT;
 
+		std::cout << "\nCubesize is " << cubesize << std::endl;		
+
 		std::cout << "\nFramesize computed" << std::endl;
 	
 		myMutex = CreateMutex(NULL, FALSE, NULL);
@@ -124,6 +126,7 @@ int main(int argc, char* argv[])
 				grabbingFrames = TRUE;
 			}
 			buffer = new unsigned short[cubesize];
+
 			if (buffer == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -136,11 +139,7 @@ int main(int argc, char* argv[])
 			while (counter < LINE_COUNT  && stpReceived == 0)			
 			{
 				imager.get_frame(&buffer[counter * framesize]);
-				while (counter == 0)
-				{
-					GetLocalTime(&acquisitionTime);
-					break;
-				}
+				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
 			}
