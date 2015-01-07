@@ -225,7 +225,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string> myData)
 	outfile << "bit depth = 12\n";
 	outfile << "samples = " << imager.get_sample_count() << "\n";
 	outfile << "bands = " << imager.get_band_count() << "\n";
-	outfile << "lines = " << LINE_COUNT << "\n";
+	outfile << "lines = " << std::get<1>(myData) << "\n";
 	outfile << "framerate = " << imager.get_framerate() << "\n";
 	outfile << "shutter = " << imager.get_integration_time() << "\n";
 	outfile << "gain = " << imager.get_gain() << "\n";
