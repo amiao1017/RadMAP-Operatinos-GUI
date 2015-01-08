@@ -138,6 +138,11 @@ int main(int argc, char* argv[])
 				std::cerr << "Error: memory could not be allocated for datacube";
 				exit(EXIT_FAILURE);
 			}
+			if (timeStamps == 0)
+			{
+				std::cerr << "Error: memory could not be allocated for datacube";
+				exit(EXIT_FAILURE);
+			}
 			free_buffer = true; //if an exception occurs below make sure we free the just allocated block of memory
 
 			SYSTEMTIME acquisitionTime;
@@ -153,18 +158,13 @@ int main(int argc, char* argv[])
 			while (counter < LINE_COUNT  && stpReceived == 0)			
 			{
 				imager.get_frame(&buffer[counter * framesize]);
-				while (counter == 0)
-				{
-					GetLocalTime(&acquisitionTime);
-					break;
-				}
+				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
+				timeStamps[(counter - 1)] = "%02d:%02d:%02d.%03d" %(acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 			}
-			char acqTime [100];
-			sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,acqTime);
+			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
@@ -238,7 +238,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string> myData)
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileCreationTime << " On " << fileDay << "\n";
-	outfile << "First line acquired at " << std::get<2>(myData) << "\n";
+	outfile << "Time stamp vector: " << std::get<2>(myData) << "\n";
 	outfile << "interleave = bil\n";
 	outfile << "data type = 12\n";
 	outfile << "bit depth = 12\n";
