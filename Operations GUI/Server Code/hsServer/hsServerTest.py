@@ -1,16 +1,21 @@
 import zmq
 import subprocess
 import shlex
+import time
+import sys
 
+port = "5556"
 context = zmq.Context()
+dbSocket = context.socket(zmq.PAIR)
+dbSocket.bind("tcp://127.0.0.1:%s" % port)
 
 processes = [] #list of processes
 iterations = 0
 HyperSpecAcqStarted = False
 
 #  Sockets to talk to servers
-dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://192.168.1.100:5108")
+#dbSocket = context.socket(zmq.REP)
+#dbSocket.connect("tcp://192.168.1.100:5108")
 
 while True:
 
@@ -27,6 +32,9 @@ while True:
                 HyperSpecAcqStarted = True
             else:
                 print "HyperSpec Acquisition already running"
+
+        if dbCommand == 'Hello':
+            dbSocket.send("Hey there!")
     		
     	if dbCommand == 'STO':
     	    if HyperSpecAcqStarted: #stop HyperSpec if started
@@ -38,8 +46,9 @@ while True:
                 HyperSpecAcqStarted = False
             else:
                 print "HyperSpec Acquisition already stopped"
+        print dbCommand
 
-    print "Verifying Processes"	
+    #print "Verifying Processes"	
     #if len(processes) != 0:
         #line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
         #if (line.find("line") != -1) and (iterations % 2 = 0): #2i verification

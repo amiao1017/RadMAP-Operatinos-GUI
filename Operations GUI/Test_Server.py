@@ -1,12 +1,16 @@
 import zmq
+import time
+import sys
 
+port = "5556"
 context = zmq.Context()
-
-#  Sockets to talk to servers
-dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://192.168.1.100:5108")
+dbSocket = context.socket(zmq.PAIR)
+dbSocket.bind("tcp://127.0.0.1:%s" % port)
 
 while True:
-
-	if dbSocket.poll(1) != 0:
-    	dbCommand = dbSocket.recv()
+    #dbSocket.send("Server message to client3")
+    msg = dbSocket.recv()
+    print msg
+    if msg == "Hello":
+    	dbSocket.send("Hey there!")
+    time.sleep(1)
