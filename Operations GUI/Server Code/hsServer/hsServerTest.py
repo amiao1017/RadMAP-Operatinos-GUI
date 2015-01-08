@@ -21,9 +21,13 @@ while True:
 
     if dbSocket.poll(1) != 0:
     	dbCommand = dbSocket.recv()
+        print dbCommand
 
     	if dbCommand == 'STA':
+            print "dbCommand = STA"
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+                testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
+                print "Acquisition Script Called"
                 #2iAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
                 #processes.append(2iAcquisition)
                 #NIRAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV1.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
@@ -32,6 +36,12 @@ while True:
                 HyperSpecAcqStarted = True
             else:
                 print "HyperSpec Acquisition already running"
+
+        if dbCommand == 'startHyperSpec':
+            print "dbCommand = startHyperSpec"
+            if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+                testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
+                print "Acquisition Script Called"
 
         if dbCommand == 'Hello':
             dbSocket.send("Hey there!")
@@ -46,7 +56,7 @@ while True:
                 HyperSpecAcqStarted = False
             else:
                 print "HyperSpec Acquisition already stopped"
-        print dbCommand
+        
 
     #print "Verifying Processes"	
     #if len(processes) != 0:
