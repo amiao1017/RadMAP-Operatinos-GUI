@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
 		if (free_buffer == true)
 			delete [] buffer;
 			delete [] trashcan;
-			delete [] timeStamps
+			delete [] timeStamps;
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
