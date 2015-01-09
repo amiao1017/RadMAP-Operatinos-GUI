@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			}
 
-			timeStamps = new char[1000];
+			timeStamps = new std::string[1000];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -165,10 +165,13 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-				timeStamps[(counter - 1)] = "%02d:%02d:%02d.%03d" %(acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
+				char acqTime [16];
+				sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
+
+				timeStamps[(counter - 1)] = acqTime;
 			}
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
+			std::tuple<unsigned short *, int, std::string *> myTuple = std::make_tuple(buffer,counter,timeStamps);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
@@ -202,7 +205,7 @@ int main(int argc, char* argv[])
 	exit(EXIT_SUCCESS);
 }
 
-void makeCube(std::tuple<unsigned short *, int, std::string> myData)
+void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 {
 	calls++;
 	SYSTEMTIME fileTime;
@@ -293,7 +296,7 @@ void writeThread(void *)
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			//std::cout << "\nQueue not empty" << std::endl;
-			std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
+			std::tuple<unsigned short *, int, std::string *> myData = myQueue.front();
 			//std::cout << "\nGot pair from queue" << std::endl; 
 			myQueue.pop();
 			//std::cout << "\nPop data from queue" << std::endl;
@@ -310,7 +313,7 @@ void writeThread(void *)
 	}
 	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
-		std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
+		std::tuple<unsigned short *, int, std::string *> myData = myQueue.front();
 		myQueue.pop();
 		makeCube(myData);
 	} 
