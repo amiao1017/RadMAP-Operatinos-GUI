@@ -23,7 +23,7 @@ std::string directoryName;
 std::string header_filename; // header filename is the same with '.hdr' appended, see below
 int framesize; //size of a single frame in records (number of elements in array)
 int cubesize; //size of complete datacube in records (number of elements in array)
-std::queue<std::tuple<unsigned short *, int, std::string> > myQueue;
+std::queue<std::tuple<unsigned short *, int, std::string *> > myQueue;
 HANDLE myMutex;
 HANDLE myThread;
 
