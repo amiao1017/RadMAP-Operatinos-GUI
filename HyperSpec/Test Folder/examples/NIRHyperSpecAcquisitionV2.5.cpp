@@ -200,6 +200,7 @@ int main(int argc, char* argv[])
 		if (free_buffer == true)
 			delete [] buffer;
 			delete [] trashcan;
+			delete [] timeStamps
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
@@ -276,6 +277,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 
 	// free allocated resources
 	delete [] std::get<0>(myData);	
+	delete [] std::get<2>(myData);
 	//std::cout << "Buffer Deleted" << std::endl;
 	std::cout << "Done." << std::endl;	
 }

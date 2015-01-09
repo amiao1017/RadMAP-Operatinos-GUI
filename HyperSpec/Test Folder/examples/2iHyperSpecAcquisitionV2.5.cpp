@@ -148,16 +148,6 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-
-				/*std::string lineTime;
-				lineTime.append(acquisitionTime.wHour);
-				lineTime.append(":");
-				lineTime.append(acquisitionTime.wMinute);
-				lineTime.append(":");
-				lineTime.append(acquisitionTime.wSecond);
-				lineTime.append(".");
-				lineTime.append(acquisitionTime.wMilliseconds);*/
-
 				char acqTime [16];
 				sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 
@@ -191,6 +181,7 @@ int main(int argc, char* argv[])
 		std::cerr << "Error: " << e.what();
 		if (free_buffer == true)
 			delete [] buffer;
+			delete [] timeStamps;
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
@@ -267,7 +258,8 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	
 
 	// free allocated resources
-	delete [] std::get<0>(myData);	
+	delete [] std::get<0>(myData);
+	delete [] std::get<2>(myData);	
 	//std::cout << "Buffer Deleted" << std::endl;
 	std::cout << "Done." << std::endl;	
 }
