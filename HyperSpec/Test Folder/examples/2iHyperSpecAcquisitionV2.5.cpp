@@ -38,6 +38,7 @@ Resonon::Pika2I imager;
 int main(int argc, char* argv[])
 {
 	unsigned short * buffer;
+	char * timeStamps;
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
 	try
 	{
@@ -123,7 +124,7 @@ int main(int argc, char* argv[])
 				imager.start_frame_grabbing();
 				grabbingFrames = TRUE;
 			}
-			
+
 			buffer = new unsigned short[cubesize];
 			if (buffer == 0)
 			{
