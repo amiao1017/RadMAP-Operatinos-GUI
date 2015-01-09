@@ -148,7 +148,8 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-				std::string lineTime = acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds;
+				std::string lineTime;
+				lineTime = acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds;
 				timeStamps[(counter - 1)] = lineTime;
 			}
 
