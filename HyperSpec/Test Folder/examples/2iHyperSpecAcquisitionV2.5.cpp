@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 				timeStamps[(counter - 1)] = lineTime;
 			}
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
+			std::tuple<unsigned short *, int, std::basic_string> myTuple = std::make_tuple(buffer,counter,timeStamps);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
