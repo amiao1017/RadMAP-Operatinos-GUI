@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			} 
 
-			timeStamps = new std::string [1000];
+			timeStamps = new std::string[1000];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -148,8 +148,7 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-				std::string lineTime;
-				lineTime.append(acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds);
+				std::string lineTime = "%02d:%02d:%02d.%03d", acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds;
 				timeStamps[(counter - 1)] = lineTime;
 			}
 
