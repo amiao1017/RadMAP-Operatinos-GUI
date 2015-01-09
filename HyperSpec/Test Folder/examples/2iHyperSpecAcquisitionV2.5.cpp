@@ -38,7 +38,7 @@ Resonon::Pika2I imager;
 int main(int argc, char* argv[])
 {
 	unsigned short * buffer;
-	WORD * timeStamps;
+	unsigned short * timeStamps;
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
 	try
 	{
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			} 
 
-			timeStamps = new WORD[1000];
+			timeStamps = new unsigned short[1000];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -148,12 +148,12 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-				WORD lineTime; 
+				unsigned short lineTime[16]; 
 				sprintf(lineTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 				timeStamps[(counter - 1)] = lineTime;
 			}
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
+			std::tuple<unsigned short *, int, unsigned short *> myTuple = std::make_tuple(buffer,counter,timeStamps);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
