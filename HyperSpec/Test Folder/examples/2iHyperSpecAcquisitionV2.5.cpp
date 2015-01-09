@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
 	exit(EXIT_SUCCESS);
 }
 
-void makeCube(std::tuple<unsigned short *, int, std::string> myData)
+void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 {
 	calls++;
 	SYSTEMTIME fileTime;
