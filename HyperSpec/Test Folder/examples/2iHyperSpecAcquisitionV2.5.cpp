@@ -123,14 +123,15 @@ int main(int argc, char* argv[])
 				imager.start_frame_grabbing();
 				grabbingFrames = TRUE;
 			}
+			
 			buffer = new unsigned short[cubesize];
-			timeStamps = new char[1000]
-
 			if (buffer == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
 				exit(EXIT_FAILURE);
 			} 
+
+			timeStamps = new char[1000];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
