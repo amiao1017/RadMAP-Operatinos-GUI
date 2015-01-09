@@ -288,7 +288,7 @@ void writeThread(void *)
 		if (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 		{
 			//std::cout << "\nQueue not empty" << std::endl;
-			std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
+			std::tuple<unsigned short *, int, std::string *> myData = myQueue.front();
 			//std::cout << "\nGot pair from queue" << std::endl; 
 			myQueue.pop();
 			//std::cout << "\nPop data from queue" << std::endl;
@@ -305,7 +305,7 @@ void writeThread(void *)
 	}
 	while (!myQueue.empty()) //while there is still data in the queue keep writing cubes
 	{
-		std::tuple<unsigned short *, int, std::string> myData = myQueue.front();
+		std::tuple<unsigned short *, int, std::string *> myData = myQueue.front();
 		myQueue.pop();
 		makeCube(myData);
 	} 
