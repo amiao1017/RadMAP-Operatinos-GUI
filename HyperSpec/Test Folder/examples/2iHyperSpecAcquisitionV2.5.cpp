@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
 				std::string lineTime;
-				lineTime = acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds;
+				lineTime.append(acquisitionTime.wHour + ":" + acquisitionTime.wMinute + ":" + acquisitionTime.wSecond + "." acquisitionTime.wMilliseconds);
 				timeStamps[(counter - 1)] = lineTime;
 			}
 
