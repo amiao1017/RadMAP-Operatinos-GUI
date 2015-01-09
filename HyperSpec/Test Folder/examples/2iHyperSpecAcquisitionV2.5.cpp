@@ -38,7 +38,7 @@ Resonon::Pika2I imager;
 int main(int argc, char* argv[])
 {
 	unsigned short * buffer;
-	char * timeStamps;
+	std::string * timeStamps;
 	bool free_buffer = false; //keep track of whether we've allocated memory that must be released
 	try
 	{
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			} 
 
-			timeStamps = new char[1000];
+			timeStamps = new std::string[1000];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -148,7 +148,8 @@ int main(int argc, char* argv[])
 				GetLocalTime(&acquisitionTime);
 				std::cout << "Line " << counter + 1 << std::endl;
 				counter++;
-				timeStamps[(counter - 1)] = "%02d:%02d:%02d.%03d" %(acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
+				lineTime = sprintf("%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
+				timeStamps[(counter - 1)] = lineTime;
 			}
 
 			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
