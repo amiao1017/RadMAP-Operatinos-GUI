@@ -161,10 +161,10 @@ int main(int argc, char* argv[])
 				char acqTime [16];
 				sprintf(acqTime, "%02d:%02d:%02d.%03d", acquisitionTime.wHour, acquisitionTime.wMinute, acquisitionTime.wSecond, acquisitionTime.wMilliseconds);
 
-				timeStamps[(counter - 1)] = lineTime;
+				timeStamps[(counter - 1)] = acqTime;
 			}
 
-			std::tuple<unsigned short *, int, std::string> myTuple = std::make_tuple(buffer,counter,timeStamps);
+			std::tuple<unsigned short *, int, std::string *> myTuple = std::make_tuple(buffer,counter,timeStamps);
 			//std::cout << "\nMade data pair" << std::endl;
 			WaitForSingleObject(myMutex,INFINITE);		//ownMutex?
 			//std::cout << "\nGot Mutex" << std::endl;
