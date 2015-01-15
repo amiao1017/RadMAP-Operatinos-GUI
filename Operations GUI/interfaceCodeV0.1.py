@@ -478,7 +478,7 @@ class operationsApp(Tk):
 					#print command
 				for command in self.startList:
 					if command == "STA":
-						print 'STA sent'
+						#print 'STA sent'
 					#subprocess.Popen(shlex.split("Set up Dbus call"))
 					#daqSocket.send('STA')
 					#mageSocket.send('STA')
@@ -559,7 +559,7 @@ class operationsApp(Tk):
 					
 				self.tick()
 				self.startList.insert(0, "STA")
-				print self.startList
+				#print self.startList
 
 				for command in self.startList:
 					if command == "STA":
