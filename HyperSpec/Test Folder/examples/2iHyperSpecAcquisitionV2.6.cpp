@@ -232,10 +232,11 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 		{
 			if (!std::get<2>(myData)[i].empty())
 			{
-			outfile << std::get<2>(myData)[i];
-			if (i < 999)
-			{
-				outfile << ", \n";
+				outfile << std::get<2>(myData)[i];
+				if (i < 999)
+				{
+					outfile << ", \n";
+				}
 			}
 			else outfile << "\n";
 		}
