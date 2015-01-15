@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			} 
 
-			timeStamps = new std::string[1000];
+			timeStamps = new std::string[1024];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
@@ -227,7 +227,14 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileCreationTime << " On " << fileDay << "\n";
-	outfile << "Time stamp vector: " << (const char*) std::get<2>(myData) << "\n";
+	outfile << "Time Stamp Vector = {";
+	for(int i = 0; i < (std::get<2>(myData).size() - 1); i++)
+		{
+			outfile << std::get<2>(myData)[i];
+			if (i < std::get<2>(myData).size() - 2)
+				outfile << ", ";
+		}
+		outfile << "}\n";
 	outfile << "interleave = bil\n";
 	outfile << "data type = 12\n";
 	outfile << "bit depth = 12\n";
