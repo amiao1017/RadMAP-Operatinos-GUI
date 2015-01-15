@@ -228,10 +228,10 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileCreationTime << " On " << fileDay << "\n";
 	outfile << "Time Stamp Vector = {";
-	for(int i = 0; i < (std::get<2>(myData).size() - 1); i++)
+	for(int i = 0; i < 1000; i++)
 		{
 			outfile << std::get<2>(myData)[i];
-			if (i < std::get<2>(myData).size() - 2)
+			if (i < 999)
 				outfile << ", ";
 		}
 		outfile << "}\n";
