@@ -237,7 +237,6 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 				{
 					outfile << ", ";
 				}
-				else outfile << "\n";
 			}
 		}
 		outfile << "}\n";
