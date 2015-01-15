@@ -249,9 +249,14 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	outfile << "Time Stamp Vector = {";
 	for(int i = 0; i < 1000; i++)
 		{
-			outfile << std::get<2>(myData)[i];
-			if (i < 999)
-				outfile << ", ";
+			if (!std::get<2>(myData)[i].empty())
+			{
+				outfile << std::get<2>(myData)[i];
+				if (i < 999)
+				{
+					outfile << ", ";
+				}
+			}
 		}
 		outfile << "}\n";
 	outfile << "interleave = bil\n";
