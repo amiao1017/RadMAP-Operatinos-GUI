@@ -232,7 +232,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 		{
 			if (std::get<2>(myData)[i].empty())
 			{
-				outfile << "No Data"
+				outfile << "No Data";
 			}
 			else
 			{
