@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 		//Print out the imager status
 		std::cout << "Imager Status:\n";
 		std::cout << "--------------\n";
-		std::cout << std::setw(18) << "Imager Type: "  << imager.get_imager_type() << "\n";
+		//std::cout << std::setw(18) << "Imager Type: "  << imager.get_imager_type() << "\n";
 		std::cout << std::setw(18) << "Integration Time: "  << imager.get_integration_time();
 		std::cout << " [min: " << imager.get_min_integration_time();
 		std::cout << ", max: " << imager.get_max_integration_time() << "]" << "\n";
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 				exit(EXIT_FAILURE);
 			}
 
-			timeStamps = new std::string[1000];
+			timeStamps = new std::string[1024];
 			if (timeStamps == 0)
 			{
 				std::cerr << "Error: memory could not be allocated for datacube";
