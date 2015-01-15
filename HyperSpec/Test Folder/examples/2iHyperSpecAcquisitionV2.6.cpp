@@ -230,7 +230,14 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	outfile << "Time Stamp Vector = { \n";
 	for(int i = 0; i < 1000; i++)
 		{
+			if (std::get<2>(myData)[i] == 0)
+			{
+				outfile << "No Data"
+			}
+			else
+			{
 			outfile << std::get<2>(myData)[i];
+			}
 			if (i < 999)
 				outfile << ", \n";
 		}
