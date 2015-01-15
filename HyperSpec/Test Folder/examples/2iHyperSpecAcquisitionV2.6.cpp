@@ -234,10 +234,12 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 			{
 			outfile << std::get<2>(myData)[i];
 			if (i < 999)
+			{
 				outfile << ", \n";
 			}
+			else outfile << "\n"
 		}
-		outfile << "\n}\n";
+		outfile << "}\n";
 	outfile << "interleave = bil\n";
 	outfile << "data type = 12\n";
 	outfile << "bit depth = 12\n";
