@@ -237,7 +237,7 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 			{
 				outfile << ", \n";
 			}
-			else outfile << "\n"
+			else outfile << "\n";
 		}
 		outfile << "}\n";
 	outfile << "interleave = bil\n";
