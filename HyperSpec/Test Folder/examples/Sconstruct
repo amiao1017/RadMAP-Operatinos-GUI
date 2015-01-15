@@ -8,4 +8,4 @@ env = Environment(ENV=os.environ,
 
 # this tells scons to build into the bin directory
 env.VariantDir('../bin', '.', duplicate=0)
-env.Program('../bin/2iHyperSpecAcquisitionV2.5', ['2iHyperSpecAcquisitionV2.5.cpp'], LIBS=['resonon-api'])
+env.Program('../bin/NIRHyperSpecAcquisitionV2.5', ['NIRHyperSpecAcquisitionV2.5.cpp'], LIBS=['resonon-api'])
