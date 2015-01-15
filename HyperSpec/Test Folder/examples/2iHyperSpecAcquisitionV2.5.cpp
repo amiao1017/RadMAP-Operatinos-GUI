@@ -227,12 +227,12 @@ void makeCube(std::tuple<unsigned short *, int, std::string *> myData)
 	std::ofstream outfile(header_filename.c_str());
 	outfile << "ENVI\n";
 	outfile << "File created at " << fileCreationTime << " On " << fileDay << "\n";
-	outfile << "Time Stamp Vector = {";
+	outfile << "Time Stamp Vector = { \n";
 	for(int i = 0; i < 1000; i++)
 		{
 			outfile << std::get<2>(myData)[i];
 			if (i < 999)
-				outfile << ", ";
+				outfile << ", \n";
 		}
 		outfile << "}\n";
 	outfile << "interleave = bil\n";
