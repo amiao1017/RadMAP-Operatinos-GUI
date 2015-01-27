@@ -6,13 +6,12 @@ import shlex
 import string
 from Tkinter import Tk
 
-
-
 context = zmq.Context()
 
 #  Sockets to talk to servers
-dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://192.168.1.100:5108")
+port = "5555"
+dbSocket = context.socket(zmq.PAIR)
+dbSocket.connect("tcp://192.168.1.100:%s" % port)
 
 #booleans
 velodynePortStarted = False

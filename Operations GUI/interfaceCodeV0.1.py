@@ -5,22 +5,25 @@ from string import whitespace
 from PIL import Image, ImageTk
 import os, sys, glob, Tkconstants,tkFileDialog,tkMessageBox,glob,tkFont,subprocess,zmq,time
 
-port = "5556"
 context = zmq.Context()
-hsSocket = context.socket(zmq.PAIR)
-hsSocket.connect("tcp://127.0.0.1:%s" % port)
 
 #  Sockets to talk to servers
-daqSocket = context.socket(zmq.REQ)
-daqSocket.connect("tcp://localhost:5106")
-mageSocket = context.socket(zmq.REQ)
-mageSocket.connect("tcp://localhost:5107")
-bugSocket = context.socket(zmq.REQ)
-bugSocket.connect("tcp://192.168.100.42:5108")
-liqSocket = context.socket(zmq.REQ)
-liqSocket.connect("tcp://192.168.100.23:5109")
-#hsSocket = context.socket(zmq.REQ)
-#hsSocket.connect("tcp://192.168.100.43:5110")
+portDaq = "5553"
+daqSocket = context.socket(zmq.PAIR)
+daqSocket.connect("tcp://localhost:%s" % portDaq)
+portMage = "5554"
+mageSocket = context.socket(zmq.PAIR)
+mageSocket.connect("tcp://localhost:%s" % portMage)
+portBug = "5555"
+bugSocket = context.socket(zmq.PAIR)
+bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
+portLiq = "5557"
+liqSocket = context.socket(zmq.PAIR)
+liqSocket.connect("tcp://192.168.100.23:%s" % portLiq)
+portHs = "5556"
+hsSocket = context.socket(zmq.PAIR)
+hsSocket.connect("tcp://127.0.0.1:%s" % portHs)
+#hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
 
 class operationsApp(Tk):
 
