@@ -477,7 +477,7 @@ class operationsApp(Tk):
 				#for command in self.startList:
 					#print command
 				for command in self.startList:
-					if command == "STA":
+					#if command == "STA":
 						#print 'STA sent'
 					#subprocess.Popen(shlex.split("Set up Dbus call"))
 					#daqSocket.send('STA')
@@ -491,7 +491,6 @@ class operationsApp(Tk):
 					#subprocess.Popen(shlex.split("Run.py call"))
 				#if command in startList == ################"bug commands"
 					#bugSocket.send("startBug")
-				for command in self.startList:
 					if command == "startHyperSpec":
 						try:
 							hsSocket.send('startHyperSpec')
