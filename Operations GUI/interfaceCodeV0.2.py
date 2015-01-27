@@ -10,20 +10,20 @@ context = zmq.Context()
 #  Sockets to talk to servers
 portDaq = "5553"
 daqSocket = context.socket(zmq.PAIR)
-daqSocket.connect("tcp://localhost:%s" % portDaq)
+daqSocket.bind("tcp://localhost:%s" % portDaq)
 portMage = "5554"
 mageSocket = context.socket(zmq.PAIR)
-mageSocket.connect("tcp://localhost:%s" % portMage)
+mageSocket.bind("tcp://localhost:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
-bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
+bugSocket.bind("tcp://192.168.100.42:%s" % portBug)
 portLiq = "5557"
 liqSocket = context.socket(zmq.PAIR)
-liqSocket.connect("tcp://192.168.100.23:%s" % portLiq)
+liqSocket.bind("tcp://192.168.100.23:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
-#hsSocket.connect("tcp://127.0.0.1:%s" % portHs)
-hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
+#hsSocket.bind("tcp://127.0.0.1:%s" % portHs)
+hsSocket.bind("tcp://192.168.100.43:%s" % portHs)
 
 class operationsApp(Tk):
 
@@ -496,6 +496,7 @@ class operationsApp(Tk):
 							bugSocket.send('startLidar')
 						except ZMQError:
 							print "Socket Send Failed"
+						print "Command Sent - %s" % startLidar
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:

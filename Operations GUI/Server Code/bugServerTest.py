@@ -37,8 +37,10 @@ while True:
     
     if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
         dbCommand = dbSocket.recv()
-        if dbCommand.find("STA") != -1:
-			print "Command Received"
+        if dbCommand == "startLidar":
+			print "Command Received - %s" % dbCommand
 			dbSocket.send("Command Received")
+	else:
+		print "Command not yet received"
 	
                                                   
