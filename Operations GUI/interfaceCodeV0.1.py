@@ -493,7 +493,10 @@ class operationsApp(Tk):
 					#bugSocket.send("startBug")
 				for command in self.startList:
 					if command == "startHyperSpec":
-						hsSocket.send('startHyperSpec')
+						try:
+							hsSocket.send('startHyperSpec')
+						except ZMQError:
+							print "Socket Send Failed"
 				#hsSocket.send("Hello")
 				#print "Hello Sent"
 				#liqSocket.send(self.startList)

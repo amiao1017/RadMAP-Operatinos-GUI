@@ -484,6 +484,12 @@ class operationsApp(Tk):
 				#bugSocket.send(self.startList)
 				#hsSocket.send(self.startList)
 				#liqSocket.send(self.startList)
+				for command in self.startList:
+					if command == "startLidar":
+						try:
+							bugSocket.send('startLidar')
+						except ZMQError:
+							print "Socket Send Failed"
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:
