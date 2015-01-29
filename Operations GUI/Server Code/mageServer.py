@@ -5,7 +5,7 @@ context = zmq.Context()
 
 #  Sockets to talk to servers
 dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://localhost:5107")
+dbSocket.connect("tcp://192.168.1.100:5554")
 
 
 while True:

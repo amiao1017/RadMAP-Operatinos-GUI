@@ -7,7 +7,7 @@ import sys
 context = zmq.Context()
 port = "5556"
 dbSocket = context.socket(zmq.PAIR)
-dbSocket.bind("tcp://192.168.100.1:%s" % port)
+dbSocket.bind("tcp://192.168.1.100:%s" % port)
 
 processes = [] #list of processes
 iterations = 0
