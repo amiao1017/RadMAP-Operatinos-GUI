@@ -10,20 +10,20 @@ context = zmq.Context()
 #  Sockets to talk to servers
 portDaq = "5553"
 daqSocket = context.socket(zmq.PAIR)
-daqSocket.bind("tcp://192.168.1.100:%s" % portDaq)
+daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
 mageSocket = context.socket(zmq.PAIR)
-mageSocket.bind("tcp://192.168.1.100:%s" % portMage)
+mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
-bugSocket.bind("tcp://192.168.1.100:%s" % portBug)
+bugSocket.bind("tcp://192.168.100.1:%s" % portBug)
 portLiq = "5557"
 liqSocket = context.socket(zmq.PAIR)
-liqSocket.bind("tcp://192.168.1.100:%s" % portLiq)
+liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
-#hsSocket.bind("tcp://192.168.1.100:%s" % portHs)
-hsSocket.bind("tcp://192.168.1.100:%s" % portHs)
+#hsSocket.bind("tcp://192.168.100.1:%s" % portHs)
+hsSocket.bind("tcp://192.168.100.1:%s" % portHs)
 
 class operationsApp(Tk):
 
@@ -477,26 +477,24 @@ class operationsApp(Tk):
 				
 				self.tick()
 				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec"]
-				#subprocess.Popen(shlex.split("Set up Dbus call"))
-				#daqSocket.send(self.startList)
-				#mageSocket.send(self.startList)
-				#subprocess.Popen(shlex.split("Set up Dbus Monitor call"))
-				#daqSocket.send("dBusMon")
-				#mageSocket.send("dBusMon")
-				#subprocess.Popen(shlex.split("Start MISTI call"))
-				#daqSocket.send("startMISTI")
-				#mageSocket.send("startMISTI")
-				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)
 				for command in self.startList:
 					if command == "startLidar":
 						try:
 							bugSocket.send('startLidar')
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
 						except ZMQError:
 							print "Socket Send Failed"
-						print "Command Sent - %s" % startLidar
+				for command in self.startList:
+					if command == "startHyperSpec":
+						try:
+							hsSocket.send('startHyperSpec')
+							if hsSocket.poll(100) != 0:
+								hsMessage = hsSocket.recv()
+								print "%s" % hsMessage
+						except ZMQError:
+							print "Socket Send Failed"
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:
@@ -560,19 +558,24 @@ class operationsApp(Tk):
 					
 				self.tick()
 				self.startList.insert(0, "STA")
-				#subprocess.Popen(shlex.split("Set up Dbus call"))
-				#daqSocket.send(self.startList)
-				#mageSocket.send(self.startList)
-				#subprocess.Popen(shlex.split("Set up Dbus Monitor call"))
-				#daqSocket.send("dBusMon")
-				#mageSocket.send("dBusMon")
-				#subprocess.Popen(shlex.split("Start MISTI call"))
-				#daqSocket.send("startMISTI")
-				#mageSocket.send("startMISTI")
-				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)
+				for command in self.startList:
+					if command == "startLidar":
+						try:
+							bugSocket.send('startLidar')
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+						except ZMQError:
+							print "Socket Send Failed"
+				for command in self.startList:
+					if command == "startHyperSpec":
+						try:
+							hsSocket.send('startHyperSpec')
+							if hsSocket.poll(100) != 0:
+								hsMessage = hsSocket.recv()
+								print "%s" % hsMessage
+						except ZMQError:
+							print "Socket Send Failed"
 				self.startCaptureCheck.config(state=DISABLED)
 				self.startWeatherCheck.config(state=DISABLED)
 				self.startGpsCheck.config(state=DISABLED)

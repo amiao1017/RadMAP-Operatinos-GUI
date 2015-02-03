@@ -28,10 +28,10 @@ while True:
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
-                #2iAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-                #processes.append(2iAcquisition)
-                #NIRAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV1.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-                #processes.append(NIRAcquisition)
+                2iAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.6.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+                processes.append(2iAcquisition)
+                NIRAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV2.6.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+                processes.append(NIRAcquisition)
                 print "HyperSpec Acquisition starting"
                 HyperSpecAcqStarted = True
             else:
@@ -46,22 +46,22 @@ while True:
     		
     	if dbCommand == 'stopHyperSpec':
     	    if HyperSpecAcqStarted: #stop HyperSpec if started
-                #2iAcquisition.communicate(input = 'q')
-                #processes.remove(2iAcquisition)
-                #NIRAcquisition.communicate(input = 'q')
-                #processes.remove(NIRAcquisition)
+                2iAcquisition.communicate(input = 'q')
+                processes.remove(2iAcquisition)
+                NIRAcquisition.communicate(input = 'q')
+                processes.remove(NIRAcquisition)
                 print "Stopping HyperSpec Acquisition"
                 HyperSpecAcqStarted = False
             else:
                 print "HyperSpec Acquisition already stopped"
         
 
-    #print "Verifying Processes"	
-    #if len(processes) != 0:
-        #line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
-        #if (line.find("line") != -1) and (iterations % 2 = 0): #2i verification
-             #dbSocket.send("2i -" + line[line.find("line"): ])
-        #if (line.find("line") != -1) and (iterations % 2 = 1): #NIR Verification
-            #dbSocket.send("NIR -" + line[line.find("line"): ])
+    print "Verifying Processes"	
+    if len(processes) != 0:
+        line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
+        if (line.find("line") != -1) and (iterations % 2 = 0): #2i verification
+            dbSocket.send("2i -" + line[line.find("line"): ])
+        if (line.find("line") != -1) and (iterations % 2 = 1): #NIR Verification
+            dbSocket.send("NIR -" + line[line.find("line"): ])
     iterations += 1
 	
