@@ -10,20 +10,20 @@ context = zmq.Context()
 #  Sockets to talk to servers
 portDaq = "5553"
 daqSocket = context.socket(zmq.PAIR)
-daqSocket.bind("tcp://192.168.1.100:%s" % portDaq)
+daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
 mageSocket = context.socket(zmq.PAIR)
-mageSocket.bind("tcp://192.168.1.100:%s" % portMage)
+mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
-bugSocket.bind("tcp://192.168.1.100:%s" % portBug)
+bugSocket.bind("tcp://192.168.100.1:%s" % portBug)
 portLiq = "5557"
 liqSocket = context.socket(zmq.PAIR)
-liqSocket.bind("tcp://192.168.1.100:%s" % portLiq)
+liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
-#hsSocket.bind("tcp://192.168.1.100:%s" % portHs)
-hsSocket.bind("tcp://192.168.1.100:%s" % portHs)
+#hsSocket.bind("tcp://192.168.100.1%s" % portHs)
+hsSocket.bind("tcp://192.168.100.1:%s" % portHs)
 
 class operationsApp(Tk):
 
@@ -494,9 +494,19 @@ class operationsApp(Tk):
 					if command == "startLidar":
 						try:
 							bugSocket.send('startLidar')
+							if bugSocket.poll(100) != 0: #potentially add a timeout to the socket poll
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
 						except ZMQError:
 							print "Socket Send Failed"
-						print "Command Sent - %s" % startLidar
+					if command == "startHyperSpec":
+						try:
+							hsSocket.send('startHyperSpec')
+							if hsSocket.poll(100) != 0: #potentially add a timeout to the socket poll
+								hsMessage = hsSocket.recv()
+								print "%s" % hsMessage
+						except ZMQError:
+							print "Socket Send Failed"
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:

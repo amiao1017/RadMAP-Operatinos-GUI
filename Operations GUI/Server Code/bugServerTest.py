@@ -11,7 +11,7 @@ context = zmq.Context()
 #  Sockets to talk to servers
 port = "5555"
 dbSocket = context.socket(zmq.PAIR)
-dbSocket.connect("tcp://192.168.1.100:%s" % port)
+dbSocket.connect("tcp://192.168.100.1:%s" % port)
 
 #booleans
 velodynePortStarted = False
@@ -33,13 +33,15 @@ system_state = 0 #0 if sta command not received
 
 while True:
 
+	print "In While Loop"
     
-    
-    if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
-        dbCommand = dbSocket.recv()
-        if dbCommand == "startLidar":
-			print "Command Received - %s" % dbCommand
-			dbSocket.send("Command Received")
+    #if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
+	dbCommand = dbSocket.recv()
+	print "%s" %dbCommand
+	if dbCommand == "startLidar":
+		print "Command Received - %s" % dbCommand
+		dbSocket.send("Command Received")
+#else:
 	else:
 		print "Command not yet received"
 	
