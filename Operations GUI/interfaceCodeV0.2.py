@@ -9,21 +9,20 @@ context = zmq.Context()
 
 #  Sockets to talk to servers
 portDaq = "5553"
-daqSocket = context.socket(zmq.PAIR)
-daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
+#daqSocket = context.socket(zmq.PAIR)
+#daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
-mageSocket = context.socket(zmq.PAIR)
-mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
+#mageSocket = context.socket(zmq.PAIR)
+#mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
-bugSocket.bind("tcp://192.168.100.1:%s" % portBug)
+bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
 portLiq = "5557"
-liqSocket = context.socket(zmq.PAIR)
-liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
+#liqSocket = context.socket(zmq.PAIR)
+#liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
-#hsSocket.bind("tcp://192.168.100.1:%s" % portHs)
-hsSocket.bind("tcp://192.168.100.1:%s" % portHs)
+hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
 
 class operationsApp(Tk):
 
@@ -476,8 +475,9 @@ class operationsApp(Tk):
 				self.displayClock.grid(column=2,row=0)
 				
 				self.tick()
-				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec"]
-				for command in self.startList:
+				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec", "The End"]
+				for command in self.startList: 
+					print "%s" % command
 					if command == "startLidar":
 						try:
 							bugSocket.send('startLidar')
@@ -486,10 +486,11 @@ class operationsApp(Tk):
 								print "%s" % bugMessage
 						except ZMQError:
 							print "Socket Send Failed"
-				for command in self.startList:
 					if command == "startHyperSpec":
+						print "inside if statement"
 						try:
 							hsSocket.send('startHyperSpec')
+							print "Sent HyperSpec Signal"
 							if hsSocket.poll(100) != 0:
 								hsMessage = hsSocket.recv()
 								print "%s" % hsMessage

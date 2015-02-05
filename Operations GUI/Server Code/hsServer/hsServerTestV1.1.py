@@ -19,12 +19,12 @@ HyperSpecAcqStarted = False
 
 while True:
 
-    if dbSocket.poll(1) != 0:
+    if dbSocket.poll(100) != 0:
     	dbCommand = dbSocket.recv()
         print dbCommand
 
     	if dbCommand == 'startHyperSpec':
-            print "dbCommand = startHyperSpec"
+            print "Command Received - %s" % dbCommand
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
