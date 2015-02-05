@@ -11,7 +11,7 @@ context = zmq.Context()
 #  Sockets to talk to servers
 port = "5555"
 dbSocket = context.socket(zmq.PAIR)
-dbSocket.connect("tcp://192.168.100.1:%s" % port)
+dbSocket.bind("tcp://192.168.100.42:%s" % port)
 
 #booleans
 velodynePortStarted = False

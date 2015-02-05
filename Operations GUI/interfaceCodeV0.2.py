@@ -10,16 +10,16 @@ context = zmq.Context()
 #  Sockets to talk to servers
 portDaq = "5553"
 #daqSocket = context.socket(zmq.PAIR)
-#daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
+#daqSocket.connect("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
 #mageSocket = context.socket(zmq.PAIR)
-#mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
+#mageSocket.connect("tcp://192.168.100.1:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
 bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
 portLiq = "5557"
-#liqSocket = context.socket(zmq.PAIR)
-#liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
+liqSocket = context.socket(zmq.PAIR)
+liqSocket.connect("tcp://192.168.100.23:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
 hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
