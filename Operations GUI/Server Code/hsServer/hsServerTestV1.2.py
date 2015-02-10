@@ -28,10 +28,10 @@ while True:
     	    #if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
             print "Acquisition Script Called"
-            iAcquisition = subprocess.Popen("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.6.exe", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
+            iAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
             processes.append(iAcquisition)
             print "2i process started"
-            NIRAcquisition = subprocess.Popen('E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV2.6.exe', stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
+            NIRAcquisition = subprocess.Popen('E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe', stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
             processes.append(NIRAcquisition)
             print "NIR process starting"
             HyperSpecAcqStarted = True
