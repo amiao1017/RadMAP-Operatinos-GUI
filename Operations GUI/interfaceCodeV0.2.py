@@ -10,16 +10,16 @@ context = zmq.Context()
 #  Sockets to talk to servers
 portDaq = "5553"
 #daqSocket = context.socket(zmq.PAIR)
-#daqSocket.connect("tcp://192.168.100.1:%s" % portDaq)
+#daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
 #mageSocket = context.socket(zmq.PAIR)
-#mageSocket.connect("tcp://192.168.100.1:%s" % portMage)
+#mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
 portBug = "5555"
 bugSocket = context.socket(zmq.PAIR)
 bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
 portLiq = "5557"
-liqSocket = context.socket(zmq.PAIR)
-liqSocket.connect("tcp://192.168.100.23:%s" % portLiq)
+#liqSocket = context.socket(zmq.PAIR)
+#liqSocket.bind("tcp://192.168.100.1:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
 hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
@@ -55,12 +55,10 @@ class operationsApp(Tk):
 		self.startList = []
 		self.stopList = []
 		self.startCapture = IntVar()
-		self.startWeather = IntVar()
 		self.startGps = IntVar()
 		self.startNeutrons = IntVar()
 		self.startHyperSpec = IntVar()
 		self.stopCapture = IntVar()
-		self.stopWeather = IntVar()
 		self.stopGps = IntVar()
 		self.stopNeutrons = IntVar()
 		self.stopHyperSpec = IntVar()
@@ -76,7 +74,6 @@ class operationsApp(Tk):
 		self.verificationGpsColor = StringVar()
 		self.verificationNeutronsColor = StringVar()
 		self.verificationHyperSpecColor = StringVar()
-		self.weatherDataCheck = StringVar()
 		self.arduinoDataCheck = StringVar()
 		self.ladybugDataCheck = StringVar()
 		self.lidarDataCheck = StringVar()
@@ -139,9 +136,6 @@ class operationsApp(Tk):
 		self.startCaptureCheck = Checkbutton(self.indStart,variable=self.startCapture,text="Start Capture", command = self.startCaptureClick)
 		self.startCaptureCheck.pack()
 
-		self.startWeatherCheck = Checkbutton(self.indStart,variable=self.startWeather,text="Start Weather", command = self.startWeatherClick)
-		self.startWeatherCheck.pack()
-
 		self.startGpsCheck = Checkbutton(self.indStart,variable=self.startGps,text="Start GPS", command = self.startGpsClick)
 		self.startGpsCheck.pack()
 
@@ -159,9 +153,6 @@ class operationsApp(Tk):
 
 		self.stopCaptureCheck = Checkbutton(indStop,variable=self.stopCapture,text="Stop Capture", command = self.stopCaptureClick)
 		self.stopCaptureCheck.pack()
-
-		self.stopWeatherCheck = Checkbutton(indStop,variable=self.stopWeather,text="Stop Weather", command = self.stopWeatherClick)
-		self.stopWeatherCheck.pack()
 
 		self.stopGpsCheck = Checkbutton(indStop,variable=self.stopGps,text="Stop GPS", command = self.stopGpsClick)
 		self.stopGpsCheck.pack()
@@ -252,19 +243,6 @@ class operationsApp(Tk):
 
 		self.dataCheckGrid = Label(self)
 		self.dataCheckGrid.grid(column=0,row=2)
-
-		weatherDataCheckGrid = Label(self.dataCheckGrid)
-		weatherDataCheckGrid.grid(column=0,row=0)
-
-		weatherDataCheckLabel = Label(weatherDataCheckGrid,anchor="w",text="Weather:")
-		weatherDataCheckLabel.grid(column=0,row=0)
-		labelUnderlinedWeather = tkFont.Font(weatherDataCheckLabel,weatherDataCheckLabel.cget("font"))
-		labelUnderlinedWeather.configure(underline = True)
-		weatherDataCheckLabel.configure(font=labelUnderlinedWeather)
-
-		self.weatherDataCheck.set("Session Not Started")	
-		self.weatherDataCheckEntry = Label(weatherDataCheckGrid, textvariable=self.weatherDataCheck)
-		self.weatherDataCheckEntry.grid(column=1,row=0)
 
 		arduinoDataCheckGrid = Label(self.dataCheckGrid)
 		arduinoDataCheckGrid.grid(column=1,row=0)
@@ -475,12 +453,11 @@ class operationsApp(Tk):
 				self.displayClock.grid(column=2,row=0)
 				
 				self.tick()
-				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec", "The End"]
+				self.startList = ["STA", "startCapture", "startGps", "startNeutrons", "startHyperSpec"]
 				for command in self.startList: 
-					print "%s" % command
-					if command == "startLidar":
+					if command == "startCapture":
 						try:
-							bugSocket.send('startLidar')
+							bugSocket.send('startCapture')
 							if bugSocket.poll(100) != 0:
 								bugMessage = bugSocket.recv()
 								print "%s" % bugMessage
@@ -560,15 +537,14 @@ class operationsApp(Tk):
 				self.tick()
 				self.startList.insert(0, "STA")
 				for command in self.startList:
-					if command == "startLidar":
+					if command == "startCapture":
 						try:
-							bugSocket.send('startLidar')
+							bugSocket.send('startCapture')
 							if bugSocket.poll(100) != 0:
 								bugMessage = bugSocket.recv()
 								print "%s" % bugMessage
 						except ZMQError:
 							print "Socket Send Failed"
-				for command in self.startList:
 					if command == "startHyperSpec":
 						try:
 							hsSocket.send('startHyperSpec')
@@ -586,19 +562,10 @@ class operationsApp(Tk):
 
 	def startCaptureClick(self):
 		if self.startCapture.get() == 1:
-			self.startList.append("startArduino")
-			self.startList.append("startLidar")
-			self.startList.append("startLadybug")
+			self.startList.append("startCapture")
 		elif self.startCapture.get() == 0:
-			self.startList.remove("startArduino")
-			self.startList.remove("startLidar")
-			self.startList.remove("startLadybug")
+			self.startList.remove("startCapture")
 
-	def startWeatherClick(self):
-		if self.startWeather.get() == 1:
-			self.startList.append("startWeather")
-		elif self.startWeather.get() == 0:
-			self.startList.remove("startWeather")	
 
 	def startGpsClick(self):
 		if self.startGps.get() == 1:
@@ -632,7 +599,25 @@ class operationsApp(Tk):
 			self.tick()
 			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
-			self.stopList = ["STO", "stopArduino", "stopLidar", "stopLadybug", "stopWeather", "stopGps", "stopNeutrons", "stopHyperSpec"]
+			self.stopList = ["STO", "stopCapture", "stopWeather", "stopGps", "stopNeutrons", "stopHyperSpec"]
+
+			for command in self.stopList:
+				if command == "stopCapture":
+					try:
+						bugSocket.send('stopCapture')
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopHyperSpec":
+					try:
+						hsSocket.send('stopHyperSpec')
+						if hsSocket.poll(100) != 0:
+							hsMessage = hsSocket.recv()
+							print "%s" % hsMessage
+					except ZMQError:
+						print "Socket Send Failed"
 			
 			#booleans to check if item is off if not kill
 
@@ -646,9 +631,7 @@ class operationsApp(Tk):
 				#daqSocket.send("startMISTI")
 				#mageSocket.send("startMISTI")
 				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)	
+	
 	
 	def indStopClick(self):
 		if self.systemClicked.get() == 1 and self.stopList != []:
@@ -665,6 +648,25 @@ class operationsApp(Tk):
 			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
 			self.stopList.insert(0, "STO")
+			
+			for command in self.stopList:
+				if command == "stopCapture":
+					try:
+						bugSocket.send('stopCapture')
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopHyperSpec":
+					try:
+						hsSocket.send('stopHyperSpec')
+						if hsSocket.poll(100) != 0:
+							hsMessage = hsSocket.recv()
+							print "%s" % hsMessage
+					except ZMQError:
+						print "Socket Send Failed"
+
 			#subprocess.Popen(shlex.split("Set up Dbus call"))
 			#daqSocket.send(self.startList)
 			#mageSocket.send(self.startList)
