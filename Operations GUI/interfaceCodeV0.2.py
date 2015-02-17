@@ -473,6 +473,22 @@ class operationsApp(Tk):
 								print "%s" % hsMessage
 						except ZMQError:
 							print "Socket Send Failed"
+					if command == "startGPS":
+						try:
+							bugSocket.send('startGPS')
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startNeutrons":
+						try:
+							liqSocket.send('startNeutrons')
+							if liqSocket.poll(100) != 0:
+								liqMessage = liqSocket.recv()
+								print "%s" % liqMessage
+						except ZMQError:
+							print "Socket Send Failed"
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:
@@ -553,6 +569,22 @@ class operationsApp(Tk):
 								print "%s" % hsMessage
 						except ZMQError:
 							print "Socket Send Failed"
+					if command == "startGPS":
+						try:
+							bugSocket.send('startGPS')
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startNeutrons":
+						try:
+							liqSocket.send('startNeutrons')
+							if liqSocket.poll(100) != 0:
+								liqMessage = liqSocket.recv()
+								print "%s" % liqMessage
+						except ZMQError:
+							print "Socket Send Failed"
 				self.startCaptureCheck.config(state=DISABLED)
 				self.startWeatherCheck.config(state=DISABLED)
 				self.startGpsCheck.config(state=DISABLED)
@@ -599,7 +631,7 @@ class operationsApp(Tk):
 			self.tick()
 			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
-			self.stopList = ["STO", "stopCapture", "stopWeather", "stopGps", "stopNeutrons", "stopHyperSpec"]
+			self.stopList = ["STO", "stopCapture", "stopGps", "stopNeutrons", "stopHyperSpec"]
 
 			for command in self.stopList:
 				if command == "stopCapture":
@@ -616,6 +648,22 @@ class operationsApp(Tk):
 						if hsSocket.poll(100) != 0:
 							hsMessage = hsSocket.recv()
 							print "%s" % hsMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopGPS":
+					try:
+						bugSocket.send('stopGPS')
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopNeutrons":
+					try:
+						liqSocket.send('stopNeutrons')
+						if liqSocket.poll(100) != 0:
+							liqMessage = liqSocket.recv()
+							print "%s" % liqMessage
 					except ZMQError:
 						print "Socket Send Failed"
 			
@@ -664,6 +712,22 @@ class operationsApp(Tk):
 						if hsSocket.poll(100) != 0:
 							hsMessage = hsSocket.recv()
 							print "%s" % hsMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopGPS":
+					try:
+						bugSocket.send('stopGPS')
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopNeutrons":
+					try:
+						liqSocket.send('stopNeutrons')
+						if liqSocket.poll(100) != 0:
+							liqMessage = liqSocket.recv()
+							print "%s" % liqMessage
 					except ZMQError:
 						print "Socket Send Failed"
 

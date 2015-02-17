@@ -20,25 +20,21 @@ while True:
     	if dbCommand == 'startNeutrons':
             print "dbCommand = %s" % dbCommand
             if VoltageOn == False:
-            	rampOnVoltage = subprocess.Popen("PATH\\TO\\VoltageAHKScript")
+            	rampOnVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Start_Script_V1.0.exe")
             	VoltageOn = True
             if VoltageOn:
-            	AcquireNeutrons = subprocess.Popen("PATH\\TO\\NEUTRONAHKSCRIPT")
-            	NeutronAcquisition = True
+                if NeutronAcquisition == False:
+            	   AcquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_Acq.exe")
+            	   NeutronAcquisition = True
 
     		
     	if dbCommand == 'stopNeutrons':
     	    if NeutronAcquisition: #stop HyperSpec if started
-                StopNeutrons = subprocess.Popen("PATH\\TO\\NEUTRONSTOPAHKSCRIPT")
+                StopNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_Acq.exe")
                 NeutronAcquisition = False
             if NeutronAcquisition == False:
-            	rampOffVoltage = subprocess.Popen("PATH\\TO\\VOLTAGEOFFAHKSCRIPT")
+                if VoltageOn == True:
+            	   rampOffVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Script_V1.0.exe")
+                   VoltageOn = False
 
-    #print "Verifying Processes"	
-    #if len(processes) != 0:
-        #line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
-        #if (line.find("line") != -1) and (iterations % 2 = 0): #2i verification
-             #dbSocket.send("2i -" + line[line.find("line"): ])
-        #if (line.find("line") != -1) and (iterations % 2 = 1): #NIR Verification
-            #dbSocket.send("NIR -" + line[line.find("line"): ])
     iterations += 1

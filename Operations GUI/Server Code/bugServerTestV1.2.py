@@ -40,11 +40,33 @@ while True:
 		
 		if dbCommand == "startCapture":
 			print "Command Received - %s" % dbCommand
-			dbSocket.send("Start Command Received")
+			dbSocket.send("startCapture Command Received")
 			startCapture = subprocess.Popen("startCapture.bat", cwd=r'E:', creationflags=subprocess.CREATE_NEW_CONSOLE)
 			time.sleep(1)
 			startArduino = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\Server Code\\startArduino.exe")
+		if dbCommand == "startGPS":
+			print "Command Received - %s" % dbCommand
+			dbSocket.send("startGPS Command Received")
+			date = datetime.now()
+			#filename = date.strftime("Run_%Y%m%d_%H" + "%M%S")
+			#logfile_path = filename + '\gps\logfile.gps' #set the path for the logfile to be saved with gps data collection
+			logfile_path = date.strftime("\gps_%Y%m%d_%H%M%S_logfile.gps")
+			x = Tk()
+			x.withdraw()
+			x.clipboard_clear()
+			x.clipboard_append(logfile_path)
+			x.destroy()
+			startGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPS_Start_Script.exe")
+
 		if dbCommand == "stopCapture":
 			print "Command Received - %s" % dbCommand
-			dbSocket.send("Stop Command Received")
-			stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureScript.exe")  
+			dbSocket.send("stopCapture Command Received")
+			stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureScript.exe")
+
+		if dbCommand == "stopGPS":
+			print "Command Received - %s" % dbCommand
+			dbSocket.send("stopGPS Command Received")
+			startGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPS_Stop_Script.exe")
+
+
+

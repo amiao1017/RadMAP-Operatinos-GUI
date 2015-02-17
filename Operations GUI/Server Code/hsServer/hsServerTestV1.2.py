@@ -38,12 +38,6 @@ while True:
             #else:
                 #print "HyperSpec Acquisition already running"
 
-        # if dbCommand == 'startHyperSpec':
-        #     print "dbCommand = startHyperSpec"
-        #     if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
-        #         testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
-        #         print "Acquisition Script Called"
-
     		
     	if dbCommand == 'stopHyperSpec':
     	    if HyperSpecAcqStarted: #stop HyperSpec if started

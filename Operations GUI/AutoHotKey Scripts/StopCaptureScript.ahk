@@ -7,10 +7,12 @@ IfWinExist, startArduino
 IfWinNotActive, startArduino, WinWaitActive, startArduino,
 WinWaitActive, startArduino
 Send, q
-Sleep, 100
+Sleep, 500
 Send, y
-Sleep, 100
+Sleep, 500
 Send, y
+Sleep, 500
+Send, q
 
 IfWinExist, startLadybugStarboard
 {
@@ -19,10 +21,11 @@ IfWinExist, startLadybugStarboard
 IfWinNotActive, startLadybugStarboard, WinWaitActive, startLadybugStarboard,
 WinWaitActive, startLadybugStarboard
 Send, q
-Sleep, 100
+Sleep, 500
 Send, y
-Sleep, 100
+Sleep, 500
 Send, y
+Sleep, 500
 
 IfWinExist, startLadybugPort
 {
@@ -31,22 +34,24 @@ IfWinExist, startLadybugPort
 IfWinNotActive, startLadybugPort, WinWaitActive, startLadybugPort,
 WinWaitActive, startLadybugPort
 Send, q
-Sleep, 100
+Sleep, 500
 Send, y
-Sleep, 100
+Sleep, 500
 Send, y
+Sleep, 500
 
-IfWinExist, startVolodyneStarboard
+IfWinExist, startVelodyneStarboard
 {
 	WinActivate
 }
-IfWinNotActive, startVolodyneStarboard, WinWaitActive, startVolodyneStarboard,
-WinWaitActive, startVolodyneStarboard
+IfWinNotActive, startVelodyneStarboard, WinWaitActive, startVelodyneStarboard,
+WinWaitActive, startVelodyneStarboard
 Send, q
-Sleep, 100
+Sleep, 500
 Send, y
-Sleep, 100
+Sleep, 500
 Send, y
+Sleep, 500
 
 IfWinExist, startVelodynePort
 {
@@ -55,9 +60,16 @@ IfWinExist, startVelodynePort
 IfWinNotActive, startVelodynePort, WinWaitActive, startVelodynePort,
 WinWaitActive, startVelodynePort
 Send, q
-Sleep, 100
+Sleep, 500
 Send, y
-Sleep, 100
+Sleep, 500
 Send, y
+Sleep, 500
 	
+IfWinExist, startArduino
+{
+	WinActivate
+	Send, q
+}
+
 
