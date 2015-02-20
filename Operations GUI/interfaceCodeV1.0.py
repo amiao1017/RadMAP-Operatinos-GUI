@@ -84,6 +84,11 @@ class operationsApp(Tk):
 		self.fileOpened = False
 		self.noteSaved = False
 		self.multipleFiles = 0
+		self.startCaptureFlag = 0
+		self.startCaptureCommand = "startCapture"
+		self.startHyperSpecCommand = "startHyperSpec"
+		self.startHyperSpecFlag = 0
+		self.hyperSpecStarted = 0
 
 		self.operatorGrid = Label (self)
 		self.operatorGrid.grid(column=0,row=0)
@@ -453,24 +458,23 @@ class operationsApp(Tk):
 				self.displayClock.grid(column=2,row=0)
 				
 				self.tick()
-				self.startList = ["STA", "startCapture", "startGps", "startNeutrons", "startHyperSpec"]
+				self.startList = ["STA", "startHyperSpec", "startGps", "startNeutrons", "startCapture"]
 				for command in self.startList: 
-					if command == "startCapture":
-						try:
-							bugSocket.send('startCapture')
-							if bugSocket.poll(100) != 0:
-								bugMessage = bugSocket.recv()
-								print "%s" % bugMessage
-						except ZMQError:
-							print "Socket Send Failed"
 					if command == "startHyperSpec":
-						print "inside if statement"
 						try:
 							hsSocket.send('startHyperSpec')
 							print "Sent HyperSpec Signal"
 							if hsSocket.poll(100) != 0:
 								hsMessage = hsSocket.recv()
 								print "%s" % hsMessage
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startCapture":
+						try:
+							bugSocket.send('startCapture')
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
 						except ZMQError:
 							print "Socket Send Failed"
 					if command == "startGPS":
@@ -552,23 +556,55 @@ class operationsApp(Tk):
 					
 				self.tick()
 				self.startList.insert(0, "STA")
+				if self.startCaptureCommand in self.startList:
+					self.startCaptureFlag = 1
+				if self.startHyperSpecCommand in self.startList:
+					self.startHyperSpecFlag = 1
 				for command in self.startList:
-					if command == "startCapture":
-						try:
-							bugSocket.send('startCapture')
-							if bugSocket.poll(100) != 0:
-								bugMessage = bugSocket.recv()
-								print "%s" % bugMessage
-						except ZMQError:
-							print "Socket Send Failed"
-					if command == "startHyperSpec":
-						try:
-							hsSocket.send('startHyperSpec')
-							if hsSocket.poll(100) != 0:
-								hsMessage = hsSocket.recv()
-								print "%s" % hsMessage
-						except ZMQError:
-							print "Socket Send Failed"
+					if command == "startHyperSpec" and self.startCaptureFlag == 1:
+						if self.hyperSpecStarted == 0:
+							try:
+								hsSocket.send('startHyperSpec')
+								if hsSocket.poll(100) != 0:
+									hsMessage = hsSocket.recv()
+									print "%s" % hsMessage
+								time.sleep(9)
+								hyperSpecStarted = 1
+							except ZMQError:
+								print "Socket Send Failed"
+					else:
+						if command == "startHyperSpec":
+							print "HyperSpec cannot be started without startCapture"
+					if self.startHyperSpecFlag == 1:
+						if command == "startCapture":
+							if self.hyperSpecStarted == 1:
+								try:
+									bugSocket.send('startCapture')
+									if bugSocket.poll(100) != 0:
+										bugMessage = bugSocket.recv()
+										print "%s" % bugMessage
+								except ZMQError:
+									print "Socket Send Failed"
+							else:
+								hsSocket.send('startHyperSpec')
+								if hsSocket.poll(100) != 0:
+									hsMessage = hsSocket.recv()
+									print "%s" % hsMessage
+								time.sleep(9)
+								hyperSpecStarted = 1
+								bugSocket.send('startCapture')
+									if bugSocket.poll(100) != 0:
+										bugMessage = bugSocket.recv()
+										print "%s" % bugMessage
+					else:
+						if command == "startCapture":
+							try:
+									bugSocket.send('startCapture')
+									if bugSocket.poll(100) != 0:
+										bugMessage = bugSocket.recv()
+										print "%s" % bugMessage
+								except ZMQError:
+									print "Socket Send Failed"
 					if command == "startGPS":
 						try:
 							bugSocket.send('startGPS')
