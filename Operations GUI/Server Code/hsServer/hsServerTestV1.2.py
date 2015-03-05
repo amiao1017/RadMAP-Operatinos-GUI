@@ -7,7 +7,7 @@ import sys
 context = zmq.Context()
 port = "5556"
 dbSocket = context.socket(zmq.PAIR)
-dbSocket.connect("tcp://192.168.100.1:%s" % port)
+dbSocket.bind("tcp://192.168.100.43:%s" % port)
 
 processes = [] #list of processes
 iterations = 0
@@ -25,32 +25,29 @@ while True:
 
     	if dbCommand == 'startHyperSpec':
             print "dbCommand = startHyperSpec"
-    	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+    	    #if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
-                print "Acquisition Script Called"
-                iAcquisition = subprocess.Popen("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.6.exe", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-                processes.append(iAcquisition)
-                NIRAcquisition = subprocess.Popen("E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV2.6.exe", stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-                processes.append(NIRAcquisition)
-                print "HyperSpec Acquisition starting"
-                HyperSpecAcqStarted = True
-            else:
-                print "HyperSpec Acquisition already running"
-
-        # if dbCommand == 'startHyperSpec':
-        #     print "dbCommand = startHyperSpec"
-        #     if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
-        #         testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
-        #         print "Acquisition Script Called"
+            print "Acquisition Script Called"
+            iAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            processes.append(iAcquisition)
+            print "2i process started"
+            NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            processes.append(NIRAcquisition)
+            print "NIR process started"
+            HyperSpecAcqStarted = True
+            #else:
+                #print "HyperSpec Acquisition already running"
 
     		
     	if dbCommand == 'stopHyperSpec':
     	    if HyperSpecAcqStarted: #stop HyperSpec if started
-                iAcquisition.communicate(input = 'q')
-                processes.remove(iAcquisition)
-                NIRAcquisition.communicate(input = 'q')
-                processes.remove(NIRAcquisition)
                 print "Stopping HyperSpec Acquisition"
+                processes.remove(iAcquisition)
+                StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iStopScript.exe")
+                print "2i Acquisition Stopped"
+                processes.remove(NIRAcquisition)
+                StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRStopScript.exe")
+                print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
             else:
                 print "HyperSpec Acquisition already stopped"
