@@ -5,6 +5,7 @@ from datetime import datetime, date, time
 import shlex
 import string
 from Tkinter import Tk
+import sys
 
 context = zmq.Context()
 
@@ -12,6 +13,7 @@ context = zmq.Context()
 port = "5555"
 dbSocket = context.socket(zmq.PAIR)
 dbSocket.bind("tcp://192.168.100.42:%s" % port)
+
 
 #booleans
 velodynePortStarted = False
@@ -35,12 +37,13 @@ while True:
 
     
     
-    if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
-        dbCommand = dbSocket.recv()
-        if dbCommand == "startLidar":
+	if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
+		dbCommand = dbSocket.recv()
+		if dbCommand == "startCapture":
 			print "Command Received - %s" % dbCommand
 			dbSocket.send("Command Received")
-	else:
-		print "Command not yet received"
-	
+		if dbCommand == "stopCapture":
+			print "Command Received - %s" % dbCommand
+			dbSocket.send("Command Received")
+			sys.exit()
                                                   
