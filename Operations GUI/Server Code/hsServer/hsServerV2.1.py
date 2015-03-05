@@ -19,6 +19,33 @@ NIRVerification = False
 #dbSocket = context.socket(zmq.REP)
 #dbSocket.connect("tcp://192.168.1.100:5108")
 
+def runProcess(processes, numprocesses):    
+    iterations = 0
+    while true:
+        if dbSocket.poll(1) != 0:
+            dbCommand = dbSocket.recv()
+            print dbCommand
+            if dbCommand == 'stopHyperSpec':
+                if HyperSpecAcqStarted == True: #stop HyperSpec if started
+                    print "Stopping HyperSpec Acquisition"
+                    processes.remove(iAcquisition)
+                    StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopScript.exe")
+                    print "2i Acquisition Stopped"
+                    #dbSocket.send("2i Acquisition stopped")
+                    processes.remove(NIRAcquisition)
+                    print "NIR Acquisition Stopped"
+                    dbSocket.send("HyperSpec Acquisition Stopped")
+                    HyperSpecAcqStarted = False
+                else:
+                    print "HyperSpec Acquisition already stopped"
+        retcode = processes[iterations % numprocesses].poll() #returns None while subprocess is running
+        line = processes[iterations % numprocesses].stdout.readline()
+        yield line
+        if(retcode is not None):
+            break
+        iterations += 1
+
+
 while True:
 
     if dbSocket.poll(1) != 0:
@@ -30,11 +57,11 @@ while True:
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
-                iAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe")
+                iAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
                 processes.append(iAcquisition)
                 print "2i process started"
                 #dbSocket.send("2i process started")
-                NIRAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe")
+                NIRAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
                 processes.append(NIRAcquisition)
                 print "NIR process started"
                 dbSocket.send("HyperSpec Acquisition started")    
@@ -60,24 +87,7 @@ while True:
 
     #print "Verifying Processes"	
     if len(processes) != 0:
-        for line in processes[iterations % len(processes)]:
-            if dbSocket.poll(1) != 0:
-                dbCommand = dbSocket.recv()
-                print dbCommand
-                if dbCommand == 'stopHyperSpec':
-                    if HyperSpecAcqStarted == True: #stop HyperSpec if started
-                        print "Stopping HyperSpec Acquisition"
-                        processes.remove(iAcquisition)
-                        StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopScript.exe")
-                        print "2i Acquisition Stopped"
-                        #dbSocket.send("2i Acquisition stopped")
-                        processes.remove(NIRAcquisition)
-                        print "NIR Acquisition Stopped"
-                        dbSocket.send("HyperSpec Acquisition Stopped")
-                        HyperSpecAcqStarted = False
-                    else:
-                        print "HyperSpec Acquisition already stopped"
-                break
+        for line in runProcess(processes, len(processes))
             if len(processes) != 0:
                 if (line.find("line") != -1 and (iterations % 2 = 0) and (line.find("discarded") == -1: #2i verification
                     print "2i - " + line
@@ -98,12 +108,3 @@ while True:
             #dbSocket.send("NIR -" + line[line.find("line"): ])
         #iterations += 1
 
-    def runProcess(exe):    
-    p = subprocess.Popen(exe, cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
-    while(True):
-      retcode = p.poll() #returns None while subprocess is running
-      line = p.stdout.readline()
-      yield line
-      if(retcode is not None):
-        break
-	
