@@ -5,7 +5,10 @@ from string import whitespace
 from PIL import Image, ImageTk
 import os, sys, glob, Tkconstants,tkFileDialog,tkMessageBox,glob,tkFont,subprocess,zmq,time
 
+port = "5556"
 context = zmq.Context()
+hsSocket = context.socket(zmq.PAIR)
+hsSocket.connect("tcp://127.0.0.1:%s" % port)
 
 #  Sockets to talk to servers
 daqSocket = context.socket(zmq.REQ)
@@ -16,8 +19,8 @@ bugSocket = context.socket(zmq.REQ)
 bugSocket.connect("tcp://192.168.100.42:5108")
 liqSocket = context.socket(zmq.REQ)
 liqSocket.connect("tcp://192.168.100.23:5109")
-hsSocket = context.socket(zmq.REQ)
-hsSocket.connect("tcp://192.168.100.43:5110")
+#hsSocket = context.socket(zmq.REQ)
+#hsSocket.connect("tcp://192.168.100.43:5110")
 
 class operationsApp(Tk):
 
@@ -471,6 +474,7 @@ class operationsApp(Tk):
 				
 				self.tick()
 				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec"]
+
 				#subprocess.Popen(shlex.split("Set up Dbus call"))
 				#daqSocket.send(self.startList)
 				#mageSocket.send(self.startList)
@@ -483,6 +487,8 @@ class operationsApp(Tk):
 				#subprocess.Popen(shlex.split("Run.py call"))
 				#bugSocket.send(self.startList)
 				#hsSocket.send(self.startList)
+				hsSocket.send("Hello")
+				print "Hello Sent"
 				#liqSocket.send(self.startList)
 
 	def indStartClick(self):
@@ -723,7 +729,7 @@ class operationsApp(Tk):
 						fileList = glob.glob(('%sv*.txt' %self.fileName))
 						fileListLength = len(fileList)
 						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-						self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
+						self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))  #should this be +1 or +2??????
 					else:
 						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
 						self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))

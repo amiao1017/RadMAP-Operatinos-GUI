@@ -7,7 +7,11 @@ import sys
 context = zmq.Context()
 port = "5556"
 dbSocket = context.socket(zmq.PAIR)
+<<<<<<< HEAD
 dbSocket.bind("tcp://192.168.100.43:%s" % port)
+=======
+dbSocket.bind("tcp://192.168.1.100:%s" % port)
+>>>>>>> f7329802ef73952ba897b8e75a0a9c63f1136ebe
 
 processes = [] #list of processes
 iterations = 0
@@ -19,6 +23,7 @@ HyperSpecAcqStarted = False
 
 while True:
 
+<<<<<<< HEAD
     if dbSocket.poll(1) != 0:
     	dbCommand = dbSocket.recv()
         print dbCommand
@@ -47,6 +52,37 @@ while True:
                 print "2i Acquisition Stopped"
                 processes.remove(NIRAcquisition)
                 print "NIR Acquisition Stopped"
+=======
+	if dbSocket.poll(1) != 0:
+		dbCommand = dbSocket.recv()
+		print dbCommand
+		if dbCommand == 'startHyperSpec':
+			print "dbCommand = startHyperSpec"
+			if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+				print "Acquisition Script Called"
+				iAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\2iHyperSpecAcquisitionV2.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+				processes.append(iAcquisition)
+				NIRAcquisition = subprocess.Popen(shlex.split("E:\ResononAPI_2.2_Beta\bin\NIRHyperSpecAcquisitionV1.0.exe"), stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+				processes.append(NIRAcquisition)
+				print "HyperSpec Acquisition starting"
+				HyperSpecAcqStarted = True
+			else:
+				print "HyperSpec Acquisition already running"
+
+#        if dbCommand == 'startHyperSpec':
+#            print "dbCommand = startHyperSpec"
+#            if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+#                testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
+#                print "Acquisition Script Called"
+    		
+		if dbCommand == 'stopHyperSpec':
+			if HyperSpecAcqStarted: #stop HyperSpec if started
+				iAcquisition.communicate(input = 'q')
+				processes.remove(iAcquisition)
+				NIRAcquisition.communicate(input = 'q')
+				processes.remove(NIRAcquisition)
+				print "Stopping HyperSpec Acquisition"
+>>>>>>> f7329802ef73952ba897b8e75a0a9c63f1136ebe
                 HyperSpecAcqStarted = False
             else:
                 print "HyperSpec Acquisition already stopped"

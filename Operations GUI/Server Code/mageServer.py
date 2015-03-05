@@ -4,8 +4,9 @@ import subprocess
 context = zmq.Context()
 
 #  Sockets to talk to servers
-dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://localhost:5107")
+portMage = "5554"
+#dbSocket = context.socket(zmq.PAIR)
+#dbSocket.bind("tcp://192.168.100.1:%s" % portMage) #FIND MAGE IP
 
 
 while True:

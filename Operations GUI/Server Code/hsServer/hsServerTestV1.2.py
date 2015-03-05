@@ -25,6 +25,7 @@ while True:
 
     	if dbCommand == 'startHyperSpec':
             print "dbCommand = startHyperSpec"
+<<<<<<< HEAD
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
@@ -46,6 +47,30 @@ while True:
                 StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopScript.exe")
                 print "2i Acquisition Stopped"
                 processes.remove(NIRAcquisition)
+=======
+    	    #if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
+                #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
+            print "Acquisition Script Called"
+            iAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            processes.append(iAcquisition)
+            print "2i process started"
+            NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            processes.append(NIRAcquisition)
+            print "NIR process started"
+            HyperSpecAcqStarted = True
+            #else:
+                #print "HyperSpec Acquisition already running"
+
+    		
+    	if dbCommand == 'stopHyperSpec':
+    	    if HyperSpecAcqStarted: #stop HyperSpec if started
+                print "Stopping HyperSpec Acquisition"
+                processes.remove(iAcquisition)
+                StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iStopScript.exe")
+                print "2i Acquisition Stopped"
+                processes.remove(NIRAcquisition)
+                StopiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRStopScript.exe")
+>>>>>>> f7329802ef73952ba897b8e75a0a9c63f1136ebe
                 print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
             else:

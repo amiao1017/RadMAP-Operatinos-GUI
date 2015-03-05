@@ -27,19 +27,40 @@ Sleep, 100
 WinWait, Save As, 
 IfWinNotActive, Save As, , WinActivate, Save As, 
 WinWaitActive, Save As, 
-Send, {CTRLDOWN}v{CTRLUP}{ENTER}
+Send, {CTRLDOWN}a{CTRLUP}{BACKSPACE}
+Sleep, 100
+MouseClick, left,  118,  66
+Sleep, 100
+MouseClick, left,  225,  155
+Sleep, 100
+MouseClick, left,  225,  155
+Sleep, 100
+MouseClick, right,  247,  39
+Sleep, 100
+MouseClick, left,  276,  73
+Sleep, 100
+MouseClick, left,  136,  414
+MouseClick, left,  136,  414
+Sleep, 100
+MouseClick, left,  137,  423
+Sleep, 100
+MouseClick, right,  138,  423
+Sleep, 100
+MouseClick, left,  159,  503
+Sleep, 100
+Send, \gps\logfile.gps{ENTER}
 WinWait, Options, 
 IfWinNotActive, Options, , WinActivate, Options, 
 WinWaitActive, Options, 
-MouseClick, left,  542,  451
+MouseClick, left,  548,  451
 Sleep, 100
 WinWait, NovAtel CDU, 
 IfWinNotActive, NovAtel CDU, , WinActivate, NovAtel CDU, 
 WinWaitActive, NovAtel CDU, 
-MouseClick, left,  737,  268
+MouseClick, left,  734,  263
 Sleep, 100
 WinWait, CONFIG - Logging Control, 
 IfWinNotActive, CONFIG - Logging Control, , WinActivate, CONFIG - Logging Control, 
 WinWaitActive, CONFIG - Logging Control, 
-MouseClick, left,  559,  7
+MouseClick, left,  562,  7
 Sleep, 100
