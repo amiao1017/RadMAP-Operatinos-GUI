@@ -12,16 +12,21 @@ dbSocket.bind("tcp://192.168.100.43:%s" % port)
 processes = [] #list of processes
 iterations = 0
 HyperSpecAcqStarted = False
-2iVerification = False
+iVerification = False
 NIRVerification = False
 
 #  Sockets to talk to servers
 #dbSocket = context.socket(zmq.REP)
 #dbSocket.connect("tcp://192.168.1.100:5108")
 
-def runProcess(processes, numprocesses):    
+def runProcess():
+    global iterations
+    global processes
+    global HyperSpecAcqStarted
+    global iVerification
+    global NIRVerification
     iterations = 0
-    while true:
+    while True:
         if dbSocket.poll(1) != 0:
             dbCommand = dbSocket.recv()
             print dbCommand
@@ -42,6 +47,10 @@ def runProcess(processes, numprocesses):
         line = processes[iterations % numprocesses].stdout.readline()
         yield line
         if(retcode is not None):
+            if (iterations % numprocesses) == 0:
+                iVerification = False
+            if (iterations % numprocesses) == 1:
+                NIRVerification = False
             break
         iterations += 1
 
@@ -57,11 +66,11 @@ while True:
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
-                iAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                iAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
                 processes.append(iAcquisition)
                 print "2i process started"
                 #dbSocket.send("2i process started")
-                NIRAcquisition = runProcess("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_CONSOLE)
                 processes.append(NIRAcquisition)
                 print "NIR process started"
                 dbSocket.send("HyperSpec Acquisition started")    
@@ -87,16 +96,16 @@ while True:
 
     #print "Verifying Processes"	
     if len(processes) != 0:
-        for line in runProcess(processes, len(processes))
+        for line in runProcess():
             if len(processes) != 0:
-                if (line.find("line") != -1 and (iterations % 2 = 0) and (line.find("discarded") == -1: #2i verification
+                if (line.find("line") != -1) and (iterations % 2 == 0): #2i verification
                     print "2i - " + line
-                    2iVerification = True
-                if (line.find("line") != -1 and (iterations % 2 = 1): #NIR verification
+                    iVerification = True
+                if (line.find("line") != -1) and (iterations % 2 == 1): #NIR verification
                     print "NIR - " + line
                     NIRVerification = True
                 iterations += 1
-            VerificationMessage = 2iVerification and NIRVerification
+            VerificationMessage = iVerification and NIRVerification
             print VerificationMessage
             #dbSocket.send(VerificationMessage)
         #line = processes[iterations % len(processes)].stdout.readline() #NEED TIMEOUT TO PREVENT BLOCKING
