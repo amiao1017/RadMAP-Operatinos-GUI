@@ -4,6 +4,7 @@ from datetime import datetime, date, time
 import shlex
 import time
 import sys, os
+import string
 
 context = zmq.Context()
 port = "5556"
@@ -91,7 +92,8 @@ while True:
             iiFile.seek(iiLocation)
         else:
             #print iiLine
-            if ((iiLine.find("Line ") != -1) or (iiLine.find("Complete") != -1) or (iiLine.find("Datacube") != -1) or (iiLine.find("Done") != -1)) and (iiLine != iiLinePrev): #2i verification
+            #if ((iiLine.find("Line ") != -1) or (iiLine.find("Complete") != -1) or (iiLine.find("Datacube") != -1) or (iiLine.find("Done") != -1)) and (iiLine != iiLinePrev): #2i verification
+            if (iiLine != iiLinePrev):              
                 iiVerification = True
                 #iiNumber = iiLine[5:]
                 #if iiNumber == '1000':
@@ -104,7 +106,10 @@ while True:
                     iiVerification = False
             else:
                 iiVerification = False
-        iiLinePrev = iiLine
+        print "iiLine - %s" % iiLine  
+        print "iiLinePrev - %s" % iiLinePrev
+        if not iiLine.strip():
+            iiLinePrev = iiLine
         nirLocation = nirFile.tell()
         nirLine = nirFile.readline()
         if not nirLine:
@@ -112,15 +117,21 @@ while True:
             nirFile.seek(iiLocation)
         else:
             #print iiLine
-            if ((nirLine.find("Line ") != -1) or (nirLine.find("Complete") != -1) or (nirLine.find("Datacube") != -1) or (nirLine.find("Done") != -1)) and (nirLine != nirLinePrev): #NIR Verification
+            #if ((nirLine.find("Line ") != -1) or (nirLine.find("Complete") != -1) or (nirLine.find("Datacube") != -1) or (nirLine.find("Done") != -1)) and (nirLine != nirLinePrev): #NIR Verification
+            if (nirLine != nirLinePrev):
                 nirVerification = True
                 if (nirLine.find("Garbage") != -1):
                     nirVerification = False
             else:
                 nirVerification = False
-        nirLinePrev = nirLine
+        print "nirLine - %s" % nirLine  
+        print "nirLinePrev - %s" % nirLinePrev
+        if not nirLine.strip():
+            nirLinePrev = nirLine
         HyperSpecVerification = iiVerification and nirVerification
-        print HyperSpecVerification
+        print "iiVerification - %s" % iiVerification 
+        print "nirVerification - %s" % nirVerification
+        print "HyperSpecVerification - %s" % HyperSpecVerification
         #dbSocket.send(HyperSpecVerification)
     iterations += 1
 	
