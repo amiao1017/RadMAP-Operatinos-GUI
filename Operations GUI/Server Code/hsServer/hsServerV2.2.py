@@ -88,7 +88,7 @@ while True:
         iiLocation = iiFile.tell()
         iiLine = iiFile.readline()
         if not iiLine:
-            #time.sleep(1)
+            time.sleep(1)
             iiFile.seek(iiLocation)
         else:
             #print iiLine
@@ -113,7 +113,7 @@ while True:
         nirLocation = nirFile.tell()
         nirLine = nirFile.readline()
         if not nirLine:
-            #time.sleep(1)
+            time.sleep(1)
             nirFile.seek(iiLocation)
         else:
             #print iiLine
@@ -128,10 +128,13 @@ while True:
         print "nirLinePrev - %s" % nirLinePrev
         if not nirLine.strip():
             nirLinePrev = nirLine
-        HyperSpecVerification = iiVerification and nirVerification
-        print "iiVerification - %s" % iiVerification 
-        print "nirVerification - %s" % nirVerification
-        print "HyperSpecVerification - %s" % HyperSpecVerification
-        #dbSocket.send(HyperSpecVerification)
+    if len(processes) == 0:
+        iiVerification = False
+        nirVerification = False
+    HyperSpecVerification = iiVerification and nirVerification
+    print "iiVerification - %s" % iiVerification 
+    print "nirVerification - %s" % nirVerification
+    print "HyperSpecVerification - %s" % HyperSpecVerification
+    #dbSocket.send(HyperSpecVerification)
     iterations += 1
 	
