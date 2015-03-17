@@ -87,11 +87,12 @@ while True:
                 print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
                 stopVerification = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopVerificationScript.exe")
-                stopped = pyperclip.paste()
+                stopped = "%s" % pyperclip.paste()
+                VerificationState = False
                 if (stopped.find('True') != -1):
                     dbSocket.send("HyperSpec Stopped")
-                    VerificationState = False
                     dbSocket.close()
+                    print "Closing Socket"
                     startedAcq = 0
                 print "Verification State is %s" % VerificationState
             else:
@@ -107,7 +108,7 @@ while True:
             iiFile.seek(iiLocation)
         else:
             #print iiLine
-            #if ((iiLine.find("Line ") != -1) or (iiLine.find("Complete") != -1) or (iiLine.find("Datacube") != -1) or (iiLine.find("Done") != -1)) and (iiLine != iiLinePrev): #2i verification
+            #if ((iiLine.find("Line ") != -1) or (iiLine.find("Complete") != -1) or (iiLine.find("Data") != -1) or (iiLine.find("Done") != -1)) and (iiLine != iiLinePrev): #2i verification
             if (iiLine != iiLinePrev):              
                 iiVerification = True
                 #iiNumber = iiLine[5:]
@@ -151,9 +152,10 @@ while True:
         VerificationState = True
     #print "iiVerification - %s" % iiVerification 
     #print "nirVerification - %s" % nirVerification
-    #print "HyperSpecVerification - %s" % HyperSpecVerification
+    time1 = time.time()
+    #print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
     if VerificationState == True:
-        dbSendMessage = "%s" % HyperSpecVerification
+        dbSendMessage = "%s @ %s" % (HyperSpecVerification, time1)
         dbSocket.send(dbSendMessage)
     iterations += 1
 	
