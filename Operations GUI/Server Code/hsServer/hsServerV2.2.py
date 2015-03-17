@@ -5,11 +5,10 @@ import shlex
 import time
 import sys, os
 import string
+import pyperclip
 
 context = zmq.Context()
 port = "5556"
-dbSocket = context.socket(zmq.PAIR)
-dbSocket.bind("tcp://192.168.100.43:%s" % port)
 
 processes = [] #list of processes
 iterations = 0
@@ -18,6 +17,8 @@ HyperSpecAcqStarted = False
 iiVerification = False
 nirVerification = False
 HyperSpecVerification = False
+VerificationState = False
+startedAcq = 0
 
 iiLinePrev = None
 nirLinePrev = None
@@ -27,7 +28,12 @@ nirLinePrev = None
 #dbSocket.connect("tcp://192.168.1.100:5108")
 
 while True:
-
+    if not startedAcq:
+        dbSocket = context.socket(zmq.PAIR)
+        dbSocket.bind("tcp://192.168.100.43:%s" % port)
+        dbSocket.setsockopt(zmq.LINGER, 1)
+        startedAcq = 1
+        
     if dbSocket.poll(1) != 0:
     	dbCommand = dbSocket.recv()
         print dbCommand
@@ -56,6 +62,7 @@ while True:
                 processes.append(iiAcquisition)
                 #iiFile.close()
                 print "2i process started"
+                
                 #dbSocket.send("2i process started")
                 NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE, stdout = nirFile)
                 processes.append(NIRAcquisition)
@@ -69,6 +76,7 @@ while True:
     	if dbCommand == 'stopHyperSpec':
     	    if HyperSpecAcqStarted == True: #stop HyperSpec if started
                 print "Stopping HyperSpec Acquisition"
+                dbSocket.send("Stop HyperSpec Acquisition Received")
                 processes.remove(iiAcquisition)
                 StopiiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopScript.exe")
                 iiFile.close()
@@ -77,8 +85,15 @@ while True:
                 processes.remove(NIRAcquisition)
                 nirFile.close()
                 print "NIR Acquisition Stopped"
-                dbSocket.send("HyperSpec Acquisition Stopped")
                 HyperSpecAcqStarted = False
+                stopVerification = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopVerificationScript.exe")
+                stopped = pyperclip.paste()
+                if (stopped.find('True') != -1):
+                    dbSocket.send("HyperSpec Stopped")
+                    VerificationState = False
+                    dbSocket.close()
+                    startedAcq = 0
+                print "Verification State is %s" % VerificationState
             else:
                 print "HyperSpec Acquisition already stopped"
         
@@ -106,8 +121,8 @@ while True:
                     iiVerification = False
             else:
                 iiVerification = False
-        print "iiLine - %s" % iiLine  
-        print "iiLinePrev - %s" % iiLinePrev
+        #print "iiLine - %s" % iiLine  
+        #print "iiLinePrev - %s" % iiLinePrev
         if not iiLine.strip():
             iiLinePrev = iiLine
         nirLocation = nirFile.tell()
@@ -124,17 +139,21 @@ while True:
                     nirVerification = False
             else:
                 nirVerification = False
-        print "nirLine - %s" % nirLine  
-        print "nirLinePrev - %s" % nirLinePrev
+        #print "nirLine - %s" % nirLine  
+        #print "nirLinePrev - %s" % nirLinePrev
         if not nirLine.strip():
             nirLinePrev = nirLine
     if len(processes) == 0:
         iiVerification = False
         nirVerification = False
     HyperSpecVerification = iiVerification and nirVerification
-    print "iiVerification - %s" % iiVerification 
-    print "nirVerification - %s" % nirVerification
-    print "HyperSpecVerification - %s" % HyperSpecVerification
-    #dbSocket.send(HyperSpecVerification)
+    if HyperSpecVerification == True:
+        VerificationState = True
+    #print "iiVerification - %s" % iiVerification 
+    #print "nirVerification - %s" % nirVerification
+    #print "HyperSpecVerification - %s" % HyperSpecVerification
+    if VerificationState == True:
+        dbSendMessage = "%s" % HyperSpecVerification
+        dbSocket.send(dbSendMessage)
     iterations += 1
 	

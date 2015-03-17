@@ -2,6 +2,7 @@ import zmq
 import subprocess
 import time
 import pyperclip
+import string
 
 context = zmq.Context()
 
