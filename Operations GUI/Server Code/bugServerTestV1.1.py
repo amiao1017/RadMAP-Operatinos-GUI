@@ -5,13 +5,14 @@ from datetime import datetime, date, time
 import shlex
 import string
 from Tkinter import Tk
+import time
 
 context = zmq.Context()
 
 #  Sockets to talk to servers
 port = "5555"
 dbSocket = context.socket(zmq.PAIR)
-dbSocket.connect("tcp://192.168.1.100:%s" % port)
+dbSocket.bind("tcp://192.168.100.42:%s" % port)
 
 #booleans
 velodynePortStarted = False
@@ -32,13 +33,18 @@ system_state = 0 #0 if sta command not received
 
 
 while True:
-
     
-    
-    if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
-        dbCommand = dbSocket.recv()
-        if dbCommand.find("STA") != -1:
-			print "Command Received"
-			dbSocket.send("Command Received")
-	
-                                                  
+	if dbSocket.poll(100) != 0: #potentially add a timeout to the socket poll
+		dbCommand = dbSocket.recv()
+		
+		
+		if dbCommand == "startCapture":
+			print "Command Received - %s" % dbCommand
+			dbSocket.send("Start Command Received")
+			startCapture = subprocess.Popen("startCapture.bat", cwd=r'E:', creationflags=subprocess.CREATE_NEW_CONSOLE)
+			time.sleep(1)
+			startArduino = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\Server Code\\startArduino.exe")
+		if dbCommand == "stopCapture":
+			print "Command Received - %s" % dbCommand
+			dbSocket.send("Stop Command Received")
+			stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureScript.exe")  

@@ -9,12 +9,12 @@ context = zmq.Context()
 
 #  Sockets to talk to servers
 portDaq = "5553"
-daqSocket = context.socket(zmq.PAIR)
-daqSocket.connect("tcp://localhost:%s" % portDaq)
+#daqSocket = context.socket(zmq.PAIR)
+#daqSocket.bind("tcp://192.168.100.1:%s" % portDaq)
 portMage = "5554"
-mageSocket = context.socket(zmq.PAIR)
-mageSocket.connect("tcp://localhost:%s" % portMage)
-portBug = "5555"
+#mageSocket = context.socket(zmq.PAIR)
+#mageSocket.bind("tcp://192.168.100.1:%s" % portMage)
+portBug = "5551"
 bugSocket = context.socket(zmq.PAIR)
 bugSocket.connect("tcp://192.168.100.42:%s" % portBug)
 portLiq = "5557"
@@ -22,7 +22,6 @@ liqSocket = context.socket(zmq.PAIR)
 liqSocket.connect("tcp://192.168.100.23:%s" % portLiq)
 portHs = "5556"
 hsSocket = context.socket(zmq.PAIR)
-#hsSocket.connect("tcp://127.0.0.1:%s" % portHs)
 hsSocket.connect("tcp://192.168.100.43:%s" % portHs)
 
 class operationsApp(Tk):
@@ -56,19 +55,17 @@ class operationsApp(Tk):
 		self.startList = []
 		self.stopList = []
 		self.startCapture = IntVar()
-		self.startWeather = IntVar()
 		self.startGps = IntVar()
 		self.startNeutrons = IntVar()
 		self.startHyperSpec = IntVar()
 		self.stopCapture = IntVar()
-		self.stopWeather = IntVar()
 		self.stopGps = IntVar()
 		self.stopNeutrons = IntVar()
 		self.stopHyperSpec = IntVar()
-		self.verificationGammaHvColor = StringVar()
+		self.verificationGammaColor = StringVar()
 		self.verificationNeutronHvColor = StringVar()		
 		self.verificationDbusColor = StringVar()
-		self.verificationDbusMonColor = StringVar()
+		self.verificationBusExtMonColor = StringVar()
 		self.verificationStartMistiColor = StringVar()
 		self.verificationArduinoColor = StringVar()
 		self.verificationLidarColor = StringVar()
@@ -77,26 +74,31 @@ class operationsApp(Tk):
 		self.verificationGpsColor = StringVar()
 		self.verificationNeutronsColor = StringVar()
 		self.verificationHyperSpecColor = StringVar()
-		self.weatherDataCheck = StringVar()
 		self.arduinoDataCheck = StringVar()
 		self.ladybugDataCheck = StringVar()
 		self.lidarDataCheck = StringVar()
 		self.timestampedNotes = StringVar()
 		self.dataOffloadNotes = StringVar()
 		self.notesVar = StringVar()
+		self.displayVar = StringVar()
 		self.fileName = StringVar()
 		self.fileOpened = False
 		self.noteSaved = False
 		self.multipleFiles = 0
+		self.startCaptureFlag = 0
+		self.startCaptureCommand = "startCapture"
+		self.startHyperSpecCommand = "startHyperSpec"
+		self.startHyperSpecFlag = 0
+		self.hyperSpecStarted = 0
 
 		self.operatorGrid = Label (self)
 		self.operatorGrid.grid(column=0,row=0)
 
-		operatorLabel = Label(self.operatorGrid,anchor="w",text="Operator:", font=2)
-		operatorLabel.grid(column=0,row=0)
-		labelUnderlined = tkFont.Font(operatorLabel,operatorLabel.cget("font"))
+		self.operatorLabel = Label(self.operatorGrid,anchor="w",text="Operator:", font=2)
+		self.operatorLabel.grid(column=0,row=0)
+		labelUnderlined = tkFont.Font(self.operatorLabel,self.operatorLabel.cget("font"))
 		labelUnderlined.configure(underline = True)
-		operatorLabel.configure(font=labelUnderlined)
+		self.operatorLabel.configure(font=labelUnderlined)
 
 		self.entryOperator = Entry(self.operatorGrid, textvariable=self.operator, width=25)
 		self.entryOperator.grid(column=1,row=0)
@@ -111,7 +113,7 @@ class operationsApp(Tk):
 		#space.grid(column=3,row=0)
 
 		self.elapsedTimeGrid = Label(self)
-		self.elapsedTimeGrid.grid(column=1,row=0)
+		self.elapsedTimeGrid.grid(column=0,row=1)
 
 		self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 		self.displayElapsedTimeLabel.grid(column=0,row=0)
@@ -125,207 +127,141 @@ class operationsApp(Tk):
 		self.displayClock = Label(self.elapsedTimeGrid, textvariable=self.clock, anchor="e", bg="gray",width=16)
 		self.displayClock.grid(column=2,row=0)
 
-		self.startGrid = Label(self)
-		self.startGrid.grid(column=0,row=1)
+		self.communicationDisplayGrid = Label(self)
+		self.communicationDisplayGrid.grid(column=0,row=2)
 
-		mainStart = Button(self.startGrid,text="START",activebackground="blue",activeforeground="white",relief=RAISED, command = self.mainStartClick)
-		mainStart.grid(column=0,row=1)
+		self.communicationDisplay = Label(self.communicationDisplayGrid, anchor=S, textvariable=self.displayVar, bg="white", relief=RAISED, width = 36, height=2, wraplength=275)
+		self.communicationDisplay.grid(column=0,row=0,columnspan=3)
 
-		mainStop = Button(self.startGrid,text="STOP",activebackground="blue",activeforeground="white",relief=RAISED, command = self.mainStopClick)
-		mainStop.grid(column=1,row=1)
+		self.mainControlGrid = Label(self)
+		self.mainControlGrid.grid(column=0,row=3)
 
-		self.indStart = Label(self.startGrid,anchor="w")
-		self.indStart.grid(column=0,row=2)
+		self.mainStart = Button(self.mainControlGrid,text="START",activebackground="blue",activeforeground="white",relief=RAISED, command = self.mainStartClick)
+		self.mainStart.grid(column=0,row=0)
+
+		self.mainStop = Button(self.mainControlGrid,text="STOP",activebackground="blue",activeforeground="white",relief=RAISED, command = self.mainStopClick)
+		self.mainStop.grid(column=1,row=0)
+
+		self.indStart = Label(self.mainControlGrid)
+		self.indStart.grid(column=0,row=1)
+
+		self.startHyperSpecCheck = Checkbutton(self.indStart,variable=self.startHyperSpec,text="Start HyperSpec", command = self.startHyperSpecClick)
+		self.startHyperSpecCheck.pack()
 
 		self.startCaptureCheck = Checkbutton(self.indStart,variable=self.startCapture,text="Start Capture", command = self.startCaptureClick)
 		self.startCaptureCheck.pack()
-
-		self.startWeatherCheck = Checkbutton(self.indStart,variable=self.startWeather,text="Start Weather", command = self.startWeatherClick)
-		self.startWeatherCheck.pack()
 
 		self.startGpsCheck = Checkbutton(self.indStart,variable=self.startGps,text="Start GPS", command = self.startGpsClick)
 		self.startGpsCheck.pack()
 
 		self.startNeutronsCheck = Checkbutton(self.indStart,variable=self.startNeutrons,text="Start Neutrons", command = self.startNeutronsClick)
-		self.startNeutronsCheck.pack()		
+		self.startNeutronsCheck.pack()
 
-		self.startHyperSpecCheck = Checkbutton(self.indStart,variable=self.startHyperSpec,text="Start HyperSpec", command = self.startHyperSpecClick)
-		self.startHyperSpecCheck.pack()
+		self.indStartButton = Button(self.indStart, text="Select Start", activebackground="blue",activeforeground="white",relief=RAISED, command = self.indStartClick)
+		self.indStartButton.pack()
 
-		indStartButton = Button(self.indStart, text="Select Start", command = self.indStartClick)
-		indStartButton.pack()
+		self.indStop = Label(self.mainControlGrid)
+		self.indStop.grid(column=1,row=1)
 
-		indStop = Label(self.startGrid)
-		indStop.grid(column=1,row=2)
-
-		self.stopCaptureCheck = Checkbutton(indStop,variable=self.stopCapture,text="Stop Capture", command = self.stopCaptureClick)
-		self.stopCaptureCheck.pack()
-
-		self.stopWeatherCheck = Checkbutton(indStop,variable=self.stopWeather,text="Stop Weather", command = self.stopWeatherClick)
-		self.stopWeatherCheck.pack()
-
-		self.stopGpsCheck = Checkbutton(indStop,variable=self.stopGps,text="Stop GPS", command = self.stopGpsClick)
-		self.stopGpsCheck.pack()
-
-		self.stopNeutronsCheck = Checkbutton(indStop,variable=self.stopNeutrons,text="Stop Neutrons", command = self.stopNeutronsClick)
-		self.stopNeutronsCheck.pack()		
-
-		self.stopHyperSpecCheck = Checkbutton(indStop,variable=self.stopHyperSpec,text="Stop HyperSpec", command = self.stopHyperSpecClick)
+		self.stopHyperSpecCheck = Checkbutton(self.indStop,variable=self.stopHyperSpec,text="Stop HyperSpec", command = self.stopHyperSpecClick)
 		self.stopHyperSpecCheck.pack()
 
-		indStopButton = Button(indStop, text="Select Stop", command = self.indStopClick)
-		indStopButton.pack()
+		self.stopCaptureCheck = Checkbutton(self.indStop,variable=self.stopCapture,text="Stop Capture", command = self.stopCaptureClick)
+		self.stopCaptureCheck.pack()
 
-		verificationLeds = Label(self.startGrid)
-		verificationLeds.grid(column=2,row=2)
+		self.stopGpsCheck = Checkbutton(self.indStop,variable=self.stopGps,text="Stop GPS", command = self.stopGpsClick)
+		self.stopGpsCheck.pack()
 
-		#if Gamma HV is on self.verificationGammaHvColor.set("Green")
-		#else 
-		self.verificationGammaHvColor.set("Red")
-		verificationGammaHvButton = Button(verificationLeds,text="Gamma Ray HV",relief=RAISED,bg=self.verificationGammaHvColor.get(),activebackground="blue",activeforeground="white", command = self.gammaHVClick)
-		verificationGammaHvButton.pack()
+		self.stopNeutronsCheck = Checkbutton(self.indStop,variable=self.stopNeutrons,text="Stop Neutrons", command = self.stopNeutronsClick)
+		self.stopNeutronsCheck.pack()		
 
+		self.indStopButton = Button(self.indStop, text="Select Stop", activebackground="blue",activeforeground="white",relief=RAISED, command = self.indStopClick)
+		self.indStopButton.pack()
+
+		self.verificationLeds = Label(self)
+		self.verificationLeds.grid(column=0,row=4)
+
+		self.verificationLedsLeft = Label(self.verificationLeds)
+		self.verificationLedsLeft.grid(column=0,row=0)
+
+		
 		#if Neutron HV is on self.verificationNeutronHvColor.set("Green")
 		#else 
-		self.verificationNeutronHvColor.set("Red")
-		verificationNeutronHvButton = Button(verificationLeds,text="Neutron HV",relief=RAISED,bg=self.verificationNeutronHvColor.get(),activebackground="blue",activeforeground="white", command = self.neutronHVClick)
-		verificationNeutronHvButton.pack()
+		#self.verificationNeutronHvColor.set("Red")
+		#self.verificationNeutronHvButton = Button(self.verificationLedsLeft,text="Neutron HV",relief=RAISED,bg=self.verificationNeutronHvColor.get(),activebackground="blue",activeforeground="white", command = self.neutronHVClick)
+		#self.verificationNeutronHvButton.pack()
 
 		#if Dbus is setup self.verificationDbusColor.set("Green")
 		#else 
 		self.verificationDbusColor.set("Red")
-		verificationDbus = Label(verificationLeds, text="DBUS Setup",relief=RAISED,bg=self.verificationDbusColor.get())
-		verificationDbus.pack()
+		self.verificationDbus = Button(self.verificationLedsLeft,text="DBUS Setup",relief=RAISED,bg=self.verificationDbusColor.get(),activebackground="blue",activeforeground="white", command = self.dBusClick)		
+		self.verificationDbus.pack()
 
 		#if Dbus Monitoring is on self.verificationDbusMonColor.set("Green")
 		#else 
-		self.verificationDbusMonColor.set("Red")
-		verificationDbusMon = Label(verificationLeds, text="DBUS Monitoring",relief=RAISED,bg=self.verificationDbusMonColor.get())
-		verificationDbus.pack()
+		self.verificationBusExtMonColor.set("Red")
+		self.verificationBusExtMon = Button(self.verificationLedsLeft,text="BusExtender Monitoring",relief=RAISED,bg=self.verificationBusExtMonColor.get(),activebackground="blue",activeforeground="white", command = self.busExtClick)
+		self.verificationBusExtMon.pack()
 
 		#if Start Misti has been started self.verificationStartMistiColor.set("Green")
 		#else 
 		self.verificationStartMistiColor.set("Red")
-		verificationStartMisti = Label(verificationLeds, text="Start MISTI",relief=RAISED,bg=self.verificationStartMistiColor.get())
-		verificationStartMisti.pack()
+		self.verificationStartMisti = Button(self.verificationLedsLeft,text="Start MISTI",relief=RAISED,bg=self.verificationStartMistiColor.get(),activebackground="blue",activeforeground="white", command = self.startMistiClick)
+		self.verificationStartMisti.pack()
 
 		#if Arduino Triggering is on self.verificationArduinoColor.set("Green")
 		#else 
 		self.verificationArduinoColor.set("Red")
-		verificationArduino = Label(verificationLeds, text="Arduino Triggering",relief=RAISED,bg=self.verificationArduinoColor.get())
-		verificationArduino.pack()
-
-		#if Lidar is on self.verificationLidarColor.set("Green")
-		#else 
-		self.verificationLidarColor.set("Red")
-		verificationLidar = Label(verificationLeds, text="Lidar",relief=RAISED,bg=self.verificationLidarColor.get())
-		verificationLidar.pack()
-
-		#if Ladybug is on self.verificationLadybugColor.set("Green")
-		#else 
-		self.verificationLadybugColor.set("Red")
-		verificationLadybug = Label(verificationLeds, text="Ladybug",relief=RAISED,bg=self.verificationLadybugColor.get())
-		verificationLadybug.pack()
-
-		#if Weather is on self.verificationWeatherColor.set("Green")
-		#else 
-		self.verificationWeatherColor.set("Red")
-		verificationWeather = Label(verificationLeds, text="Weather",relief=RAISED,bg=self.verificationWeatherColor.get())
-		verificationWeather.pack()
+		self.verificationArduino = Button(self.verificationLedsLeft,text="Arduino Triggering",relief=RAISED,bg=self.verificationArduinoColor.get(),activebackground="blue",activeforeground="white", command = self.arduinoTriggeringClick)
+		self.verificationArduino.pack()
 
 		#if GPS is on self.verificationGpsColor.set("Green")
 		#else 
 		self.verificationGpsColor.set("Red")
-		verificationGps = Label(verificationLeds, text="NovAtel GPS",relief=RAISED,bg=self.verificationGpsColor.get())
-		verificationGps.pack()
+		self.verificationGps = Button(self.verificationLedsLeft,text="NovAtel GPS",relief=RAISED,bg=self.verificationGpsColor.get(),activebackground="blue",activeforeground="white", command = self.gpsClick)
+		self.verificationGps.pack()
+
+		self.verificationLedsRight = Label(self.verificationLeds)
+		self.verificationLedsRight.grid(column=1,row=0)
+
+		#if Gamma HV is on self.verificationGammaHvColor.set("Green")
+		#else 
+		self.verificationGammaColor.set("Red")
+		self.verificationGammaButton = Button(self.verificationLedsRight,text="Gamma Ray",relief=RAISED,bg=self.verificationGammaColor.get(),activebackground="blue",activeforeground="white", command = self.gammaClick)
+		self.verificationGammaButton.pack()
 
 		#if Neutrons is on self.verificationNeutronsColor.set("Green")
 		#else 
 		self.verificationNeutronsColor.set("Red")
-		verificationNeutrons = Label(verificationLeds, text="Neutrons Acquisistion",relief=RAISED,bg=self.verificationNeutronsColor.get())
-		verificationNeutrons.pack()
+		self.verificationNeutrons = self.verificationGps = Button(self.verificationLedsRight,text="Neutrons",relief=RAISED,bg=self.verificationNeutronsColor.get(),activebackground="blue",activeforeground="white", command = self.neutronsClick)
+		self.verificationNeutrons.pack()
+
+		#if Lidar is on self.verificationLidarColor.set("Green")
+		#else 
+		self.verificationLidarColor.set("Red")
+		self.verificationLidar = Button(self.verificationLedsRight,text="Lidar",relief=RAISED,bg=self.verificationLidarColor.get(),activebackground="blue",activeforeground="white", command = self.lidarClick)
+		self.verificationLidar.pack()
+
+		#if Ladybug is on self.verificationLadybugColor.set("Green")
+		#else 
+		self.verificationLadybugColor.set("Red")
+		self.verificationLadybug = Button(self.verificationLedsRight,text="Ladybug",relief=RAISED,bg=self.verificationLadybugColor.get(),activebackground="blue",activeforeground="white", command = self.ladybugClick)
+		self.verificationLadybug.pack()
 
 		#if Hyper Spec is on self.verificationHyperSpecColor.set("Green")
 		#else 
 		self.verificationHyperSpecColor.set("Red")
-		verificationHyperSpec = Label(verificationLeds, text="Hyper Spec",relief=RAISED,bg=self.verificationHyperSpecColor.get())
-		verificationHyperSpec.pack()
-
-		self.dataCheckGrid = Label(self)
-		self.dataCheckGrid.grid(column=0,row=2)
-
-		weatherDataCheckGrid = Label(self.dataCheckGrid)
-		weatherDataCheckGrid.grid(column=0,row=0)
-
-		weatherDataCheckLabel = Label(weatherDataCheckGrid,anchor="w",text="Weather:")
-		weatherDataCheckLabel.grid(column=0,row=0)
-		labelUnderlinedWeather = tkFont.Font(weatherDataCheckLabel,weatherDataCheckLabel.cget("font"))
-		labelUnderlinedWeather.configure(underline = True)
-		weatherDataCheckLabel.configure(font=labelUnderlinedWeather)
-
-		self.weatherDataCheck.set("Session Not Started")	
-		self.weatherDataCheckEntry = Label(weatherDataCheckGrid, textvariable=self.weatherDataCheck)
-		self.weatherDataCheckEntry.grid(column=1,row=0)
-
-		arduinoDataCheckGrid = Label(self.dataCheckGrid)
-		arduinoDataCheckGrid.grid(column=1,row=0)
-	
-		arduinoDataCheckLabel = Label(arduinoDataCheckGrid,text="Arduino Triggering:")
-		arduinoDataCheckLabel.grid(column=0,row=0)
-		labelUnderlinedArduino = tkFont.Font(arduinoDataCheckLabel,arduinoDataCheckLabel.cget("font"))
-		labelUnderlinedArduino.configure(underline = True)
-		arduinoDataCheckLabel.configure(font=labelUnderlinedArduino)
-
-		self.arduinoDataCheck.set("Session Not Started")
-		self.arduinoDataCheckEntry = Label(arduinoDataCheckGrid, textvariable=self.arduinoDataCheck)
-		self.arduinoDataCheckEntry.grid(column=1,row=0)
-
-		ladybugDataCheckGrid = Label(self.dataCheckGrid)
-		ladybugDataCheckGrid.grid(column=0,row=1)
-
-		ladybugDataCheckLabel = Label(ladybugDataCheckGrid,text="Ladybugs:")
-		ladybugDataCheckLabel.grid(column=0,row=0)
-		labelUnderlinedLadybug = tkFont.Font(ladybugDataCheckLabel,ladybugDataCheckLabel.cget("font"))
-		labelUnderlinedLadybug.configure(underline = True)
-		ladybugDataCheckLabel.configure(font=labelUnderlinedLadybug)
-
-		self.ladybugDataCheck.set("Session Not Started")
-		self.ladybugDataCheckEntry = Label(ladybugDataCheckGrid, textvariable=self.ladybugDataCheck)
-		self.ladybugDataCheckEntry.grid(column=1,row=0)
-
-		lidarDataCheckGrid = Label(self.dataCheckGrid)
-		lidarDataCheckGrid.grid(column=1,row=1)
-
-		lidarDataCheckLabel = Label(lidarDataCheckGrid,text="Lidars:")
-		lidarDataCheckLabel.grid(column=0,row=0)
-		labelUnderlinedLidar = tkFont.Font(lidarDataCheckLabel,lidarDataCheckLabel.cget("font"))
-		labelUnderlinedLidar.configure(underline = True)
-		lidarDataCheckLabel.configure(font=labelUnderlinedLidar)
-
-		self.lidarDataCheck.set("Session Not Started")
-		self.lidarDataCheckEntry = Label(lidarDataCheckGrid, textvariable=self.lidarDataCheck)
-		self.lidarDataCheckEntry.grid(column=1,row=0)
-
-		#self.mapPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/BerkeleyCA.gif")
-
-		#self.mapLabel = Label(self, image=self.mapPhoto)
-		#self.mapLabel.image = self.mapPhoto
-		#self.mapLabel.grid(column=1,row=1)
-
-		#self.waterfallPhoto = ImageTk.PhotoImage(file="/home/rossebv/Downloads/waterfallExample.jpg")
-
-		#self.waterfallLabel = Label(self, image=self.waterfallPhoto)
-		#self.waterfallLabel.image = self.waterfallPhoto
-		#self.waterfallLabel.grid(column=1,row=3)
-
+		self.verificationHyperSpec = Button(self.verificationLedsRight,text="HyperSpec",relief=RAISED,bg=self.verificationHyperSpecColor.get(),activebackground="blue",activeforeground="white", command = self.hyperSpecClick)
+		self.verificationHyperSpec.pack()
+		
 		self.timestampedNotesGrid = Label(self,anchor="w")
-		self.timestampedNotesGrid.grid(column=0,row=3)
+		self.timestampedNotesGrid.grid(column=0,row=5)
 
-		timestampedNotesLabel = Label(self.timestampedNotesGrid,text="Notes:")
-		timestampedNotesLabel.grid(column=0,row=0)
-		labelUnderlinedNotes = tkFont.Font(timestampedNotesLabel,timestampedNotesLabel.cget("font"))
+		self.timestampedNotesLabel = Label(self.timestampedNotesGrid,text="Notes:")
+		self.timestampedNotesLabel.grid(column=0,row=0)
+		labelUnderlinedNotes = tkFont.Font(self.timestampedNotesLabel,self.timestampedNotesLabel.cget("font"))
 		labelUnderlinedNotes.configure(underline = True)
-		timestampedNotesLabel.configure(font=labelUnderlinedNotes)
+		self.timestampedNotesLabel.configure(font=labelUnderlinedNotes)
 
 		#self.timestampedNotes.set("Insert Notes Here")
 		self.timestampedNotesEntry = Entry(self.timestampedNotesGrid, textvariable=self.timestampedNotes)
@@ -337,14 +273,14 @@ class operationsApp(Tk):
 		self.timestampedNotesButton = Button(self.timestampedNotesGrid,text="Save Note",activebackground="blue",activeforeground="white",relief=RAISED, command = self.setTimestampedNotes)
 		self.timestampedNotesButton.grid(column=2,row=0) 
 
-		self.timestampedNotesDisplay = Label(self.timestampedNotesGrid, anchor=S, textvariable=self.notesVar, bg="white", relief=RAISED, width = 36, height=15, wraplength=275)
-		self.timestampedNotesDisplay.grid(column=0,row=1,columnspan=3)
+		self.timestampedNotesDisplayScreen = Label(self.timestampedNotesGrid, anchor=S, textvariable=self.notesVar, bg="white", relief=RAISED, width = 36, height=15, wraplength=275)
+		self.timestampedNotesDisplayScreen.grid(column=0,row=1,columnspan=3)
 
 		self.timestampedNotesDisplayButton = Button(self.timestampedNotesGrid,text="Display Notes",activebackground="blue",activeforeground="white",relief=RAISED, command = self.timestampedNotesDisplay)
 		self.timestampedNotesDisplayButton.grid(column=0,row=2, columnspan=3) 
 
 		self.dataOffloadGrid = Label(self,anchor="w")
-		self.dataOffloadGrid.grid(column=0,row=4)
+		self.dataOffloadGrid.grid(column=0,row=6)
 
 		#dataOffloadLabel = Label(self.dataOffloadGrid,text="File Name:")
 		#dataOffloadLabel.pack(side = LEFT)
@@ -361,12 +297,13 @@ class operationsApp(Tk):
 
 		self.dataOffloadButton = Button(self.dataOffloadGrid,text="Save Files",activebackground="blue",activeforeground="white",relief=RAISED, command = self.saveData)
 		self.dataOffloadButton.pack(side = LEFT)	
-
-		#self.resetLabel = Label(self)
-		#self.resetLabel.grid(column=1, row=4)	
+		
+		#self.closeWindowButton = Button(self.dataOffloadGrid, text="Close Window", activebackground="blue",activeforeground="white",relief=RAISED, command = self.closeWindow)
+		#self.closeWindowButton.pack(side = LEFT)
 
 		self.resetButton = Button(self.dataOffloadGrid, text="New Session",activebackground="blue",activeforeground="white",relief=RAISED, command = self.resetClicked)
 		self.resetButton.pack()
+
 
 	def entryClicked(self, number):
 		if self.clickedOperator == False:		#Clicked can be thought of as saved. savedOpterator
@@ -403,8 +340,9 @@ class operationsApp(Tk):
 				self.clock.set(clock2)
 			self.displayClock.after(200, app.tick)
 		elif self.systemClicked.get() == 2:
+			self.elapsedTimeGrid.grid_forget()
 			elapsedTimeGrid = Label(self)
-			elapsedTimeGrid.grid(column=1,row=0)
+			elapsedTimeGrid.grid(column=0,row=1)
 			self.displayElapsedTimeLabel = Label(elapsedTimeGrid, text="Time Since Start of Session:")
 			self.displayElapsedTimeLabel.grid(column=0,row=0)
 			labelUnderlined = tkFont.Font(self.displayElapsedTimeLabel,self.displayElapsedTimeLabel.cget("font"))
@@ -414,6 +352,17 @@ class operationsApp(Tk):
 			self.displayElapsedTime.grid(column=1,row=0)
 			self.displayClock = Label(elapsedTimeGrid, textvariable=self.clock, anchor="e", bg="orange",fg="black",width=7)
 			self.displayClock.grid(column=2,row=0)
+
+	
+	def displayUpdate(self):
+		self.communicationDisplayGrid.grid_forget()
+		self.communicationDisplayGrid = Label(self)
+		self.communicationDisplayGrid.grid(column=0,row=2)
+
+		self.communicationDisplay = Label(self.communicationDisplayGrid, anchor=S, textvariable=self.displayVar, bg="white", relief=RAISED, width = 36, height=2, wraplength=275)
+		self.communicationDisplay.grid(column=0,row=0,columnspan=3)
+		print "Display Changed"
+		
 
 	def mainStartClick(self):
 		if self.systemClicked.get() == 0:
@@ -425,15 +374,15 @@ class operationsApp(Tk):
 				if self.fileOpened == False:
 					operatorName = self.operator.get()
 					operatorName = operatorName.translate(None,whitespace)
-					self.fileName = '/home/mistidb/misti/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+					self.fileName = '/home/mistidb/misti/Documents/RadMAP Runs/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
 					if glob.glob("%s.txt" %self.fileName): 
 						if glob.glob(('%sv*.txt' %self.fileName)):
 							fileList = glob.glob(('%sv*.txt' %self.fileName))
 							fileListLength = len(fileList)
-							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Tests')
+							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 							self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
 						else:
-							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Tests')
+							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 							self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
 						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
@@ -442,8 +391,8 @@ class operationsApp(Tk):
 						self.notesVar.set(self.f.read())
 						self.f.close()
 					else:
-						#self.fileName = glob.glob('/*/Documents/RadMAP Tests')
-						self.fileName = '%s.txt' %(self.fileName)
+						#self.fileName = glob.glob('/*/Documents/RadMAP Runs')
+						self.fileName = '%s.txt' %self.fileName
 						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
@@ -462,7 +411,7 @@ class operationsApp(Tk):
 				self.elapsedTimeGrid.grid_forget()
 				self.elapsedTimeGrid = Label(self)
 
-				self.elapsedTimeGrid.grid(column=1,row=0)
+				self.elapsedTimeGrid.grid(column=0,row=1)
 				self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 				self.displayElapsedTimeLabel.grid(column=0,row=0)
 				
@@ -476,26 +425,61 @@ class operationsApp(Tk):
 				self.displayClock.grid(column=2,row=0)
 				
 				self.tick()
-				self.startList = ["STA", "startArduino", "startLidar", "startLadybug", "startWeather", "startGps", "startNeutrons", "startHyperSpec"]
-				#subprocess.Popen(shlex.split("Set up Dbus call"))
-				#daqSocket.send(self.startList)
-				#mageSocket.send(self.startList)
-				#subprocess.Popen(shlex.split("Set up Dbus Monitor call"))
-				#daqSocket.send("dBusMon")
-				#mageSocket.send("dBusMon")
-				#subprocess.Popen(shlex.split("Start MISTI call"))
-				#daqSocket.send("startMISTI")
-				#mageSocket.send("startMISTI")
-				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)
+				self.startList = ["STA", "startHyperSpec", "startNeutrons", "startCapture", "startGPS"]
 				for command in self.startList:
-					if command == "startLidar":
+					print command
+					if command == "startHyperSpec":
 						try:
-							bugSocket.send('startLidar')
+							hsSocket.send('startHyperSpec')
+							print "Sent Start HyperSpec"
+							self.displayVar.set("Sent Start HyperSpec")
+							if hsSocket.poll(100) != 0:
+								hsMessage = hsSocket.recv()
+								print "%s" % hsMessage
+								self.displayVar.set(hsMessage)
+								#self.displayUpdate()
+							time.sleep(9)
+							print "Done sleeping"
 						except ZMQError:
 							print "Socket Send Failed"
+					if command == "startCapture":
+						try:
+							bugSocket.send('startCapture')
+							print "Sent StartCapture"
+							self.displayVar.set("Sent StartCapture")
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+								self.displayVar.set(bugMessage)
+								#self.displayUpdate()
+							time.sleep(10)
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startGPS":
+						try:
+							bugSocket.send('startGPS')
+							print "Sent Start GPS"
+							self.displayVar.set("Sent Start GPS")
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+								self.displayVar.set(bugMessage)
+								#self.displayUpdate()
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startNeutrons":
+						try:
+							liqSocket.send('startNeutrons')
+							print "Sent Start Neutrons"
+							self.displayVar.set("Sent Start Neutrons")
+							if liqSocket.poll(100) != 0:
+								liqMessage = liqSocket.recv()
+								print "%s" % liqMessage
+								self.displayVar.set(liqMessage)
+								#self.displayUpdate()
+						except ZMQError:
+							print "Socket Send Failed"
+
 
 	def indStartClick(self):
 		if self.systemClicked.get() == 0 and self.startList != []:
@@ -507,15 +491,15 @@ class operationsApp(Tk):
 				if self.fileOpened == False:
 					operatorName = self.operator.get()
 					operatorName = operatorName.translate(None,whitespace)
-					self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+					self.fileName = '/home/mistidb/misti/Documents/RadMAP Runs/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
 					if glob.glob("%s.txt" %self.fileName): 
 						if glob.glob(('%sv*.txt' %self.fileName)):
 							fileList = glob.glob(('%sv*.txt' %self.fileName))
 							fileListLength = len(fileList)
-							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 							self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
 						else:
-							self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+							self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 							self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
 						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
@@ -524,14 +508,16 @@ class operationsApp(Tk):
 						self.notesVar.set(self.f.read())
 						self.f.close()
 					else:
-						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-						self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+						#self.fileName = glob.glob('/*/*/Documents/RadMAP Runs')
+						self.fileName = '%s.txt' %self.fileName
 						self.f = open("%s" %self.fileName, "w")
 						self.fileOpened = True
 						self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
 						self.f = open('%s' %self.fileName)
 						self.notesVar.set(self.f.read())
 						self.f.close()
+						
+
 				else:
 					self.f = open("%s" %self.fileName, "a")
 					self.f.write("%s: Session Started \n" %self.currentClock.strftime('%H:%M:%S'))
@@ -544,7 +530,7 @@ class operationsApp(Tk):
 				self.elapsedTimeGrid.grid_forget()
 				self.elapsedTimeGrid = Label(self)
 
-				self.elapsedTimeGrid.grid(column=1,row=0)
+				self.elapsedTimeGrid.grid(column=0,row=1)
 				self.displayElapsedTimeLabel = Label(self.elapsedTimeGrid, text="Time Since Start of Session:")
 				self.displayElapsedTimeLabel.grid(column=0,row=0)
 				
@@ -559,21 +545,99 @@ class operationsApp(Tk):
 					
 				self.tick()
 				self.startList.insert(0, "STA")
-				#subprocess.Popen(shlex.split("Set up Dbus call"))
-				#daqSocket.send(self.startList)
-				#mageSocket.send(self.startList)
-				#subprocess.Popen(shlex.split("Set up Dbus Monitor call"))
-				#daqSocket.send("dBusMon")
-				#mageSocket.send("dBusMon")
-				#subprocess.Popen(shlex.split("Start MISTI call"))
-				#daqSocket.send("startMISTI")
-				#mageSocket.send("startMISTI")
-				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)
+				for command in self.startList:
+					if command == "startHyperSpec":
+						if self.startCaptureFlag == 1:
+							if self.hyperSpecStarted == 0:
+								try:
+									hsSocket.send('startHyperSpec')
+									print "Sent Start HyperSpec"
+									self.displayVar.set("Sent Start HyperSpec")
+									if hsSocket.poll(100) != 0:
+										hsMessage = hsSocket.recv()
+										print "%s" % hsMessage
+										self.displayVar.set(hsMessage)
+										#self.displayUpdate()
+									time.sleep(9)
+									self.hyperSpecStarted = 1
+								except ZMQError:
+									print "Socket Send Failed"
+						else:
+							print "HyperSpec cannot be started without StartCapture"
+							self.displayVar.set("HyperSpec cannot be started without StartCapture")
+					if command == "startCapture":
+						if self.startHyperSpecFlag == 1:
+							if self.hyperSpecStarted == 1:
+								try:
+									bugSocket.send('startCapture')
+									print "Sent StartCapture"
+									self.displayVar.set("Sent StartCapture")
+									if bugSocket.poll(100) != 0:
+										bugMessage = bugSocket.recv()
+										print "%s" % bugMessage
+										self.displayVar.set(bugMessage)
+										#self.displayUpdate()
+									time.sleep(10)
+								except ZMQError:
+									print "Socket Send Failed"
+							else:
+								hsSocket.send('startHyperSpec')
+								print "Sent Start HyperSpec from StartCapture"
+								self.displayVar.set("Sent Start HyperSpec from StartCapture")
+								if hsSocket.poll(100) != 0:
+									hsMessage = hsSocket.recv()
+									print "%s" % hsMessage
+									self.displayVar.set(hsMessage)
+									#self.displayUpdate()
+								time.sleep(9)
+								self.hyperSpecStarted = 1
+								bugSocket.send('startCapture')
+								print "Sent StartCapture"
+								self.displayVar.set("Sent StartCapture")
+								if bugSocket.poll(100) != 0:
+									bugMessage = bugSocket.recv()
+									print "%s" % bugMessage
+									self.displayVar.set(bugMessage)
+									#self.displayUpdate()
+								time.sleep(10)	
+						else:
+							try:
+								bugSocket.send('startCapture')
+								print "Sent StartCapture"
+								self.displayVar.set("Sent StartCapture")
+								if bugSocket.poll(100) != 0:
+									bugMessage = bugSocket.recv()
+									print "%s" % bugMessage
+									self.displayVar.set(bugMessage)
+									#self.displayUpdate()
+								time.sleep(10)
+							except ZMQError:
+								print "Socket Send Failed"
+					if command == "startGPS":
+						try:
+							bugSocket.send('startGPS')
+							print "Sent Start GPS"
+							self.displayVar.set("Sent Start GPS")
+							if bugSocket.poll(100) != 0:
+								bugMessage = bugSocket.recv()
+								print "%s" % bugMessage
+								self.displayVar.set(bugMessage)
+								#self.displayUpdate()
+						except ZMQError:
+							print "Socket Send Failed"
+					if command == "startNeutrons":
+						try:
+							liqSocket.send('startNeutrons')
+							print "Sent Start Neutrons"
+							self.displayVar.set("Sent Start Neutrons")
+							if liqSocket.poll(100) != 0:
+								liqMessage = liqSocket.recv()
+								print "%s" % liqMessage
+								self.displayVar.set(liqMessage)
+								#self.displayUpdate()
+						except ZMQError:
+							print "Socket Send Failed"
 				self.startCaptureCheck.config(state=DISABLED)
-				self.startWeatherCheck.config(state=DISABLED)
 				self.startGpsCheck.config(state=DISABLED)
 				self.startNeutronsCheck.config(state=DISABLED)
 				self.startHyperSpecCheck.config(state=DISABLED)
@@ -581,25 +645,17 @@ class operationsApp(Tk):
 
 	def startCaptureClick(self):
 		if self.startCapture.get() == 1:
-			self.startList.append("startArduino")
-			self.startList.append("startLidar")
-			self.startList.append("startLadybug")
+			self.startList.append("startCapture")
+			self.startCaptureFlag = 1
 		elif self.startCapture.get() == 0:
-			self.startList.remove("startArduino")
-			self.startList.remove("startLidar")
-			self.startList.remove("startLadybug")
+			self.startList.remove("startCapture")
 
-	def startWeatherClick(self):
-		if self.startWeather.get() == 1:
-			self.startList.append("startWeather")
-		elif self.startWeather.get() == 0:
-			self.startList.remove("startWeather")	
 
 	def startGpsClick(self):
 		if self.startGps.get() == 1:
-			self.startList.append("startGps")
+			self.startList.append("startGPS")
 		elif self.startGps.get() == 0:
-			self.startList.remove("startGps")
+			self.startList.remove("startGPS")
 
 	def startNeutronsClick(self):
 		if self.startNeutrons.get() == 1:
@@ -610,8 +666,10 @@ class operationsApp(Tk):
 	def startHyperSpecClick(self):
 		if self.startHyperSpec.get() == 1:
 			self.startList.append("startHyperSpec")
+			self.startHyperSpecFlag = 1
 		elif self.startHyperSpec.get() == 0:
 			self.startList.remove("startHyperSpec")
+		
 
 	def mainStopClick(self):
 		if self.systemClicked.get() == 1:
@@ -627,7 +685,53 @@ class operationsApp(Tk):
 			self.tick()
 			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
-			self.stopList = ["STO", "stopArduino", "stopLidar", "stopLadybug", "stopWeather", "stopGps", "stopNeutrons", "stopHyperSpec"]
+			self.stopList = ["STO", "stopHyperSpec", "stopNeutrons", "stopCapture", "stopGPS"]
+
+			for command in self.stopList:
+				if command == "stopHyperSpec":
+					try:
+						hsSocket.send('stopHyperSpec')
+						print "Sent Stop HyperSpec"
+						self.displayVar.set("Sent Stop HyperSpec")
+						if hsSocket.poll(100) != 0:
+							hsMessage = hsSocket.recv()
+							print "%s" % hsMessage
+							self.displayVar.set(hsMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopCapture":
+					try:
+						bugSocket.send('stopCapture')
+						print "Sent StopCapture"
+						self.displayVar.set("Sent StopCapture")
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+							self.displayVar.set(bugMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopGPS":
+					try:
+						bugSocket.send('stopGPS')
+						print "Sent Stop GPS"
+						self.displayVar.set("Sent Stop GPS")
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+							self.displayVar.set(bugMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopNeutrons":
+					try:
+						liqSocket.send('stopNeutrons')
+						print "Sent Stop Neutrons"
+						self.displayVar.set("Sent Stop Neutrons")
+						if liqSocket.poll(100) != 0:
+							liqMessage = liqSocket.recv()
+							print "%s" % liqMessage
+							self.displayVar.set(liqMessage)
+					except ZMQError:
+						print "Socket Send Failed"
 			
 			#booleans to check if item is off if not kill
 
@@ -641,9 +745,7 @@ class operationsApp(Tk):
 				#daqSocket.send("startMISTI")
 				#mageSocket.send("startMISTI")
 				#subprocess.Popen(shlex.split("Run.py call"))
-				#bugSocket.send(self.startList)
-				#hsSocket.send(self.startList)
-				#liqSocket.send(self.startList)	
+	
 	
 	def indStopClick(self):
 		if self.systemClicked.get() == 1 and self.stopList != []:
@@ -660,6 +762,52 @@ class operationsApp(Tk):
 			if self.fileOpened == True:			#File should already be closed. Thinking unneccesary
 				self.f.close()
 			self.stopList.insert(0, "STO")
+			
+			for command in self.stopList:
+				if command == "stopHyperSpec":
+					try:
+						hsSocket.send('stopHyperSpec')
+						print "Sent Stop HyperSpec"
+						self.displayVar.set("Sent Stop HyperSpec")
+						if hsSocket.poll(100) != 0:
+							hsMessage = hsSocket.recv()
+							print "%s" % hsMessage
+							self.displayVar.set(hsMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopCapture":
+					try:
+						bugSocket.send('stopCapture')
+						print "Sent StopCapture"
+						self.displayVar.set("Sent StopCapture")
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+							self.displayVar.set(bugMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopGPS":
+					try:
+						bugSocket.send('stopGPS')
+						print "Sent Stop GPS"
+						self.displayVar.set("Sent Stop GPS")
+						if bugSocket.poll(100) != 0:
+							bugMessage = bugSocket.recv()
+							print "%s" % bugMessage
+							self.displayVar.set(bugMessage)
+					except ZMQError:
+						print "Socket Send Failed"
+				if command == "stopNeutrons":
+					try:
+						liqSocket.send('stopNeutrons')
+						print "Sent Stop Neutrons"
+						self.displayVar.set("Sent Stop Neutrons")
+						if liqSocket.poll(100) != 0:
+							liqMessage = liqSocket.recv()
+							print "%s" % liqMessage
+							self.displayVar.set(liqMessage)
+					except ZMQError:
+						print "Socket Send Failed"
 			#subprocess.Popen(shlex.split("Set up Dbus call"))
 			#daqSocket.send(self.startList)
 			#mageSocket.send(self.startList)
@@ -675,9 +823,9 @@ class operationsApp(Tk):
 			#liqSocket.send(self.startList)	
 
 	def stopCaptureClick(self):
-		if self.stopLidar.get() == 1:
+		if self.stopCapture.get() == 1:
 			self.stopList.append("stopCapture")
-		elif self.stopLidar.get() == 0:
+		elif self.stopCapture.get() == 0:
 			self.stopList.remove("stopCapture")
 
 	def stopWeatherClick(self):
@@ -688,9 +836,9 @@ class operationsApp(Tk):
 
 	def stopGpsClick(self):
 		if self.stopGps.get() == 1:
-			self.stopList.append("stopGps")
+			self.stopList.append("stopGPS")
 		elif self.stopGps.get() == 0:
-			self.stopList.remove("stopGps")
+			self.stopList.remove("stopGPS")
 
 	def stopNeutronsClick(self):
 		if self.stopNeutrons.get() == 1:
@@ -704,7 +852,7 @@ class operationsApp(Tk):
 		elif self.stopHyperSpec.get() == 0:
 			self.stopList.remove("stopHyperSpec")
 
-	def gammaHVClick(self):
+	def gammaClick(self):
 		result = tkMessageBox.askquestion("Turn Gamma HV On/Off", "Are You Sure?", icon="warning")
 		if result == "yes":
 			print "Gamma Ray HV Clicked"
@@ -717,27 +865,54 @@ class operationsApp(Tk):
 			print "Neutron Ray HV Clicked"	
 		else:
 			return
+	
+	def dBusClick(self):
+		print "DBUS Clicked"
+
+	def busExtClick(self):
+		print "BusExtender Clicked"
+
+	def startMistiClick(self):
+		print "Start MISTI Clicked"
+
+	def gpsClick(self):
+		print "GPS Clicked"
+
+	def neutronsClick(self):
+		print "Neutrons Clicked"
+	
+	def arduinoTriggeringClick(self):
+		print "Arduino Triggering Clicked"	
+
+	def lidarClick(self):
+		print "Lidar Clicked"
+
+	def ladybugClick(self):
+		print "Ladybug Clicked"
+
+	def hyperSpecClick(self):
+		print "HyperSpec Clicked"
 
 	def setTimestampedNotes(self):
 		self.clickedNotes = False
 		if self.systemClicked.get() == 0:
 			self.currentClock = datetime.now()
 		#if self.noteSaved == False:
-		if self.fileOpened == False:
-			if self.operator.get() == "Enter Operator Name Here":
-				self.noOperator()
-			else:
+		if self.operator.get() == "Enter Operator Name Here":
+				self.noOperator()	
+		else:			
+			if self.fileOpened == False:
 				operatorName = self.operator.get()
 				operatorName = operatorName.translate(None,whitespace)
-				self.fileName = '/*/*/Documents/RadMAP Tests/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
+				self.fileName = '/home/mistidb/misti/Documents/RadMAP Runs/%s%s' %(operatorName,self.currentClock.strftime('%m%d%y'))
 				if glob.glob('%s.txt' %self.fileName):
 					if glob.glob(('%sv*.txt' %self.fileName)):
 						fileList = glob.glob(('%sv*.txt' %self.fileName))
 						fileListLength = len(fileList)
-						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 						self.fileName = ('%s/%s%sv.%s.txt' %(self.fileName[0],operatorName, self.currentClock.strftime('%m%d%y'),(fileListLength+2)))
 					else:
-						self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
+						self.fileName = glob.glob('/home/mistidb/misti/Documents/RadMAP Runs')
 						self.fileName = '%s/%s%sv.2.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
 					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
@@ -748,8 +923,8 @@ class operationsApp(Tk):
 					self.timestampedNotesEntry.delete(0,END)
 					self.noteSaved = True
 				else:
-					self.fileName = glob.glob('/*/*/Documents/RadMAP Tests')
-					self.fileName = '%s/%s%s.txt' %(self.fileName[0], operatorName, self.currentClock.strftime('%m%d%y'))
+					#self.fileName = glob.glob('/*/*/Documents/RadMAP Runs')
+					self.fileName = '%s.txt' %self.fileName
 					self.f = open('%s' %self.fileName, "w")
 					self.fileOpened = True
 					self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
@@ -758,14 +933,14 @@ class operationsApp(Tk):
 					self.f.close()
 					self.timestampedNotesEntry.delete(0,END)
 					self.noteSaved = True					
-		else:
-			self.f = open('%s' %self.fileName, "a")
-			self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
-			self.f = open('%s' %self.fileName)
-			self.notesVar.set(self.f.read())
-			self.f.close()
-			self.timestampedNotesEntry.delete(0,END)
-			self.noteSaved = True
+			else:
+				self.f = open('%s' %self.fileName, "a")
+				self.f.write('%s: %s \n' %(self.currentClock.strftime('%H:%M:%S'), self.timestampedNotesEntry.get()))
+				self.f = open('%s' %self.fileName)
+				self.notesVar.set(self.f.read())
+				self.f.close()
+				self.timestampedNotesEntry.delete(0,END)
+				self.noteSaved = True
 
 		#elif self.noteSaved == True:
 		#	self.timestampedNotesEntry.set("Note Already Saved: Ready for Next Entry")
@@ -775,6 +950,11 @@ class operationsApp(Tk):
 		self.setTimestampedNotes()
 
 	def timestampedNotesDisplay(self):
+		print "Notes Display Clicked"
+		self.f = open('%s' %self.fileName, "r")
+		notes = self.f.read()
+		print notes
+		tkMessageBox.showinfo("Notes", notes)
 		return
 	
 	def saveData(self):
@@ -784,15 +964,23 @@ class operationsApp(Tk):
 		else:
 			return
 
+	def closeWindow(self):
+		bugSocket.close()
+		liqSocket.close()
+		hsSocket.close()
+		context.destroy(0)		
+		self.destroy()
+
 	def resetClicked(self):
 		result = tkMessageBox.askquestion("New Session", "Are You Sure?", icon="warning")
 		if result == "yes":
 			self.operatorGrid.grid_forget()
 			self.elapsedTimeGrid.grid_forget()
-			self.startGrid.grid_forget()
+			self.communicationDisplayGrid.grid_forget()
+			self.mainControlGrid.grid_forget()
 			self.resetButton.grid_forget()
-			self.dataCheckGrid.grid_forget()
 			self.timestampedNotesGrid.grid_forget()
+			self.dataOffloadGrid.grid_forget()
 			self.initialize()
 		else:
 			return

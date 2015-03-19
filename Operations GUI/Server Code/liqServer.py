@@ -3,24 +3,38 @@ import subprocess
 
 context = zmq.Context()
 
-#  Sockets to talk to servers
-dbSocket = context.socket(zmq.REP)
-dbSocket.connect("tcp://localhost:5109")
+VoltageOn = False
+NeutronAcquisition = False
 
+#  Sockets to talk to servers
+portLiq = "5557"
+dbSocket = context.socket(zmq.PAIR)
+dbSocket.bind("tcp://192.168.100.23:%s" % portLiq)
 
 while True:
 
-	dbCommand = dbSocket.recv()
+    if dbSocket.poll(1) != 0:
+    	dbCommand = dbSocket.recv()
+        print dbCommand
 
-	if dbCommand == str:
+    	if dbCommand == 'startNeutrons':
+            print "dbCommand = %s" % dbCommand
+            if VoltageOn == False:
+            	rampOnVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Start_Script_V1.0.exe")
+            	VoltageOn = True
+            if VoltageOn:
+                if NeutronAcquisition == False:
+            	   AcquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_Acq.exe")
+            	   NeutronAcquisition = True
 
-	#based on what the start script returns may want to use subprocess.callback() and use resulting info for data verification
-		subprocess.call(#insert liq start script name here#)
-		
-	if dbCommand == stp:
-		subprocess.call(#insert liq stop script name here#)
-	
-	if dbCommand == save:
-		subprocess.call(#insert liq save script name here#)
-		
-	#function to display live data
+    		
+    	if dbCommand == 'stopNeutrons':
+    	    if NeutronAcquisition: #stop HyperSpec if started
+                StopNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_Acq.exe")
+                NeutronAcquisition = False
+            if NeutronAcquisition == False:
+                if VoltageOn == True:
+            	   rampOffVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Script_V1.0.exe")
+                   VoltageOn = False
+
+    iterations += 1
