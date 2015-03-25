@@ -62,7 +62,7 @@ while True:
 		
 		
 		if dbCommand == "startCapture":
-                        interfaceSocketCapture.send("startCapture Received")
+			interfaceSocketCapture.send("startCapture Received")
 			if startCaptureStarted == False:
 				print "Command Received - %s" % dbCommand
 				startCapture = subprocess.Popen("startCapture.bat", cwd=r'E:', creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -80,16 +80,16 @@ while True:
 				startCaptureStarted = False
 				time.sleep(10)
 				stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureVerificationScript.exe")
-                                stopped = "%s" % pyperclip.paste()
+                                #stopped = "%s" % pyperclip.paste()
                                 #if stopped.find("True") != -1:
                                         
                                         
 			else:
 				print "startCapture already stopped"
 
-                if dbCommand == "Started?":
-                        time.sleep(4)
-                        interfaceSocketCapture.send("startCapture Acquisition Starting")
+		if dbCommand == "Started?":
+			time.sleep(4)
+			interfaceSocketCapture.send("startCapture Acquisition Starting")
 			startCaptureStarted = True
 
 				
@@ -97,7 +97,7 @@ while True:
 		dbCommand = interfaceSocketGps.recv()
 		
 		if dbCommand == "startGPS":
-                        interfaceSocketGps.send("startGPS Received")
+			interfaceSocketGps.send("startGPS Received")
 			if gpsStarted == False:
 				gpsAcquisitionStarted = False
 				print "Command Received - %s" % dbCommand
@@ -119,18 +119,18 @@ while True:
 				interfaceSocketGps.send("stopGPS Command Received")
 				startGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPS_Stop_Script.exe")
 				gpsStarted = False
-                                time.sleep(4)
+				time.sleep(4)
 				checkGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPSCheck.exe")
 				stopped = "%s" % pyperclip.paste()
-                                if stopped.find("True") != -1:
-                                        gpsAcquisitionStopped = True
+				if stopped.find("True") != -1:
+					gpsAcquisitionStopped = True
                                         
                                         
 			else:
 				print "GPS already stopped"
 
-		if dmCommand == "Started?":
-                        time.sleep(20)
+		if dbCommand == "Started?":
+			time.sleep(20)
 			interfaceSocketGps.send("GPS Acquisition Starting")
 			verifyGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPSVerification.exe")
 			gpsStarted = True
