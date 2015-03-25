@@ -27,13 +27,14 @@ hsVerificationSocket = context.socket(zmq.REP)
 hsVerificationSocket.bind("tcp://192.168.100.43:%s" % verificationPort)
 
 while True:
-    if interfaceSocket.poll(1) != 0:
+    if interfaceSocket.poll(100) != 0:
     	dbCommand = interfaceSocket.recv()
         print dbCommand
 
     	if dbCommand == 'startHyperSpec':
             acquisitionStopped = False
             print "dbCommand = startHyperSpec"
+            interfaceSocket.send("startHyperSpec Received")
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 print "Acquisition Script Called"
                 date = datetime.now()
@@ -57,8 +58,6 @@ while True:
                 NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE, stdout = nirFile)
                 processes.append(NIRAcquisition)
                 print "NIR process started"
-                interfaceSocket.send("HyperSpec Acquisition started")    
-                HyperSpecAcqStarted = True
             else:
                 print "HyperSpec Acquisition already running"
     		
@@ -83,7 +82,12 @@ while True:
                     print "acquisitionStopped % s" % acquisitionStopped
             else:
                 print "HyperSpec Acquisition already stopped"
-        
+
+        if dbCommand == 'Started?':
+            time.sleep(9)
+            interfaceSocket.send("HyperSpec Acquisition Starting")
+            HyperSpecAcqStarted = True
+
 
     #print "Verifying Processes"	
     if len(processes) != 0:
@@ -101,7 +105,7 @@ while True:
             else:
                 iiVerification = False
         print "iiLine - %s" % iiLine  
-        print "iiLinePrev - %s" % iiLinePrev
+        #print "iiLinePrev - %s" % iiLinePrev
         if not iiLine.strip():
             iiLinePrev = iiLine
         nirLocation = nirFile.tell()
@@ -118,7 +122,7 @@ while True:
             else:
                 nirVerification = False
         print "nirLine - %s" % nirLine  
-        print "nirLinePrev - %s" % nirLinePrev
+        #print "nirLinePrev - %s" % nirLinePrev
         if not nirLine.strip():
             nirLinePrev = nirLine
     if len(processes) == 0:
@@ -128,7 +132,7 @@ while True:
     #print "iiVerification - %s" % iiVerification 
     #print "nirVerification - %s" % nirVerification
     time1 = time.time()
-    print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
+    #print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
     if hsVerificationSocket.poll(100) != 0:
         msg = hsVerificationSocket.recv()
         print "message - %s" % msg
