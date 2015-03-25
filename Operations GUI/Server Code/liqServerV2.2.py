@@ -6,70 +6,82 @@ import pyperclip
 context = zmq.Context()
 
 
-HVStarted = False
-NeutronStarted = False
-HVVerification = False
-NeutronVerification = False
-VerificationState = False
+hvStarted = False
+neutronStarted = False
+hvVerification = False
+neutronVerification = False
+neutronStopped = False
+hvStopped = False
+acquisitionStopped = False
 
 #  Sockets to talk to servers
-portLiq = "5557"
-dbSocket = context.socket(zmq.PAIR)
-dbSocket.bind("tcp://192.168.100.23:%s" % portLiq)
+interfacePort = "5557"
+interfaceSocket = context.socket(zmq.REP)
+interfaceSocket.bind("tcp://192.168.100.23:%s" % interfacePort)
+liqVerificationPort = "5567"
+liqVerificationSocket = context.socket(zmq.REP)
+liqVerificationSocket.bind("tcp://192.168.100.23:%s" %liqVerificationPort)
 
 while True:
 
-    if dbSocket.poll(1) != 0:
-    	dbCommand = dbSocket.recv()
+    if interfaceSocket.poll(100) != 0:
+    	dbCommand = interfaceSocket.recv()
         print dbCommand
 
     	if dbCommand == 'startNeutrons':
             print "dbCommand = %s" % dbCommand
-            dbSocket.send("Start Neutron Signal Received")
-            if HVStarted == False:
+            interfaceSocket.send("Start Neutron Signal Received")
+            if hvStarted == False:
             	rampOnVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Start_Script_V2.0.exe")
-            	HVStarted = True
+            	hvStarted = True
             	time.sleep(80)
-            if HVStarted:
-                if NeutronStarted == False:
-            	   AcquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_AcqV2.0.exe")
-            	   NeutronStarted = True
+            if hvStarted:
+                if neutronStarted == False:
+            	   acquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_AcqV2.0.exe")
+            	   neutronStarted = True
+            acquisitionStopped = False
 
     		
     	if dbCommand == 'stopNeutrons':
-            dbSocket.send("Stop Neutron Signal Received")
-    	    if NeutronStarted:
-                StopNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_AcqV2.0.exe")
-                NeutronStarted = False
+            interfaceSocket.send("Stop Neutron Signal Received")
+    	    if neutronStarted:
+                stopNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_AcqV2.0.exe")
+                neutronStarted = False
                 time.sleep(10)
-            if NeutronStarted == False:
-                if HVStarted == True:
+            if neutronStarted == False:
+                if hvStarted == True:
             	   rampOffVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Script_V2.0.exe")
             	   time.sleep(80)
-                   HVStarted = False
-            stopCheck = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_Verification.exe")
-            stopped = pyperclip.paste()
+                   hvStarted = False
+            neutronStopCheck = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_Verification.exe")
+            stopped = "%s" % pyperclip.paste()
             if (stopped.find('True') != -1):
-                dbSocket.send("Neutrons Stopped")
-                VerificationState = False
+                neutronStopped = True
+            hvStopCheck = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Verification.exe")
+            stopped = "%s" % pyperclip.paste()
+            if (stopped.find('True') != -1):
+                hvStopped = True
+            acquisitionStopped = hvStopped and neutronStopped
 
-                  
-    if HVStarted == True or NeutronStarted == True:
-        VerifyVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Verification_ScriptV1.0.exe")
+               
+    if hvStarted == True or neutronStarted == True:
+        verifyVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Verification_ScriptV1.0.exe")
         clipboard = pyperclip.paste()
         if clipboard.find('False') != -1:
-            HVVerification = False
+            hvVerification = False
         if clipboard.find('True') != -1:
-            HVVerification = True
-        VerifyNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Verification_Script_V1.0.exe")
+            hvVerification = True
+        verifyNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Verification_Script_V1.0.exe")
         clipboard = pyperclip.paste()
         if clipboard.find('False') != -1:
-            NeutronVerification = False
+            neutronVerification = False
         if clipboard.find('True') != -1:
-            NeutronVerification = True
-        verificationMessage = HVVerification and NeutronVerification
-        if verificationMessage == True:
-            VerificationState = True
-        if VerificationState == True:
-            dbSocket.send(verificationMessage)
+            neutronVerification = True
+        verificationMessage = hvVerification and neutronVerification
+    if liqVerificationSocket.poll(100) != 0:
+        if not acquisitionStopped:
+            liqVerificationMessage = "%s" % verificationMessage
+            liqVerificationSocket.send(liqVerificationMessage)
+        else:
+            liqVerificationSocket.send("Closed")
         
