@@ -34,7 +34,7 @@ while True:
     	if dbCommand == 'startHyperSpec':
             acquisitionStopped = False
             print "dbCommand = startHyperSpec"
-            interfaceSocket.send("startHyperSpec Received")
+            interfaceSocket.send("startHyperSpec Received - Wait 9 Seconds")
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
                 print "Acquisition Script Called"
                 date = datetime.now()
