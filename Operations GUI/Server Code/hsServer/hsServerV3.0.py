@@ -8,40 +8,33 @@ import string
 import pyperclip
 
 context = zmq.Context()
-port = "5556"
-
 processes = [] #list of processes
-iterations = 0
 HyperSpecAcqStarted = False
-
+acquisitionStopped = False
 iiVerification = False
 nirVerification = False
-HyperSpecVerification = False
-VerificationState = False
-startedAcq = 0
+hyperSpecVerification = False
+stopped = False
 
 iiLinePrev = None
 nirLinePrev = None
 
-#  Sockets to talk to servers
-#dbSocket = context.socket(zmq.REP)
-#dbSocket.connect("tcp://192.168.1.100:5108")
+interfacePort = "5556"
+interfaceSocket = context.socket(zmq.REP)
+interfaceSocket.bind("tcp://192.168.100.43:%s" % interfacePort)
+verificationPort = "5555"
+hsVerificationSocket = context.socket(zmq.REP)
+hsVerificationSocket.bind("tcp://192.168.100.43:%s" % verificationPort)
 
 while True:
-    if not startedAcq:
-        dbSocket = context.socket(zmq.PAIR)
-        dbSocket.bind("tcp://192.168.100.43:%s" % port)
-        dbSocket.setsockopt(zmq.LINGER, 1)
-        startedAcq = 1
-        
-    if dbSocket.poll(1) != 0:
-    	dbCommand = dbSocket.recv()
+    if interfaceSocket.poll(1) != 0:
+    	dbCommand = interfaceSocket.recv()
         print dbCommand
 
     	if dbCommand == 'startHyperSpec':
+            acquisitionStopped = False
             print "dbCommand = startHyperSpec"
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
-                #testAcquitision = subprocess.call(shlex.split("python /home/rossebv/Desktop/RadMAP-Operatinos-GUI/Operations\ GUI/interfaceCodeV0.2.py &"))
                 print "Acquisition Script Called"
                 date = datetime.now()
                 currTime = date.strftime("%Y%m%d%H%M%S")
@@ -60,15 +53,11 @@ while True:
                 nirFile = open("%s\\%s" %(nirPath, nirFileName), 'a+')
                 iiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\2iHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE, stdout = iiFile)
                 processes.append(iiAcquisition)
-                #iiFile.close()
                 print "2i process started"
-                
-                #dbSocket.send("2i process started")
                 NIRAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\NIRHyperSpecAcquisitionV2.6.exe", cwd=r'E:\\HS_Data\\', creationflags=subprocess.CREATE_NEW_CONSOLE, stdout = nirFile)
                 processes.append(NIRAcquisition)
-                #nirFile.close()
                 print "NIR process started"
-                dbSocket.send("HyperSpec Acquisition started")    
+                interfaceSocket.send("HyperSpec Acquisition started")    
                 HyperSpecAcqStarted = True
             else:
                 print "HyperSpec Acquisition already running"
@@ -76,25 +65,22 @@ while True:
     	if dbCommand == 'stopHyperSpec':
     	    if HyperSpecAcqStarted == True: #stop HyperSpec if started
                 print "Stopping HyperSpec Acquisition"
-                dbSocket.send("Stop HyperSpec Acquisition Received")
+                interfaceSocket.send("HyperSpec Acquisition Stopping")
                 processes.remove(iiAcquisition)
                 StopiiAcquisition = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopScript.exe")
                 iiFile.close()
                 print "2i Acquisition Stopped"
-                #dbSocket.send("2i Acquisition stopped")
                 processes.remove(NIRAcquisition)
                 nirFile.close()
                 print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
+                time.sleep(3)
                 stopVerification = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopVerificationScript.exe")
                 stopped = "%s" % pyperclip.paste()
-                VerificationState = False
+                print stopped
                 if (stopped.find('True') != -1):
-                    dbSocket.send("HyperSpec Stopped")
-                    dbSocket.close()
-                    print "Closing Socket"
-                    startedAcq = 0
-                print "Verification State is %s" % VerificationState
+                    acquisitionStopped = True
+                    print "acquisitionStopped % s" % acquisitionStopped
             else:
                 print "HyperSpec Acquisition already stopped"
         
@@ -107,23 +93,15 @@ while True:
             time.sleep(1)
             iiFile.seek(iiLocation)
         else:
-            #print iiLine
             #if ((iiLine.find("Line ") != -1) or (iiLine.find("Complete") != -1) or (iiLine.find("Data") != -1) or (iiLine.find("Done") != -1)) and (iiLine != iiLinePrev): #2i verification
             if (iiLine != iiLinePrev):              
                 iiVerification = True
-                #iiNumber = iiLine[5:]
-                #if iiNumber == '1000':
-                    #iiLine = iiFile.readline()
-                    #if (iiLine.find("Recording") != -1):
-                        #iiVerification = True
-                    #elif (iiLine == ""):
-                        #iiVerification = False
                 if (iiLine.find("Garbage") != -1):
                     iiVerification = False
             else:
                 iiVerification = False
-        #print "iiLine - %s" % iiLine  
-        #print "iiLinePrev - %s" % iiLinePrev
+        print "iiLine - %s" % iiLine  
+        print "iiLinePrev - %s" % iiLinePrev
         if not iiLine.strip():
             iiLinePrev = iiLine
         nirLocation = nirFile.tell()
@@ -132,7 +110,6 @@ while True:
             time.sleep(1)
             nirFile.seek(iiLocation)
         else:
-            #print iiLine
             #if ((nirLine.find("Line ") != -1) or (nirLine.find("Complete") != -1) or (nirLine.find("Datacube") != -1) or (nirLine.find("Done") != -1)) and (nirLine != nirLinePrev): #NIR Verification
             if (nirLine != nirLinePrev):
                 nirVerification = True
@@ -140,22 +117,22 @@ while True:
                     nirVerification = False
             else:
                 nirVerification = False
-        #print "nirLine - %s" % nirLine  
-        #print "nirLinePrev - %s" % nirLinePrev
+        print "nirLine - %s" % nirLine  
+        print "nirLinePrev - %s" % nirLinePrev
         if not nirLine.strip():
             nirLinePrev = nirLine
     if len(processes) == 0:
         iiVerification = False
         nirVerification = False
     HyperSpecVerification = iiVerification and nirVerification
-    if HyperSpecVerification == True:
-        VerificationState = True
     #print "iiVerification - %s" % iiVerification 
     #print "nirVerification - %s" % nirVerification
     time1 = time.time()
-    #print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
-    if VerificationState == True:
-        dbSendMessage = "%s @ %s" % (HyperSpecVerification, time1)
-        dbSocket.send(dbSendMessage)
-    iterations += 1
-	
+    print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
+    if hsVerificationSocket.poll(100) != 0:
+        hsVerificationSocket.recv()
+        if not acquisitionStopped:
+            hsVerificationMessage = "%s" % HyperSpecVerification
+            hsVerificationSocket.send(hsVerificationMessage)
+        else:
+            hsVerificationSocket.send("Closed")
