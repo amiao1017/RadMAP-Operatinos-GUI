@@ -73,13 +73,13 @@ while True:
                 nirFile.close()
                 print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
-                time.sleep(3)
+                time.sleep(6)
                 stopVerification = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopVerificationScript.exe")
                 stopped = "%s" % pyperclip.paste()
                 print stopped
                 if (stopped.find('True') != -1):
                     acquisitionStopped = True
-                    print "acquisitionStopped % s" % acquisitionStopped
+                print "acquisitionStopped % s" % acquisitionStopped
             else:
                 print "HyperSpec Acquisition already stopped"
 
