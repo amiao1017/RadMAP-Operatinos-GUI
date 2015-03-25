@@ -30,7 +30,7 @@ while True:
 
     	if dbCommand == 'startNeutrons':
             print "dbCommand = %s" % dbCommand
-            interfaceSocket.send("Start Neutron Signal Received")
+            interfaceSocket.send("Start Neutron Signal Received - Wait 90 Seconds")
             if hvStarted == False:
             	rampOnVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Start_Script_V2.0.exe")
             	hvStarted = True

@@ -62,7 +62,7 @@ while True:
 		
 		
 		if dbCommand == "startCapture":
-			interfaceSocketCapture.send("startCapture Received")
+			interfaceSocketCapture.send("startCapture Received - Wait 5 Seconds")
 			if startCaptureStarted == False:
 				print "Command Received - %s" % dbCommand
 				startCapture = subprocess.Popen("startCapture.bat", cwd=r'E:', creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -97,7 +97,7 @@ while True:
 		dbCommand = interfaceSocketGps.recv()
 		
 		if dbCommand == "startGPS":
-			interfaceSocketGps.send("startGPS Received")
+			interfaceSocketGps.send("startGPS Received - Wait 20 Seconds")
 			if gpsStarted == False:
 				gpsAcquisitionStarted = False
 				print "Command Received - %s" % dbCommand
