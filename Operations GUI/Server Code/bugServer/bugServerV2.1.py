@@ -124,12 +124,14 @@ while True:
 				stopped = "%s" % pyperclip.paste()
                                 if stopped.find("True") != -1:
                                         gpsAcquisitionStopped = True
+                                        
+                                        
 			else:
 				print "GPS already stopped"
 
 		if dmCommand == "Started?":
                         time.sleep(20)
-			interfaceSocketGps.send("GPS Acquisition Started")
+			interfaceSocketGps.send("GPS Acquisition Starting")
 			verifyGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPSVerification.exe")
 			gpsStarted = True
 	

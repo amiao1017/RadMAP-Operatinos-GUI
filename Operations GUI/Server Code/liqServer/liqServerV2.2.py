@@ -35,10 +35,9 @@ while True:
             	rampOnVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Start_Script_V2.0.exe")
             	hvStarted = True
             	time.sleep(80)
-            if hvStarted:
-                if neutronStarted == False:
-            	   acquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_AcqV2.0.exe")
-            	   neutronStarted = True
+            if neutronStarted == False:
+               acquireNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Start_AcqV2.0.exe")
+               neutronStarted = True
             acquisitionStopped = False
 
     		
@@ -48,11 +47,10 @@ while True:
                 stopNeutrons = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_AcqV2.0.exe")
                 neutronStarted = False
                 time.sleep(10)
-            if neutronStarted == False:
-                if hvStarted == True:
-            	   rampOffVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Script_V2.0.exe")
-            	   time.sleep(80)
-                   hvStarted = False
+            if hvStarted == True:
+                rampOffVoltage = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\HV_Stop_Script_V2.0.exe")
+                time.sleep(80)
+                hvStarted = False
             neutronStopCheck = subprocess.Popen("C:\\Users\\misti\\Desktop\\AutoHotKey Scripts\\Neutron_Stop_Verification.exe")
             stopped = "%s" % pyperclip.paste()
             if (stopped.find('True') != -1):
@@ -62,6 +60,10 @@ while True:
             if (stopped.find('True') != -1):
                 hvStopped = True
             acquisitionStopped = hvStopped and neutronStopped
+
+        if dbCommand == "Started?":
+            interfaceSocket.send("Neutron Acquisition Starting")
+            
 
                
     if hvStarted == True or neutronStarted == True:
