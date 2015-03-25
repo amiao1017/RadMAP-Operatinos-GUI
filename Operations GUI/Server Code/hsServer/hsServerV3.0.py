@@ -130,7 +130,8 @@ while True:
     time1 = time.time()
     print "HyperSpecVerification - %s @ %s" % (HyperSpecVerification, time1)
     if hsVerificationSocket.poll(100) != 0:
-        hsVerificationSocket.recv()
+        msg = hsVerificationSocket.recv()
+        print "message - %s" % msg
         if not acquisitionStopped:
             hsVerificationMessage = "%s" % HyperSpecVerification
             hsVerificationSocket.send(hsVerificationMessage)

@@ -31,17 +31,19 @@ gpsVerificationSocket = context.socket(zmq.REP)
 gpsVerificationSocket.bind("tcp://192.168.100.42:%s" % gpsVerificationPort)
 
 #booleans
-velodynePortStarted = False
-velodyneStarboardStarted = False
-ladybugPortStarted = False
-ladybugStarboardStarted = False
-arduinoStarted = False
-gpsStarted = False
-startCaptureStarted = False
 
+gpsStarted = False
 gpsVerification = False
 gpsAcquisitionStopped = False
-
+velodynePortVerification = False
+velodyneStarboardVerification = False
+velodyneVerification = False
+ladybugPortVerification = False
+ladybugStarboardVerification = False
+ladybugVerification = False
+arduinoVerification = False
+startCaptureStarted = False
+startCaptureAcquisitionStopped = False
 
 
 processes = [] #list of all the processes running
@@ -62,11 +64,11 @@ while True:
 		if dbCommand == "startCapture":
 			if startCaptureStarted == False:
 				print "Command Received - %s" % dbCommand
-				interfaceSocketCapture.send("startCapture Command Received")
 				startCapture = subprocess.Popen("startCapture.bat", cwd=r'E:', creationflags=subprocess.CREATE_NEW_CONSOLE)
 				date = datetime.now()
 				time.sleep(1)
 				startArduino = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\Server Code\\startArduino.exe")
+				interfaceSocketCapture.send("startCapture Acquisition Started")
 				startCaptureStarted = True
 			else:
 				print "startCapture already started"
@@ -77,7 +79,11 @@ while True:
 				interfaceSocketCapture.send("stopCapture Command Received")
 				stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureScript.exe")
 				startCaptureStarted = False
-				#time.sleep(10)
+				time.sleep(10)
+				stopCapture = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations Gui\\Server Code\\StopCaptureVerificationScript.exe")
+                                stopped = "%s" % pyperclip.paste()
+                                if stopped.find("True") != -1:
+                                        
 			else:
 				print "startCapture already stopped"
 				
@@ -88,7 +94,6 @@ while True:
 			if gpsStarted == False:
 				gpsAcquisitionStarted = False
 				print "Command Received - %s" % dbCommand
-				interfaceSocketGps.send("startGPS Command Received")
 				searchName = date.strftime("Run_%Y%m%d_%H%M%S")
 				#fileName = glob.glob('%s' %searchName)
 				#fileName = fileName
@@ -96,7 +101,8 @@ while True:
 				#logfile_path = date.strftime("\gps_%Y%m%d_%H%M%S_logfile.gps")
 				pyperclip.copy(logfile_path)
 				startGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPS_Start_Script.exe")
-				time.sleep(17)
+				time.sleep(20)
+				interfaceSocketGps.send("GPS Acquisition Started")
 				verifyGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPSVerification.exe")
 				gpsStarted = True
 				
@@ -109,8 +115,11 @@ while True:
 				interfaceSocketGps.send("stopGPS Command Received")
 				startGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPS_Stop_Script.exe")
 				gpsStarted = False
+                                time.sleep(4)
 				checkGps = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\AutoHotKey Scripts\\GPSCheck.exe")
-				#time.sleep(4)
+				stopped = "%s" % pyperclip.paste()
+                                if stopped.find("True") != -1:
+                                        gpsAcquisitionStopped = True
 			else:
 				print "GPS already stopped"
 	
