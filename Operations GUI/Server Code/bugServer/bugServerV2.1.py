@@ -45,17 +45,6 @@ arduinoVerification = False
 startCaptureStarted = False
 startCaptureAcquisitionStopped = False
 
-#Folder Sizes for Data Verification
-velodynePortFolderSizeCurr = 0
-velodynePortFolderSizePrev = 0
-velodyneStarboardFolderSizeCurr = 0
-velodyneStarboardFolderSizePrev = 0
-ladybugPortFolderSizeCurr = 0
-ladybugPortFolderSizePrev = 0
-ladybugStarboardFolderSizeCurr = 0
-ladybugStarboardFolderSizePrev = 0
-arduinoFolderSizeCurr = 0
-arduinoFolderSizePrev = 0
 
 processes = [] #list of all the processes running
 iterations = 0 #number of iterations through loop. used to index list of processes for verification
@@ -80,13 +69,6 @@ while True:
 				date = datetime.now()
 				time.sleep(1)
 				startArduino = subprocess.Popen("C:\\Users\\misti\\Desktop\\RadMAP-Operatinos-GUI\\Operations GUI\\Server Code\\startArduino.exe")
-				searchName = date.strftime("Run_%Y%m%d_%H%M%S")
-				velodynePortFolder = 'E:\\' + searchName + '\lidar\port'
-				velodyneStarboardFolder = 'E:\\' + searchName + '\lidar\starboard'
-				ladybugPortFolder = 'E:\\' + searchName + '\ladybug\port'
-				ladybugStarboardFolder = 'E:\\' + searchName + '\ladybug\starboard'
-				arduinoFolder = 'E:\\' + searchName + '\time_sync_files'
-				gpsFolder = 'E:\\' + searchName + '\gps'
         		else:
 				print "startCapture already started"
 
@@ -119,7 +101,7 @@ while True:
 			if gpsStarted == False:
 				gpsAcquisitionStarted = False
 				print "Command Received - %s" % dbCommand
-				
+				searchName = date.strftime("Run_%Y%m%d_%H%M%S")
 				#fileName = glob.glob('%s' %searchName)
 				#fileName = fileName
 				logfile_path = 'E:\\' + searchName + '\gps\logfile.gps' #set the path for the logfile to be saved with gps data collection
