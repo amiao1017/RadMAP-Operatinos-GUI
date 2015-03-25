@@ -3,61 +3,55 @@ setTitleMatchMode 2
 IfWinExist, startArduino
 {
 	WinActivate
+	Send, q
+	Sleep, 100
+	Send, y
+	Sleep, 100
+	Send, y
 }
-IfWinNotActive, startArduino, WinWaitActive, startArduino,
-WinWaitActive, startArduino
-Send, q
-Sleep, 100
-Send, y
-Sleep, 100
-Send, y
+
+
 
 IfWinExist, startLadybugStarboard
 {
 	WinActivate
+	Send, q
+	Sleep, 100
+	Send, y
+	Sleep, 100
+	Send, y
 }
-IfWinNotActive, startLadybugStarboard, WinWaitActive, startLadybugStarboard,
-WinWaitActive, startLadybugStarboard
-Send, q
-Sleep, 100
-Send, y
-Sleep, 100
-Send, y
+
 
 IfWinExist, startLadybugPort
 {
 	WinActivate
+	Send, q
+	Sleep, 100
+	Send, y
+	Sleep, 100
+	Send, y
 }
-IfWinNotActive, startLadybugPort, WinWaitActive, startLadybugPort,
-WinWaitActive, startLadybugPort
-Send, q
-Sleep, 100
-Send, y
-Sleep, 100
-Send, y
 
 IfWinExist, startVolodyneStarboard
 {
 	WinActivate
+	Send, q
+	Sleep, 100
+	Send, y
+	Sleep, 100
+	Send, y
 }
-IfWinNotActive, startVolodyneStarboard, WinWaitActive, startVolodyneStarboard,
-WinWaitActive, startVolodyneStarboard
-Send, q
-Sleep, 100
-Send, y
-Sleep, 100
-Send, y
 
 IfWinExist, startVelodynePort
 {
 	WinActivate
+	Send, q
+	Sleep, 100
+	Send, y
+	Sleep, 100
+	Send, y
 }
-IfWinNotActive, startVelodynePort, WinWaitActive, startVelodynePort,
-WinWaitActive, startVelodynePort
-Send, q
-Sleep, 100
-Send, y
-Sleep, 100
-Send, y
+
 	
 
