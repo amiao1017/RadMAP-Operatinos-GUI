@@ -6,4 +6,4 @@ Loop, %Folder%\*.*, , 1
 	FolderSize += %A_LoopFileSize%
 clipboard = %FolderSize%
 	
-MsgBox Size of %Folder% is %FolderSize% bytes.
+;MsgBox Size of %Folder% is %FolderSize% bytes.
