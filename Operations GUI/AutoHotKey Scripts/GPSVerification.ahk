@@ -24,8 +24,7 @@ if WinExist("NovAtel") {
 	WinActive("NovAtel")
 	if WinExist("CONFIG - ASCII")
 	{
-		clipboard = GPS True
-		clipboard = %clipboard%
+		
 		;MsgBox, Window Exists
 		WinGetText, text
 		Loop, parse, text, `n, `r
@@ -34,12 +33,15 @@ if WinExist("NovAtel") {
 		IfInString, A_LoopField, #BESTPOS
 		{
 		;MsgBox, %A_LoopField%
+		clipboard = GPS True
+		clipboard = %clipboard%
 		FileAppend, 
 		(
 		%A_LoopField%`n
 		), E:\GPS_Verification\gps_%time%\%time%.txt
 		Sleep, 1000
 		}
+
 		
 		}else
 	{
