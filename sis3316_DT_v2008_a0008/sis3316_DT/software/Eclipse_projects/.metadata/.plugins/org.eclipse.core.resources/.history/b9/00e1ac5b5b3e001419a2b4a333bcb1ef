@@ -1,0 +1,51 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../src/SisVmeInterface.cpp \
+../src/adc_config.cpp \
+../src/gpGraph.cpp \
+../src/sis3316_adc.cpp \
+../src/sis3316_flash_class.cpp \
+../src/sis3316_root_clock.cpp \
+../src/sis3316_root_gui_linux.cpp \
+../src/sis3316_root_main_class.cpp \
+../src/sis3316_root_process_class.cpp \
+../src/sis3316_root_setup_class.cpp 
+
+OBJS += \
+./src/SisVmeInterface.o \
+./src/adc_config.o \
+./src/gpGraph.o \
+./src/sis3316_adc.o \
+./src/sis3316_flash_class.o \
+./src/sis3316_root_clock.o \
+./src/sis3316_root_gui_linux.o \
+./src/sis3316_root_main_class.o \
+./src/sis3316_root_process_class.o \
+./src/sis3316_root_setup_class.o 
+
+CPP_DEPS += \
+./src/SisVmeInterface.d \
+./src/adc_config.d \
+./src/gpGraph.d \
+./src/sis3316_adc.d \
+./src/sis3316_flash_class.d \
+./src/sis3316_root_clock.d \
+./src/sis3316_root_gui_linux.d \
+./src/sis3316_root_main_class.d \
+./src/sis3316_root_process_class.d \
+./src/sis3316_root_setup_class.d 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+src/%.o: ../src/%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -I/usr/local/include -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+

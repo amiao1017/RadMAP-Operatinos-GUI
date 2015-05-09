@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;sis3316_jaea_histogram_monitoring/src/sis3316_cern_root_jaea_class&apos; to &apos;sis3316_cern_root_jaea_class.h&apos;" description="Rename resource &apos;sis3316_cern_root_jaea_class&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/sis3316_cern_root_jaea_class" name="sis3316_cern_root_jaea_class.h" stamp="1392628065379" updateReferences="true"/>
+</session>

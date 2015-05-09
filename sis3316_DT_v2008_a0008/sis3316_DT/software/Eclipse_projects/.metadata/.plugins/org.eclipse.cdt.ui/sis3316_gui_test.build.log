@@ -1,0 +1,51 @@
+
+**** Build of configuration Debug for project sis3316_gui_test ****
+
+make all 
+Building file: ../src/sis3316_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_class.d" -MT"src/sis3316_class.d" -o"src/sis3316_class.o" "../src/sis3316_class.cpp"
+../src/sis3316_class.cpp: In constructor »sis3316_adc::sis3316_adc(vme_interface_class*, unsigned int)«:
+../src/sis3316_class.cpp:64: Warnung: Variable »data« wird nicht verwendet
+Finished building: ../src/sis3316_class.cpp
+ 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_read(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:428: Warnung: Variable »i« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_write(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:627: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/sis3316_ethernet_access_class.cpp:593: Warnung: Variable »udp_data_copy_to_buffer_index« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:595: Warnung: Variable »rest_length_byte« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:596: Warnung: Variable »soft_packet_number« wird nicht verwendet
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building file: ../src/sis3316_gui_test.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_gui_test.d" -MT"src/sis3316_gui_test.d" -o"src/sis3316_gui_test.o" "../src/sis3316_gui_test.cpp"
+../src/sis3316_gui_test.cpp: In constructor »TestMainFrame::TestMainFrame(const TGWindow*, UInt_t, UInt_t)«:
+../src/sis3316_gui_test.cpp:790: Warnung: Variable »data« wird nicht verwendet
+../src/sis3316_gui_test.cpp: In constructor »SIS3316TestDialog::SIS3316TestDialog(const TGWindow*, const TGWindow*, UInt_t, UInt_t, Bool_t*, UInt_t)«:
+../src/sis3316_gui_test.cpp:1363: Warnung: Variable »SIS3316_device« wird nicht verwendet
+../src/sis3316_gui_test.cpp:2241: Warnung: Variable »fL5« wird nicht verwendet
+../src/sis3316_gui_test.cpp: In member function »void SIS3316TestDialog::SIS3316_Test1()«:
+../src/sis3316_gui_test.cpp:2341: Warnung: Variable »addr« wird nicht verwendet
+../src/sis3316_gui_test.cpp:2362: Warnung: Variable »maw_length« wird nicht verwendet
+../src/sis3316_gui_test.cpp:2382: Warnung: Variable »header_energy_values_offset« wird nicht verwendet
+../src/sis3316_gui_test.cpp:2432: Warnung: Variable »amplitude« wird nicht verwendet
+../src/sis3316_gui_test.cpp:2446: Warnung: Variable »SIS3316_device« wird nicht verwendet
+../src/sis3316_gui_test.cpp: In member function »virtual Bool_t SIS3316TestDialog::ProcessMessage(Long_t, Long_t, Long_t)«:
+../src/sis3316_gui_test.cpp:4655: Warnung: format »%d« erwartet Typ »int«, aber Argument 2 hat Typ »Long_t«
+../src/sis3316_gui_test.cpp:4343: Warnung: Variable »newtab« wird nicht verwendet
+../src/sis3316_gui_test.cpp: In function »int si5325_clk_muliplier_write(unsigned int, unsigned int, unsigned int)«:
+../src/sis3316_gui_test.cpp:4700: Warnung: Variable »cal_poll_counter« wird nicht verwendet
+../src/sis3316_gui_test.cpp: In function »int si5325_clk_muliplier_read(unsigned int, unsigned int, unsigned int*)«:
+../src/sis3316_gui_test.cpp:4732: Warnung: Variable »msec« wird nicht verwendet
+Finished building: ../src/sis3316_gui_test.cpp
+ 
+Building target: sis3316_gui_test
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/lib -o"sis3316_gui_test"  ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_gui_test.o   -lfftw3 -lCint -lGraf -lGui
+Finished building target: sis3316_gui_test
+ 

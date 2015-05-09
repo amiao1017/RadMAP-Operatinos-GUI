@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;test_configuration_parameter/src/get_configuration_parameters&apos; to &apos;get_configuration_parameters.cpp&apos;" description="Rename resource &apos;get_configuration_parameters&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/get_configuration_parameters" name="get_configuration_parameters.cpp" stamp="1393756459512" updateReferences="true"/>
+</session>

@@ -1,2 +1,0 @@
-RadMAP-Operatinos-GUI
-=====================

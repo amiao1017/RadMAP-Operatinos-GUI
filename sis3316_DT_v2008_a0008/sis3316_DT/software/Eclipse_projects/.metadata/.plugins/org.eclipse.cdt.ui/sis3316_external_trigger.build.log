@@ -1,0 +1,38 @@
+
+**** Build of configuration Debug for project sis3316_external_trigger ****
+
+make all 
+Building file: ../src/sis3316_cern_root_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_cern_root_class.d" -MT"src/sis3316_cern_root_class.d" -o"src/sis3316_cern_root_class.o" "../src/sis3316_cern_root_class.cpp"
+Finished building: ../src/sis3316_cern_root_class.cpp
+ 
+Building file: ../src/sis3316_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_class.d" -MT"src/sis3316_class.d" -o"src/sis3316_class.o" "../src/sis3316_class.cpp"
+Finished building: ../src/sis3316_class.cpp
+ 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_read(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:428: Warnung: Variable »i« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_write(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:627: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/sis3316_ethernet_access_class.cpp:593: Warnung: Variable »udp_data_copy_to_buffer_index« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:595: Warnung: Variable »rest_length_byte« wird nicht verwendet
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building file: ../src/sis3316_external_trigger.cpp
+../src/sis3316_ethernet_access_class.cpp:596: Warnung: Variable »soft_packet_number« wird nicht verwendet
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_external_trigger.d" -MT"src/sis3316_external_trigger.d" -o"src/sis3316_external_trigger.o" "../src/sis3316_external_trigger.cpp"
+../src/sis3316_external_trigger.cpp: In function »int main(int, char**)«:
+../src/sis3316_external_trigger.cpp:188: Warnung: Variable »j« wird nicht verwendet
+Finished building: ../src/sis3316_external_trigger.cpp
+ 
+Building target: sis3316_external_trigger
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/lib -o"sis3316_external_trigger"  ./src/sis3316_cern_root_class.o ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_external_trigger.o   -lCint -lGraf -lGui
+Finished building target: sis3316_external_trigger
+ 

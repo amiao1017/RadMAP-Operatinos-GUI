@@ -1,0 +1,106 @@
+
+**** Build of configuration Debug for project sis3316_root_gui_linux ****
+
+make all 
+Building file: ../src/SisVmeInterface.cpp
+Invoking: GCC C++ Compiler
+g++ -I/usr/local/include -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/SisVmeInterface.d" -MT"src/SisVmeInterface.d" -o"src/SisVmeInterface.o" "../src/SisVmeInterface.cpp"
+Finished building: ../src/SisVmeInterface.cpp
+ 
+Building file: ../src/adc_config.cpp
+Invoking: GCC C++ Compiler
+g++ -I/usr/local/include -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/adc_config.d" -MT"src/adc_config.d" -o"src/adc_config.o" "../src/adc_config.cpp"
+In Datei, eingefügt von ../src/adc_config.h:2,
+                 von ../src/adc_config.cpp:1:
+../src/rootIncludes.h:1:21: Warnung: TThread.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:2:19: Warnung: TROOT.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:3:26: Warnung: TApplication.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:4:23: Warnung: TVirtualX.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:5:31: Warnung: TVirtualPadEditor.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:6:28: Warnung: TGResourcePool.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:7:23: Warnung: TGListBox.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:8:24: Warnung: TGListTree.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:9:27: Warnung: TGFSContainer.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:10:22: Warnung: TGClient.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:11:21: Warnung: TGFrame.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:12:20: Warnung: TGIcon.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:13:21: Warnung: TGLabel.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:14:22: Warnung: TGButton.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:15:25: Warnung: TGTextEntry.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:16:27: Warnung: TGNumberEntry.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:17:22: Warnung: TGMsgBox.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:18:20: Warnung: TGMenu.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:19:22: Warnung: TGCanvas.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:20:24: Warnung: TGComboBox.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:21:19: Warnung: TGTab.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:22:22: Warnung: TGSlider.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:23:28: Warnung: TGDoubleSlider.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:24:26: Warnung: TGFileDialog.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:25:24: Warnung: TGTextEdit.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:26:23: Warnung: TGShutter.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:27:27: Warnung: TGProgressBar.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:28:27: Warnung: TGColorSelect.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:29:33: Warnung: TRootEmbeddedCanvas.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:30:21: Warnung: TCanvas.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:31:20: Warnung: TColor.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:32:17: Warnung: TH1.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:33:17: Warnung: TH2.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:34:21: Warnung: TRandom.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:35:21: Warnung: TSystem.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:36:30: Warnung: TSystemDirectory.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:37:18: Warnung: TEnv.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:38:19: Warnung: TFile.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:39:18: Warnung: TKey.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:40:29: Warnung: TGDockableFrame.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:41:26: Warnung: TGFontDialog.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:42:31: Warnung: TGenericClassInfo.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:44:17: Warnung: TF1.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:45:24: Warnung: TGXYLayout.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:46:21: Warnung: TGTable.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:47:25: Warnung: TGStatusBar.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:48:27: Fehler: TGButtonGroup.h: Datei oder Verzeichnis nicht gefunden
+../src/rootIncludes.h:49:19: Warnung: TTree.h: Datei oder Verzeichnis nicht gefunden
+In file included from ../src/adc_config.cpp:1:
+../src/adc_config.h:8: Fehler: »Bool_t« does not name a type
+../src/adc_config.h:21: Fehler: »Bool_t« does not name a type
+../src/adc_config.h:22: Fehler: »Bool_t« does not name a type
+../src/adc_config.h:23: Fehler: »Bool_t« does not name a type
+../src/adc_config.h:24: Fehler: »Bool_t« does not name a type
+../src/adc_config.h:25: Fehler: »TString« has not been declared
+../src/adc_config.cpp: In member function »int adc_config_file::recallFromFile(char*)«:
+../src/adc_config.cpp:27: Fehler: »Bool_t« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:27: Fehler: expected »;« before »sectionActive«
+../src/adc_config.cpp:28: Fehler: »TString« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:28: Fehler: expected »;« before »sectionTitle«
+../src/adc_config.cpp:33: Fehler: expected »;« before »line«
+../src/adc_config.cpp:34: Fehler: »line« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:34: Fehler: »kFALSE« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:38: Fehler: »isComment« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:44: Fehler: »isEmptyLine« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:46: Fehler: »sectionActive« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:52: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:52: Fehler: »isSectionMark« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:54: Fehler: »sectionActive« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:54: Fehler: »kTRUE« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:62: Fehler: »sectionActive« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:62: Fehler: »kTRUE« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:63: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:65: Fehler: »class adc_module_config« hat kein Element namens »enabled«
+../src/adc_config.cpp:65: Fehler: »getNextBool« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:70: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:71: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/adc_config.cpp:78: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:79: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/adc_config.cpp:86: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:87: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/adc_config.cpp:94: Fehler: »sectionTitle« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp: At global scope:
+../src/adc_config.cpp:111: Fehler: »Bool_t« does not name a type
+../src/adc_config.cpp:117: Fehler: »Bool_t« does not name a type
+../src/adc_config.cpp:123: Fehler: »Bool_t« does not name a type
+../src/adc_config.cpp:138: Fehler: »Bool_t« does not name a type
+../src/adc_config.cpp:161: Fehler: »unsigned int adc_config_file::getNextInt« ist kein statisches Element von »class adc_config_file«
+../src/adc_config.cpp:161: Fehler: »TString« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:161: Fehler: »s« wurde in diesem Gültigkeitsbereich nicht definiert
+../src/adc_config.cpp:162: Fehler: expected »,« or »;« before »{« token
+make: *** [src/adc_config.o] Fehler 1

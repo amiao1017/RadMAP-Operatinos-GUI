@@ -1,0 +1,40 @@
+
+**** Build of configuration Release for project sis3316_internal_trigger ****
+
+make all 
+Building file: ../src/sis3316_cern_root_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_cern_root_class.d" -MT"src/sis3316_cern_root_class.d" -o"src/sis3316_cern_root_class.o" "../src/sis3316_cern_root_class.cpp"
+Finished building: ../src/sis3316_cern_root_class.cpp
+ 
+Building file: ../src/sis3316_ch1_to_ch16_internal_trigger_test.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ch1_to_ch16_internal_trigger_test.d" -MT"src/sis3316_ch1_to_ch16_internal_trigger_test.d" -o"src/sis3316_ch1_to_ch16_internal_trigger_test.o" "../src/sis3316_ch1_to_ch16_internal_trigger_test.cpp"
+Finished building: ../src/sis3316_ch1_to_ch16_internal_trigger_test.cpp
+ 
+Building file: ../src/sis3316_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_class.d" -MT"src/sis3316_class.d" -o"src/sis3316_class.o" "../src/sis3316_class.cpp"
+../src/sis3316_class.cpp: In constructor »sis3316_adc::sis3316_adc(vme_interface_class*, unsigned int)«:
+../src/sis3316_class.cpp:64: Warnung: Variable »data« wird nicht verwendet
+Finished building: ../src/sis3316_class.cpp
+ 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sis3316_register_read(unsigned int, UINT*, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:321: Warnung: Dereferenzierung eines Type-Pun-Zeigers verletzt strict-aliasing-Regeln
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_write(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:626: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/sis3316_ethernet_access_class.cpp:592: Warnung: Variable »udp_data_copy_to_buffer_index« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:594: Warnung: Variable »rest_length_byte« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:595: Warnung: Variable »soft_packet_number« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp: In member function »virtual int sis3316_eth::vme_A32DMA_D32FIFO_write(UINT, UINT*, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:1040: Warnung: »return_code« may be used uninitialized in this function
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building target: sis3316_internal_trigger
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/lib -o"sis3316_internal_trigger"  ./src/sis3316_cern_root_class.o ./src/sis3316_ch1_to_ch16_internal_trigger_test.o ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o   -lCint -lGraf -lGui
+Finished building target: sis3316_internal_trigger
+ 

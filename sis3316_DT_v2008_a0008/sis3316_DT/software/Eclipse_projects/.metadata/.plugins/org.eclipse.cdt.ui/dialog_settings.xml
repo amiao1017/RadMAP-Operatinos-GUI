@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="Default C++ source template" key="LastUsedSourceTemplate"/>
+	<item value="Default C++ header template" key="LastUsedHeaderTemplate"/>
+	<section name="completion_proposal_size">
+	</section>
+	<section name="PDOMSearchPage">
+		<item value="227191" key="searchFlags"/>
+		<item value="false" key="caseSensitive"/>
+		<list key="previousPatterns">
+			<item value="fNumericEntriesStopAfterBanks"/>
+			<item value="uint_DataEvent_OpenFlag"/>
+			<item value="fftw_"/>
+			<item value="gl_cmd_ip_string"/>
+			<item value="comp_errstrncmplineTEXT_PARAMETER_PC_HISTOGRAMMING_DISABLE_FOR_N_USEC_AFTER_RESTART_VALkey_word_length"/>
+			<item value="fpga_bin_file"/>
+		</list>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+</section>

@@ -1,0 +1,44 @@
+
+**** Build of configuration Debug for project sis3316_jaea_histogram_running ****
+
+make all 
+Building file: ../src/sis3316_cern_root_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_cern_root_class.d" -MT"src/sis3316_cern_root_class.d" -o"src/sis3316_cern_root_class.o" "../src/sis3316_cern_root_class.cpp"
+Finished building: ../src/sis3316_cern_root_class.cpp
+ 
+Building file: ../src/sis3316_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_class.d" -MT"src/sis3316_class.d" -o"src/sis3316_class.o" "../src/sis3316_class.cpp"
+../src/sis3316_class.cpp: In constructor »sis3316_adc::sis3316_adc(vme_interface_class*, unsigned int)«:
+../src/sis3316_class.cpp:64: Warnung: Variable »data« wird nicht verwendet
+Finished building: ../src/sis3316_class.cpp
+ 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_read(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:396: Warnung: Variable »i« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp: In member function »int sis3316_eth::udp_sub_sis3316_fifo_write(unsigned int, UINT, UINT*)«:
+../src/sis3316_ethernet_access_class.cpp:600: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/sis3316_ethernet_access_class.cpp:566: Warnung: Variable »udp_data_copy_to_buffer_index« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:567: Warnung: Variable »nof_read_data_bytes« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:568: Warnung: Variable »rest_length_byte« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:569: Warnung: Variable »soft_packet_number« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:570: Warnung: Variable »packet_number« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:573: Warnung: Variable »uchar_ptr« wird nicht verwendet
+../src/sis3316_ethernet_access_class.cpp:574: Warnung: Variable »receive_bytes« wird nicht verwendet
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building file: ../src/sis3316_jaea_histogram_running.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_jaea_histogram_running.d" -MT"src/sis3316_jaea_histogram_running.d" -o"src/sis3316_jaea_histogram_running.o" "../src/sis3316_jaea_histogram_running.cpp"
+../src/sis3316_jaea_histogram_running.cpp: In function »int main(int, char**)«:
+../src/sis3316_jaea_histogram_running.cpp:234: Warnung: Variable »j« wird nicht verwendet
+Finished building: ../src/sis3316_jaea_histogram_running.cpp
+ 
+Building target: sis3316_jaea_histogram_running
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/root/lib -o"sis3316_jaea_histogram_running"  ./src/sis3316_cern_root_class.o ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_jaea_histogram_running.o   -lrt -lCint -lGraf -lGui
+Finished building target: sis3316_jaea_histogram_running
+ 

@@ -1,0 +1,26 @@
+#
+#ifconfig eth0 down
+#ifconfig eth0 212.60.16.xxx
+#ifconfig eth0 up
+#
+arp -i eth0 -s 212.60.16.200 00:00:56:31:60:7C   
+#
+#
+#
+# Network TCP/UDP tuning to support high-bandwith applications
+#
+#sysctl -w net.core.rmem_max=33554432
+#
+sysctl -w net.core.rmem_max=8388608
+sysctl -w net.core.wmem_max=8388608
+sysctl -w net.core.rmem_default=65536
+sysctl -w net.core.wmem_default=65536
+#
+sysctl -w net.ipv4.udp_mem='8388608 8388608 8388608'
+#
+sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608'
+sysctl -w net.ipv4.tcp_wmem='4096 65536 8388608'
+sysctl -w net.ipv4.tcp_mem='8388608 8388608 8388608'
+#
+sysctl -w net.ipv4.route.flush=1
+

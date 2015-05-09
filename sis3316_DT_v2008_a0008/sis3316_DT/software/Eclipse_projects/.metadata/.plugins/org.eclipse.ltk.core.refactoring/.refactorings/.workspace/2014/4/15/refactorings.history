@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;sis3316_jaea_histogram_running_build&apos; to &apos;sis3316_energy_histogram_running&apos;" description="Rename resource &apos;sis3316_jaea_histogram_running_build&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/sis3316_jaea_histogram_running_build" name="sis3316_energy_histogram_running" stamp="1397220302291" updateReferences="true"/>
+</session>

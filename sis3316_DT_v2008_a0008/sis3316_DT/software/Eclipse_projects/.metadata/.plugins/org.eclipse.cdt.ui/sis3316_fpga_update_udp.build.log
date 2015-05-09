@@ -1,0 +1,14 @@
+
+**** Build of configuration Release for project sis3316_fpga_update_udp ****
+
+make all 
+Building file: ../src/sis3316_fpga_update_udp.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/sis3316/software/Eclipse_projects/sis3316_fpga_update_udp/src -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_fpga_update_udp.d" -MT"src/sis3316_fpga_update_udp.d" -o"src/sis3316_fpga_update_udp.o" "../src/sis3316_fpga_update_udp.cpp"
+Finished building: ../src/sis3316_fpga_update_udp.cpp
+ 
+Building target: sis3316_fpga_update_udp
+Invoking: GCC C++ Linker
+g++  -o"sis3316_fpga_update_udp"  ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_fpga_update_udp.o   
+Finished building target: sis3316_fpga_update_udp
+ 
