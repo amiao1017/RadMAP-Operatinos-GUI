@@ -1,0 +1,14 @@
+
+**** Build of configuration Release for project sis3316_offline ****
+
+make all 
+Building file: ../src/sis3316_offline.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_offline.d" -MT"src/sis3316_offline.d" -o"src/sis3316_offline.o" "../src/sis3316_offline.cpp"
+Finished building: ../src/sis3316_offline.cpp
+ 
+Building target: sis3316_offline
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/lib -o"sis3316_offline"  ./src/sis3316_cern_root_class.o ./src/sis3316_offline.o   -lCint -lGraf -lGui
+Finished building target: sis3316_offline
+ 

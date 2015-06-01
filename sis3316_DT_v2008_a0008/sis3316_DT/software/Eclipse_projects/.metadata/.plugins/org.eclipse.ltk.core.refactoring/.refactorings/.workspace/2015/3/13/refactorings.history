@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;sis3316_fpga_update_udp&apos;" deleteContents="false" description="Delete resource &apos;sis3316_fpga_update_udp&apos;" element1="/sis3316_fpga_update_udp" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1427460349848"/>
+</session>

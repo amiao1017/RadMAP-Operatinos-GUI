@@ -1,0 +1,6 @@
+
+**** Clean-only build of configuration Debug for project sis3316_jaea_histogram_running_build ****
+
+make clean 
+rm -rf  ./src/get_configuration_parameters.o ./src/sis3316_cern_root_class.o ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_jaea_histogram_running_build.o  ./src/get_configuration_parameters.d ./src/sis3316_cern_root_class.d ./src/sis3316_class.d ./src/sis3316_ethernet_access_class.d ./src/sis3316_jaea_histogram_running_build.d  sis3316_jaea_histogram_running_build
+ 

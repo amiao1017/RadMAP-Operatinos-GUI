@@ -1,0 +1,24 @@
+
+**** Build of configuration Release for project sis3316_eth_fpga_update ****
+
+make all 
+Building file: ../src/sis3316_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/sis3316/software/Eclipse_projects/sis3316_fpga_update_udp/src -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_class.d" -MT"src/sis3316_class.d" -o"src/sis3316_class.o" "../src/sis3316_class.cpp"
+Finished building: ../src/sis3316_class.cpp
+ 
+Building file: ../src/sis3316_eth_fpga_update.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/sis3316/software/Eclipse_projects/sis3316_fpga_update_udp/src -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_eth_fpga_update.d" -MT"src/sis3316_eth_fpga_update.d" -o"src/sis3316_eth_fpga_update.o" "../src/sis3316_eth_fpga_update.cpp"
+Finished building: ../src/sis3316_eth_fpga_update.cpp
+ 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/sis3316/software/Eclipse_projects/sis3316_fpga_update_udp/src -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building target: sis3316_eth_fpga_update
+Invoking: GCC C++ Linker
+g++  -o"sis3316_eth_fpga_update"  ./src/sis3316_class.o ./src/sis3316_eth_fpga_update.o ./src/sis3316_ethernet_access_class.o   
+Finished building target: sis3316_eth_fpga_update
+ 

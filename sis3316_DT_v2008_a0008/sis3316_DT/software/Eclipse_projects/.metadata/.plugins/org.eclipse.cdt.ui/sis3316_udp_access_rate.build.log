@@ -1,0 +1,14 @@
+
+**** Build of configuration Release for project sis3316_udp_access_rate ****
+
+make all 
+Building file: ../src/sis3316_udp_access_rate.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_udp_access_rate.d" -MT"src/sis3316_udp_access_rate.d" -o"src/sis3316_udp_access_rate.o" "../src/sis3316_udp_access_rate.cpp"
+Finished building: ../src/sis3316_udp_access_rate.cpp
+ 
+Building target: sis3316_udp_access_rate
+Invoking: GCC C++ Linker
+g++  -o"sis3316_udp_access_rate"  ./src/sis3316_udp_access_rate.o   
+Finished building target: sis3316_udp_access_rate
+ 

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;sis3316_jaea_histogram_monitoring_backup&apos;" deleteContents="true" description="Delete resource &apos;sis3316_jaea_histogram_monitoring_backup&apos;" element1="/sis3316_jaea_histogram_monitoring_backup" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1392750497301"/>
+</session>

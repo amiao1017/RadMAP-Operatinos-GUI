@@ -1,0 +1,14 @@
+
+**** Build of configuration Release for project sis3316_udp_access_test ****
+
+make all 
+Building file: ../src/sis3316_udp_access_test.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_udp_access_test.d" -MT"src/sis3316_udp_access_test.d" -o"src/sis3316_udp_access_test.o" "../src/sis3316_udp_access_test.cpp"
+Finished building: ../src/sis3316_udp_access_test.cpp
+ 
+Building target: sis3316_udp_access_test
+Invoking: GCC C++ Linker
+g++  -o"sis3316_udp_access_test"  ./src/sis3316_udp_access_test.o   
+Finished building target: sis3316_udp_access_test
+ 

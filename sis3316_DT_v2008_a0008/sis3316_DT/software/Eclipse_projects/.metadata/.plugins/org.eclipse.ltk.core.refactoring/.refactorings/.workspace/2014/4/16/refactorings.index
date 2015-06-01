@@ -1,0 +1,6 @@
+1397486023252	Rename resource 'sis3316_jaea_histogram_monitoring_NGamma_Separation'
+1397486360115	Delete resource 'sis3316_energy_histogram_monitoring/src/shmsizes.h'
+1397491888030	Delete resource 'sis3316_jaea_histogram_monitoring'
+1397491895577	Delete resource 'sis3316_jaea_histogram_running'
+1397491903336	Delete resource 'sis3316_jaea_test'
+1397491920496	Delete resource 'test_configuration_parameter'

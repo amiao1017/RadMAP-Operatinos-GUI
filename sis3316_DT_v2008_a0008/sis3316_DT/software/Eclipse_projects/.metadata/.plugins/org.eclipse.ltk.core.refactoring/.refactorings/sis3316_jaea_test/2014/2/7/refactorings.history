@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;sis3316_jaea_test/src/sis3316_external_trigger.cpp&apos; to &apos;sis3316_jaea_test.cpp&apos;" description="Rename resource &apos;sis3316_external_trigger.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/sis3316_external_trigger.cpp" name="sis3316_jaea_test.cpp" stamp="1392039286723" updateReferences="true"/>
+</session>

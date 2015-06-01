@@ -1,0 +1,29 @@
+
+**** Build of configuration Debug for project sis3316_jaea_histogram_monitoring_NGamma_Separation ****
+
+make all 
+Building file: ../src/sis3316_cern_root_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_cern_root_class.d" -MT"src/sis3316_cern_root_class.d" -o"src/sis3316_cern_root_class.o" "../src/sis3316_cern_root_class.cpp"
+Finished building: ../src/sis3316_cern_root_class.cpp
+ 
+Building file: ../src/sis3316_cern_root_jaea_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_cern_root_jaea_class.d" -MT"src/sis3316_cern_root_jaea_class.d" -o"src/sis3316_cern_root_jaea_class.o" "../src/sis3316_cern_root_jaea_class.cpp"
+Finished building: ../src/sis3316_cern_root_jaea_class.cpp
+ 
+Building file: ../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/root/include -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_jaea_histogram_monitoring_NGamma_Separation.d" -MT"src/sis3316_jaea_histogram_monitoring_NGamma_Separation.d" -o"src/sis3316_jaea_histogram_monitoring_NGamma_Separation.o" "../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp"
+../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp: In function »int main(int, char**)«:
+../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp:312: Warnung: statement hat keinen Effekt
+../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp:313: Warnung: statement hat keinen Effekt
+../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp:315: Warnung: statement hat keinen Effekt
+../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp:316: Warnung: statement hat keinen Effekt
+Finished building: ../src/sis3316_jaea_histogram_monitoring_NGamma_Separation.cpp
+ 
+Building target: sis3316_jaea_histogram_monitoring_NGamma_Separation
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/root/lib -o"sis3316_jaea_histogram_monitoring_NGamma_Separation"  ./src/sis3316_cern_root_class.o ./src/sis3316_cern_root_jaea_class.o ./src/sis3316_jaea_histogram_monitoring_NGamma_Separation.o   -lrt -lCint -lGraf -lGui
+Finished building target: sis3316_jaea_histogram_monitoring_NGamma_Separation
+ 

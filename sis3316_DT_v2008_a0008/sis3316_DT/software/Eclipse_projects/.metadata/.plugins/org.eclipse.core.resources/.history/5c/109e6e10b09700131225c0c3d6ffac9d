@@ -1,0 +1,33 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CPP_SRCS += \
+../sis3316_cern_root_class.cpp \
+../sis3316_class.cpp \
+../sis3316_ethernet_access_class.cpp \
+../sis3316_jaea_histogram_monitoring.cpp 
+
+OBJS += \
+./sis3316_cern_root_class.o \
+./sis3316_class.o \
+./sis3316_ethernet_access_class.o \
+./sis3316_jaea_histogram_monitoring.o 
+
+CPP_DEPS += \
+./sis3316_cern_root_class.d \
+./sis3316_class.d \
+./sis3316_ethernet_access_class.d \
+./sis3316_jaea_histogram_monitoring.d 
+
+
+# Each subdirectory must supply rules for building sources it contributes
+%.o: ../%.cpp
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C++ Compiler'
+	g++ -I/home/th/root/root/include -O2 -g -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+

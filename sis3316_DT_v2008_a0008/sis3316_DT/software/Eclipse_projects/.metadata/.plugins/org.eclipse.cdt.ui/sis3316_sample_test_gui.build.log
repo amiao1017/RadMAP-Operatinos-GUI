@@ -1,0 +1,35 @@
+
+**** Build of configuration Release for project sis3316_sample_test_gui ****
+
+make all 
+Building file: ../src/sis3316_ethernet_access_class.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_ethernet_access_class.d" -MT"src/sis3316_ethernet_access_class.d" -o"src/sis3316_ethernet_access_class.o" "../src/sis3316_ethernet_access_class.cpp"
+Finished building: ../src/sis3316_ethernet_access_class.cpp
+ 
+Building file: ../src/sis3316_sample_test_gui.cpp
+Invoking: GCC C++ Compiler
+g++ -I/home/th/root/include -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/sis3316_sample_test_gui.d" -MT"src/sis3316_sample_test_gui.d" -o"src/sis3316_sample_test_gui.o" "../src/sis3316_sample_test_gui.cpp"
+../src/sis3316_sample_test_gui.cpp: In member function »virtual Bool_t TestMainFrame::ProcessMessage(Long_t, Long_t, Long_t)«:
+../src/sis3316_sample_test_gui.cpp:1157: Warnung: Variable »char_messages« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp:1158: Warnung: Variable »nof_found_devices« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp: In constructor »SIS3316TestDialog::SIS3316TestDialog(const TGWindow*, const TGWindow*, UInt_t, UInt_t, Bool_t*, UInt_t)«:
+../src/sis3316_sample_test_gui.cpp:1710: Warnung: Variable »SIS3316_device« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp:3125: Warnung: Variable »fL5« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp: In member function »void SIS3316TestDialog::SIS3316_Test1()«:
+../src/sis3316_sample_test_gui.cpp:4625: Warnung: zu viele Argumente für Format
+../src/sis3316_sample_test_gui.cpp:3455: Warnung: Variable »amplitude« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp:4651: Warnung: Variable »char_str_temp« wird nicht verwendet
+../src/sis3316_sample_test_gui.cpp: In member function »virtual Bool_t SIS3316TestDialog::ProcessMessage(Long_t, Long_t, Long_t)«:
+../src/sis3316_sample_test_gui.cpp:5910: Warnung: Vergleich zwischen vorzeichenbehafteten und vorzeichenlosen Ganzzahlausdrücken
+../src/sis3316_sample_test_gui.cpp:6360: Warnung: format »%d« erwartet Typ »int«, aber Argument 2 hat Typ »Long_t«
+../src/sis3316_sample_test_gui.cpp: In member function »void SIS3316TestDialog::SIS3316_Test1()«:
+../src/sis3316_sample_test_gui.cpp:5352: Warnung: »uint_firFilter_energy_histogram_start_ptr« may be used uninitialized in this function
+../src/sis3316_sample_test_gui.cpp:3486: Warnung: »file_WriteData_to_File_Pointer« may be used uninitialized in this function
+Finished building: ../src/sis3316_sample_test_gui.cpp
+ 
+Building target: sis3316_sample_test_gui
+Invoking: GCC C++ Linker
+g++ -L/home/th/root/lib -L/usr/local/lib -o"sis3316_sample_test_gui"  ./src/sis3316_class.o ./src/sis3316_ethernet_access_class.o ./src/sis3316_flash_class.o ./src/sis3316_sample_test_gui.o   -lfftw3 -lCint -lGraf -lGui
+Finished building target: sis3316_sample_test_gui
+ 

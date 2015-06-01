@@ -1,0 +1,17 @@
+ifconfig eth1 down
+ifconfig eth2 down
+ifconfig eth3 down
+ifconfig eth1 213.60.16.100
+ifconfig eth2 214.60.16.100
+ifconfig eth3 215.60.16.100
+arp -i eth1 -s 213.60.16.200 00:00:56:35:00:1d
+arp -i eth2 -s 214.60.16.200 00:00:56:35:00:10
+arp -i eth3 -s 215.60.16.200 00:00:56:35:00:1f
+ifconfig eth1 up
+ifconfig eth2 up
+ifconfig eth3 up
+ifconfig
+arp -i eth1 
+arp -i eth2 
+arp -i eth3 
+sysctl -w net.core.rmem_max=33554432

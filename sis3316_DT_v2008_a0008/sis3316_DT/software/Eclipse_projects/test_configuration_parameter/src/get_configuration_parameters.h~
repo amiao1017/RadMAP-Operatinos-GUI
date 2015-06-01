@@ -1,0 +1,40 @@
+/*
+ * get_configuration_parameters.h
+ *
+ *  Created on: 02.03.2014
+ *      Author: th
+ */
+
+#ifndef GET_CONFIGURATION_PARAMETERS_H_
+#define GET_CONFIGURATION_PARAMETERS_H_
+
+
+class sis3316_get_configuration_parameters
+{
+
+private:
+//	int si5325_clk_muliplier_internal_calibration_cmd(void)  ;
+
+public:
+
+	unsigned int uint_gate1_start_index ;
+	unsigned int uint_gate1_length ;
+	unsigned int uint_gate2_start_index ;
+	unsigned int uint_gate2_length ;
+	unsigned int uint_gate3_start_index ;
+	unsigned int uint_gate3_length ;
+
+public:
+	sis3316_get_configuration_parameters(void);
+
+	int read_parameter_file(char *path);
+
+	~sis3316_get_configuration_parameters(void);
+};
+
+
+
+
+
+
+#endif /* GET_CONFIGURATION_PARAMETERS_H_ */

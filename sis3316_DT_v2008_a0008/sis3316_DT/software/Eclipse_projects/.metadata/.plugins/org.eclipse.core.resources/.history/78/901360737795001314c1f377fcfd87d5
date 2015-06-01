@@ -1,0 +1,15 @@
+//============================================================================
+// Name        : sis3316_jaea_histogram_monitoring.cpp
+// Author      : th
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C, Ansi-style
+//============================================================================
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {
+	puts("sis3316_jaea_histogram_monitoring");
+	return EXIT_SUCCESS;
+}

@@ -1,0 +1,1108 @@
+//============================================================================
+// Name        : sis3316_jaea_histogram_monitoring.cpp
+// Author      : th
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C, Ansi-style
+//============================================================================
+
+#include "project_system_define.h"		//define LINUX or WINDOWS
+#include "project_interface_define.h"		//define VME Interface or UDP Interface
+
+
+#include <iostream>
+using namespace std;
+
+
+
+
+
+
+
+#define CERN_ROOT_PLOT
+
+#ifdef CERN_ROOT_PLOT
+	#include "rootIncludes.h"
+#endif
+
+#ifdef CERN_ROOT_PLOT
+
+#include "sis3316_cern_root_class.h"
+sis_root_graph *gl_graph_raw ;
+
+#endif
+
+
+
+
+/******************************************************************************************************************************/
+
+
+// choose Interface
+#include "vme_interface_class.h"
+
+#ifdef PCI_VME_INTERFACE
+	#include "sis1100w_vme_class.h"
+	sis1100 *gl_vme_crate ;
+#endif
+
+#ifdef USB_VME_INTERFACE
+	#include "sis3150w_vme_class.h"
+	sis3150 *gl_vme_crate ;
+#endif
+
+#ifdef USB3_VME_INTERFACE
+	#include "sis3153w_vme_class.h"
+	sis3153 *gl_vme_crate ;
+#endif
+
+
+
+
+#ifdef ETHERNET_UDP_INTERFACE
+	#include "sis3316_ethernet_access_class.h"
+	sis3316_eth *gl_vme_crate ;
+
+	#ifdef LINUX
+		#include <sys/types.h>
+		#include <sys/socket.h>
+	#endif
+
+	#ifdef WINDOWS
+		#include <winsock2.h>
+		#pragma comment(lib, "ws2_32.lib")
+		//#pragma comment(lib, "wsock32.lib")
+		typedef int socklen_t;
+		char  gl_sis3316_ip_addr_string[32] ;
+
+		long WinsockStartup()
+		{
+		  long rc;
+
+		  WORD wVersionRequested;
+		  WSADATA wsaData;
+		  wVersionRequested = MAKEWORD(2, 1);
+
+		  rc = WSAStartup( wVersionRequested, &wsaData );
+		  return rc;
+		}
+	#endif
+
+#endif
+
+
+
+
+
+
+
+#ifdef LINUX
+//	#include <sys/types.h>
+	//#include <sys/socket.h>
+
+	#include <sys/uio.h>
+
+	#include <ctime>
+	#include <sys/time.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <errno.h>
+	#include <string.h>
+	#include <stdlib.h>
+#endif
+
+
+#ifdef WINDOWS
+	#include <time.h>
+	#include <iostream>
+	#include <iomanip>
+	using namespace std;
+
+	#define WIN32_LEAN_AND_MEAN
+	#include <windows.h>
+	#include <tchar.h>
+	#include <winsock2.h>
+	#include <stdlib.h>
+	#include <string.h>
+
+	#pragma comment(lib, "ws2_32.lib")
+	//#pragma comment(lib, "wsock32.lib")
+	typedef int socklen_t;
+
+	long WinsockStartup()
+	{
+	  long rc;
+
+	  WORD wVersionRequested;
+	  WSADATA wsaData;
+	  wVersionRequested = MAKEWORD(2, 1);
+
+	  rc = WSAStartup( wVersionRequested, &wsaData );
+	  return rc;
+	}
+
+	#include "wingetopt.h"
+	void usleep(unsigned int uint_usec) ;
+
+#endif
+/* ***************************************************************************************************************** */
+
+
+
+#include "vme_interface_class.h"
+#include "sis3316_ethernet_access_class.h"
+
+#include "sis3316_class.h"
+
+
+//handling cmd line input
+char gl_cmd_ip_string[64];
+unsigned int gl_cmd_ethernet_device_no = 0;
+
+char gl_command[256];
+
+#define MAX_NUMBER_LWORDS_64MBYTE			0x1000000       /* 64MByte */
+//#define MAX_NUMBER_LWORDS_64MBYTE			0x1000000       /* 64MByte */
+
+
+unsigned int gl_rblt_data[MAX_NUMBER_LWORDS_64MBYTE] ;
+FILE *gl_FILE_DataEvenFilePointer ;
+
+
+
+
+/*===========================================================================*/
+/* Prototypes			                               		  			     */
+/*===========================================================================*/
+
+int WriteBufferHeaderCounterNofChannelToDataFile (unsigned int buffer_no,unsigned int nof_events, unsigned int event_length);
+int WriteEventsToDataFile (unsigned int* memory_data_array, unsigned int nof_write_length_lwords);
+
+
+/* ***************************************************************************************************************** */
+int main(int argc, char* argv[]) {
+//int main() {
+
+	int i_arg;
+	unsigned int i, j;
+	unsigned int data;
+
+	char ch ;
+	char ch_string[64] ;
+
+	char char_messages[128] ;
+	unsigned int nof_found_devices ;
+
+	unsigned int stop_after_loop_counts ;
+	unsigned int nof_events ;
+	unsigned int trigger_gate_window_length ;
+	unsigned int sample_length ;
+	unsigned int sample_start_index ;
+
+	unsigned int pre_trigger_delay ;
+	unsigned int header_length ;
+	unsigned int event_length ;
+	unsigned int address_threshold ;
+	unsigned int uint_DataEvent_OpenFlag ;
+	unsigned int analog_ctrl_val ;
+	unsigned int analog_offset_dac_val ;
+
+	unsigned int uint_pileup ;
+	unsigned int uint_re_pileup ;
+
+	unsigned int header_accu_3_values_enable_flag ;
+	unsigned int p_val ;
+	unsigned int g_val ;
+	unsigned int trigger_threshold_value ;
+
+	char filename[128]  ;
+
+
+
+
+	// Set Gain/Termination
+	analog_ctrl_val = 0 ; // 5 V Range
+	analog_ctrl_val = analog_ctrl_val + 0x01010101 ; // set to 2 V Range
+	//analog_ctrl_val = analog_ctrl_val + 0x04040404 ; // disable 50 Ohm Termination
+
+	//set ADC offsets (DAC) :
+	//analog_offset_dac_val = 0x8000 ; // middle
+	//analog_offset_dac_val = 100 ; // 100 mV - 4.9 V if 5V range
+	analog_offset_dac_val = 13000 ; // 100 mV - 1.9 V if 2V range
+
+//default values
+	stop_after_loop_counts       = 10000;
+	nof_events                   = 10 ;    // each Bank
+
+	trigger_gate_window_length   =  150;
+	sample_length                =  150; // 600 ns
+	sample_start_index           =  0;
+	pre_trigger_delay            =  40  ;  //
+
+	header_accu_3_values_enable_flag = 0 ;
+	uint_pileup = 75;  //
+	uint_re_pileup = 62;  //
+
+
+
+// internal trigger
+	p_val = 6 ;
+	g_val = 6 ;
+	trigger_threshold_value =  60 * 8  * p_val ; // 2V Range -> 1 bin = 122 uV
+
+
+
+	uint_DataEvent_OpenFlag      =  0 ;  // save to file
+
+
+
+	/* Save command line into string "command" */
+	  memset(gl_command,0,sizeof(gl_command));
+	  // memset(startchoice,0,sizeof(startchoice));
+	  for (i_arg=0;i_arg<argc;i_arg++) {
+	      strcat(gl_command,argv[i_arg]);
+	      strcat(gl_command," ");
+	  }
+
+
+	    if (argc > 1) {
+		/* Save command line into string "command" */
+		memset(gl_command,0,sizeof(gl_command));
+		// memset(startchoice,0,sizeof(startchoice));
+		for (i_arg=1;i_arg<argc;i_arg++) {
+		    strcat(gl_command,argv[i_arg]);
+		    strcat(gl_command," ");
+		}
+		printf("nof args %d    \n", argc );
+		printf("gl_command %s    \n", gl_command );
+
+
+		while ((ch = getopt(argc, argv, "?lhI:A:L:E:B:F:")) != -1)
+		  //printf("ch %c    \n", ch );
+		  switch (ch) {
+		    case 'I':
+			sscanf(optarg,"%s", ch_string) ;
+			printf("-I %s    \n", ch_string );
+			strcpy(gl_cmd_ip_string,ch_string) ;
+			break;
+
+		    case 'A':
+			sscanf(optarg,"%x",&data) ;
+			gl_cmd_ethernet_device_no = data ;
+			break;
+
+
+
+		    case 'L':
+			sscanf(optarg,"%d",&data) ;
+			//printf("-L %d    \n", data );
+			if (data > 50000) {
+				trigger_gate_window_length   =  50000;
+				sample_length                =  50000; // 200 us
+			}
+			else {
+				trigger_gate_window_length   =  data;
+				sample_length                =  data; // 200 us
+			}
+			break;
+
+		    case 'E':
+			sscanf(optarg,"%d",&data) ;
+			if (data > 100000) {
+				nof_events                   = 100000 ;    // each Bank
+			}
+			else {
+				nof_events                   = data ;    // each Bank
+			}
+			break;
+
+		    case 'B':
+			sscanf(optarg,"%d",&data) ;
+			if (data > 100000) {
+				stop_after_loop_counts                   = 100000 ;    //
+			}
+			else {
+				stop_after_loop_counts                   = data ;    //
+			}
+			break;
+
+		    case 'F':
+			sscanf(optarg,"%d",&data) ;
+			if (data == 1) {
+				uint_DataEvent_OpenFlag = 1 ;
+			}
+			break;
+
+
+		    case '?':
+		    case 'h':
+		    default:
+			  //printf("Usage: %s  [-?h] [-I ip] [-A num]  ", argv[0]);
+			  printf("Usage: %s  [-?h] [-L sample length] [-E number of events/loop] [-B number of loops] [-F save flag] ", argv[0]);
+		      printf("   \n");
+		      //printf("       -I string     SIS3316 IP Address                                          Default = %s\n", gl_cmd_ip_string);
+		      //printf("       -A num        Ethernet Device Number (0 = ETH0, 1 = ETH1, .. , 3 = ETH3)  Default = %d\n", gl_cmd_ethernet_device_no);
+		      printf("   \n");
+		      printf("   -L	num		       sample length \n");
+		      printf("   -E	num		       number of events/bank \n");
+		      printf("   -B	num		       number of loops (banks) \n");
+		      printf("   -F	num		       save to file flag (0: no; 1: yes) \n");
+		      printf("   \n");
+		      printf("       -h            Print this message\n");
+		      printf("   \n");
+		      exit(1);
+		    }
+
+	      } // if (argc > 2)
+
+	      printf("gl_cmd_ip_string          = %s\n",gl_cmd_ip_string);
+	      printf("gl_cmd_ethernet_device_no = %d\n",gl_cmd_ethernet_device_no);
+	      usleep(1000);
+
+	cout << "sis3316_external_trigger" << endl; // prints sis3316_external_trigger
+
+
+/******************************************************************************************************************************/
+/* CERN ROOT                                                                                                                  */
+/******************************************************************************************************************************/
+
+
+#ifdef CERN_ROOT_PLOT
+
+	int root_graph_x ;
+	int root_graph_y ;
+	int root_graph_x_size ;
+	int root_graph_y_size ;
+	char root_graph_text[80] ;
+
+	root_graph_x_size = 1000 ;
+	root_graph_y_size = 500 ;
+
+	root_graph_x = 10 ;
+	root_graph_y = 620 ;
+
+	TApplication theApp("SIS3316 Application: Test", &argc, (char**)argv);
+	strcpy(root_graph_text,"SIS3316 Graph: Raw data") ;
+	gl_graph_raw      = new sis_root_graph(root_graph_text, root_graph_x, root_graph_y, root_graph_x_size, root_graph_y_size) ;
+
+#endif
+
+
+
+
+
+#ifdef ETHERNET_UDP_INTERFACE
+
+	char  pc_ip_addr_string[32] ;
+	char  sis3316_ip_addr_string[32] ;
+	int return_code ;
+
+	//strcpy(sis3316_ip_addr_string, gl_sis3316_ip_addr_string) ; // SIS3316 IP address
+	//strcpy(sis3316_ip_addr_string,"212.60.16.200") ; // SIS3316 IP address
+	strcpy(sis3316_ip_addr_string,"192.168.1.100") ; // SIS3316 IP address
+	#ifdef WINDOWS
+    //return_code = WSAStartup();
+    return_code = WinsockStartup();
+	#endif
+	sis3316_eth *vme_crate = new sis3316_eth;
+	// increase read_buffer size
+	// SUSE needs following command as su: >sysctl -w net.core.rmem_max=33554432
+	int	sockbufsize = 335544432 ; // 0x2000000
+	return_code = vme_crate->set_UdpSocketOptionBufSize(sockbufsize) ;
+
+	//strcpy(pc_ip_addr_string,"212.60.16.49") ; // Window example: secocnd Lan interface IP address is 212.60.16.49
+	strcpy(pc_ip_addr_string,"") ; // empty if default Lan interface (Window: use IP address to bind in case of 2. 3. 4. .. LAN Interface)
+	return_code = vme_crate->set_UdpSocketBindMyOwnPort( pc_ip_addr_string);
+
+	vme_crate->set_UdpSocketSIS3316_IpAddress( sis3316_ip_addr_string);
+
+	vme_crate->udp_reset_cmd();
+	vme_crate->vme_A32D32_write(SIS3316_INTERFACE_ACCESS_ARBITRATION_CONTROL, 0x80000000); // kill request and grant from other vme interface
+	vme_crate->vme_A32D32_write(SIS3316_INTERFACE_ACCESS_ARBITRATION_CONTROL, 0x1); // request access to SIS3316 from UDP interface
+
+    return_code = vme_crate->vme_A32D32_read(SIS3316_MODID,&data);
+	printf("return_code = 0X%08x   Module ID = 0X%08x \n",return_code, data);
+    return_code = vme_crate->vme_A32D32_read(SIS3316_INTERFACE_ACCESS_ARBITRATION_CONTROL,&data);
+	printf("return_code = 0X%08x   ACCESS    = 0X%08x \n",return_code, data);
+
+#endif
+
+	// open Vme Interface device
+	return_code = vme_crate->vmeopen ();  // open Vme interface
+	vme_crate->get_vmeopen_messages (char_messages, &nof_found_devices);  // open Vme interface
+    printf("get_vmeopen_messages = %s , nof_found_devices %d \n",char_messages, nof_found_devices);
+
+/*************************************************************************************************************************/
+
+	sis3316_adc  *sis3316_adc1 ;
+	sis3316_adc1 = new sis3316_adc( vme_crate, 0x0);
+	return_code = sis3316_adc1->register_read(SIS3316_MODID, &data);
+	printf("sis3316_adc1->register_read: return_code = 0X%08x   data = 0X%08x \n",return_code, data);
+
+	if(return_code != 0) {
+		printf("Error: no connection to SIS3316 !! \n");
+		return -1 ;
+	}
+
+/*************************************************************************************************************************/
+
+/*  configure sis3316 */
+
+	return_code = sis3316_adc1->register_write(SIS3316_KEY_RESET, 0);
+	return_code = sis3316_adc1->register_write(SIS3316_KEY_DISARM, 0);
+
+	unsigned int clock_N1div, clock_HSdiv ;
+	unsigned int iob_delay_value ;
+
+
+
+	// 250.000 MHz
+	clock_N1div      =  4  ;
+	clock_HSdiv      =  5  ;
+	//iob_delay_value  =  0x48   ; // ADC FPGA version A_0250_0003
+	iob_delay_value  =  0x1008 ; // ADC FPGA version A_0250_0004 and higher
+	sis3316_adc1->change_frequency_HSdiv_N1div(0, clock_HSdiv, clock_N1div) ;
+
+	usleep(1000) ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_INPUT_TAP_DELAY_REG, 0xf00 ); // Calibrate IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_INPUT_TAP_DELAY_REG, 0xf00 ); // Calibrate IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_INPUT_TAP_DELAY_REG, 0xf00 ); // Calibrate IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_INPUT_TAP_DELAY_REG, 0xf00 ); // Calibrate IOB _delay Logic
+	usleep(1000) ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_INPUT_TAP_DELAY_REG, 0x300 + iob_delay_value ); // set IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_INPUT_TAP_DELAY_REG, 0x300 + iob_delay_value ); // set IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_INPUT_TAP_DELAY_REG, 0x300 + iob_delay_value ); // set IOB _delay Logic
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_INPUT_TAP_DELAY_REG, 0x300 + iob_delay_value ); // set IOB _delay Logic
+	usleep(1000) ;
+
+
+/******************************************/
+
+	// Select LEMO Output "Co"
+	data = 0x1 ; // Select Sample Clock
+	return_code = sis3316_adc1->register_write(SIS3316_LEMO_OUT_CO_SELECT_REG, data ); //
+
+	// Enable LEMO Output "TO"
+	data = 0xffff ; // Select all triggers
+	return_code = sis3316_adc1->register_write(SIS3316_LEMO_OUT_TO_SELECT_REG, data ); //
+
+	// Enable LEMO Output "UO"
+	data = 0x10 ; //
+	return_code = sis3316_adc1->register_write(SIS3316_LEMO_OUT_UO_SELECT_REG, data ); //
+
+/******************************************/
+
+	data = 0x0 ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_CHANNEL_HEADER_REG, data); //
+	data = 0x00400000 ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_CHANNEL_HEADER_REG, data ); //
+	data = 0x00800000 ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_CHANNEL_HEADER_REG, data ); //
+	data = 0x00C00000 ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_CHANNEL_HEADER_REG, data ); //
+
+/******************************************/
+	// set ADC chips via SPI
+	for (i=0;i<4;i++) {
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_SPI_CTRL_REG, 0x81001404 ); // SPI (OE)  set binary
+		usleep(10); //unsigned int uint_usec
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_SPI_CTRL_REG, 0x81401404 ); // SPI (OE)  set binary
+		usleep(10); //unsigned int uint_usec
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_SPI_CTRL_REG, 0x8100ff01 ); // SPI (OE)  update
+		usleep(10); //unsigned int uint_usec
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_SPI_CTRL_REG, 0x8140ff01 ); // SPI (OE)  update
+		usleep(10); //unsigned int uint_usec
+	}
+
+		/******************************************/
+
+	// Gain/Termination
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_ANALOG_CTRL_REG, analog_ctrl_val); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_ANALOG_CTRL_REG, analog_ctrl_val ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_ANALOG_CTRL_REG, analog_ctrl_val ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_ANALOG_CTRL_REG, analog_ctrl_val ); //
+
+	//
+	//  set ADC offsets (DAC)
+	for (i=0;i<4;i++) { // over all 4 ADC-FPGAs
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_DAC_OFFSET_CTRL_REG, 0x80000000 + 0x8000000 +  0xf00000 + 0x1);  // set internal Reference
+		usleep(1); //unsigned int uint_usec
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_DAC_OFFSET_CTRL_REG, 0x80000000 + 0x2000000 +  0xf00000 + ((analog_offset_dac_val & 0xffff) << 4) );  //
+		//return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_DAC_OFFSET_CTRL_REG, 0x80000000 + 0x2000000 +  0xf00000 + ((15000 & 0xffff) << 4) );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_4_DAC_OFFSET_CTRL_REG, 0xC0000000 );  //
+		usleep(1); //unsigned int uint_usec
+	}
+
+
+/******************************************/
+
+
+	// disable all FIR Triggers
+	data = 0x00000000 ;
+	for (i=0; i<4; i++) {
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_FIR_TRIGGER_THRESHOLD_REG, data );  // disable ch1, 5, 9, 13
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH2_FIR_TRIGGER_THRESHOLD_REG, data );  // disable ch2, ..
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH3_FIR_TRIGGER_THRESHOLD_REG, data );  // disable ch3, ..
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH4_FIR_TRIGGER_THRESHOLD_REG, data );  // disable ch4, ..
+	}
+
+
+	// set HighEnergy Threshold
+	data =  0x08000000 + (p_val * 1000) ; // gt 1000
+	for (i=0; i<4; i++) {
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_FIR_HIGH_ENERGY_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH2_FIR_HIGH_ENERGY_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH3_FIR_HIGH_ENERGY_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH4_FIR_HIGH_ENERGY_THRESHOLD_REG, data );  //
+	}
+
+
+	// set FIR Trigger Setup
+	for (i=0; i<4; i++) {
+		data =  p_val + (g_val << 12) ; //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_FIR_TRIGGER_SETUP_REG, 0 );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_FIR_TRIGGER_SETUP_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH2_FIR_TRIGGER_SETUP_REG, 0 );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH2_FIR_TRIGGER_SETUP_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH3_FIR_TRIGGER_SETUP_REG, 0 );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH3_FIR_TRIGGER_SETUP_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH4_FIR_TRIGGER_SETUP_REG, 0 );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH4_FIR_TRIGGER_SETUP_REG, data );  //
+	}
+
+// configure Fir trigger logic
+	data =  0xB0000000 + 0x08000000 + trigger_threshold_value ;  // cfd 50
+	//data =  0xA0000000 + 0x08000000 + trigger_threshold_value ;  // cfd zero crossing
+	for (i=0; i<4; i++) {
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH1_FIR_TRIGGER_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH2_FIR_TRIGGER_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH3_FIR_TRIGGER_THRESHOLD_REG, data );  //
+		return_code = sis3316_adc1->register_write((i*SIS3316_FPGA_ADC_REG_OFFSET) + SIS3316_ADC_CH4_FIR_TRIGGER_THRESHOLD_REG, data );  //
+	}
+
+
+
+/******************************************/
+	//pileup ;
+	data = ((uint_re_pileup & 0xffff) << 16) + (uint_pileup & 0xffff) ;
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_PILEUP_CONFIG_REG, data); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_PILEUP_CONFIG_REG, data); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_PILEUP_CONFIG_REG, data); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_PILEUP_CONFIG_REG, data); //
+
+	/******************************************/
+
+
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_TRIGGER_GATE_WINDOW_LENGTH_REG, ((trigger_gate_window_length -2) & 0xffff) ); // trigger_gate_window_length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_TRIGGER_GATE_WINDOW_LENGTH_REG, ((trigger_gate_window_length -2) & 0xffff) ); // trigger_gate_window_length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_TRIGGER_GATE_WINDOW_LENGTH_REG, ((trigger_gate_window_length -2) & 0xffff) ); // trigger_gate_window_length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_TRIGGER_GATE_WINDOW_LENGTH_REG, ((trigger_gate_window_length -2) & 0xffff) ); // trigger_gate_window_length
+
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_RAW_DATA_BUFFER_CONFIG_REG, ((sample_length & 0xffff) << 16) + (sample_start_index & 0xffff) ); // Sample Length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_RAW_DATA_BUFFER_CONFIG_REG, ((sample_length & 0xffff) << 16) + (sample_start_index & 0xffff) ); // Sample Length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_RAW_DATA_BUFFER_CONFIG_REG, ((sample_length & 0xffff) << 16) + (sample_start_index & 0xffff) ); // Sample Length
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_RAW_DATA_BUFFER_CONFIG_REG, ((sample_length & 0xffff) << 16) + (sample_start_index & 0xffff) ); // Sample Length
+
+/******************************************/
+
+
+	if (pre_trigger_delay > 2042) {
+		pre_trigger_delay  = 2042 ;
+	}
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_PRE_TRIGGER_DELAY_REG, pre_trigger_delay ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_PRE_TRIGGER_DELAY_REG, pre_trigger_delay ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_PRE_TRIGGER_DELAY_REG, pre_trigger_delay ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_PRE_TRIGGER_DELAY_REG, pre_trigger_delay ); //
+
+/******************************************/
+
+	// Enable LEMO Input "TI" as External Trigger
+	unsigned int uint_nim_input_ctrl ;
+
+	uint_nim_input_ctrl = 0x10 ; // Enable Nim Input "TI"
+	uint_nim_input_ctrl = uint_nim_input_ctrl + 0x40 ; // Level sensitiv
+
+	// Enable LEMO Input "UI" as Timestamp Clear (Restart)
+	uint_nim_input_ctrl = uint_nim_input_ctrl + 0x100 ; // Enable Nim Input "UI" as
+	return_code = sis3316_adc1->register_write(SIS3316_NIM_INPUT_CONTROL_REG, uint_nim_input_ctrl ); //
+
+/******************************************/
+
+	//  Event Configuration
+
+	//data = 0x08080808 ; //  external trigger
+	//data = 0x00080008 ; //  external trigger only ch1, 3, 5, 7 ..
+	//data = 0x00000008 ; //  external trigger only ch1, 5, 9, 13
+	data = 0x04040404 ; // internal trigger ch4 , ch3, ch2 ch1
+	data = data + 0x01010101 ; // signal Invert ch4 , ch3, ch2 ch1
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_EVENT_CONFIG_REG, data ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_EVENT_CONFIG_REG, data ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_EVENT_CONFIG_REG, data ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_EVENT_CONFIG_REG, data ); //  r
+
+	/******************************************/
+		// data format
+
+		header_length = 6;
+		data = 1 ;
+		data = data + (data << 8) + (data << 16) + (data << 24);
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_DATAFORMAT_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_DATAFORMAT_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_DATAFORMAT_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_DATAFORMAT_CONFIG_REG, data );
+
+
+
+/******************************************/
+				// TOF max histogram length
+		#define SIS3316_ADC_CH1_4_TOF_WINDOW_CONFIG_REG 							0x10C0
+		#define SIS3316_ADC_CH5_8_TOF_WINDOW_CONFIG_REG  						0x20C0
+		#define SIS3316_ADC_CH9_12_TOF_WINDOW_CONFIG_REG 						0x30C0
+		#define SIS3316_ADC_CH13_16_TOF_WINDOW_CONFIG_REG						0x40C0
+
+				data = 20 ;
+				return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_TOF_WINDOW_CONFIG_REG, data );
+				return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_TOF_WINDOW_CONFIG_REG, data );
+				return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_TOF_WINDOW_CONFIG_REG, data );
+				return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_TOF_WINDOW_CONFIG_REG, data );
+
+
+/******************************************/
+		// Baseline Configuration
+
+#define SIS3316_ADC_CH1_4_BASELINE_CONFIG_REG 						0x10C4
+#define SIS3316_ADC_CH5_8_BASELINE_CONFIG_REG  						0x20C4
+#define SIS3316_ADC_CH9_12_BASELINE_CONFIG_REG 						0x30C4
+#define SIS3316_ADC_CH13_16_BASELINE_CONFIG_REG						0x40C4
+
+		unsigned int uint_peakHeight_minus_baseline_mode ;
+		unsigned int uint_baseline_average_mode ;
+		unsigned int uint_baseline_average_pretrigger_delay ;
+		uint_peakHeight_minus_baseline_mode    = 1 ; //
+		uint_baseline_average_mode             = 0 ; // over 32 samples
+		uint_baseline_average_pretrigger_delay = 10 ; //
+
+		data = 0x80000000 ;  // enable
+		data = data + ((uint_baseline_average_mode & 0x3) << 28) ;
+		data = data + ((uint_baseline_average_pretrigger_delay & 0xfff) << 16) ;
+		data = data + ( uint_peakHeight_minus_baseline_mode & 1)  ;
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_BASELINE_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_BASELINE_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_BASELINE_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_BASELINE_CONFIG_REG, data );
+
+/******************************************/
+		// Tof Histogram Configuration
+
+		#define SIS3316_ADC_CH1_4_TOF_HISTOGRAM_CONFIG_REG 							0x10D0
+		#define SIS3316_ADC_CH5_8_TOF_HISTOGRAM_CONFIG_REG  						0x20D0
+		#define SIS3316_ADC_CH9_12_TOF_HISTOGRAM_CONFIG_REG 						0x30D0
+		#define SIS3316_ADC_CH13_16_TOF_HISTOGRAM_CONFIG_REG						0x40D0
+
+		unsigned int uint_tofHistogram_divider_val ;
+		uint_tofHistogram_divider_val    = 25 ; //
+
+		data = 0x1 ;  // enable
+		data = data + ((uint_tofHistogram_divider_val & 0xfff) << 16) ;
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_TOF_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_TOF_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_TOF_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_TOF_HISTOGRAM_CONFIG_REG, data );
+
+
+/******************************************/
+		// Shape Histogram Configuration
+
+		#define SIS3316_ADC_CH1_4_SHAPE_HISTOGRAM_X_CONFIG_REG 						0x10D4
+		#define SIS3316_ADC_CH5_8_SHAPE_HISTOGRAM_X_CONFIG_REG  						0x20D4
+		#define SIS3316_ADC_CH9_12_SHAPE_HISTOGRAM_X_CONFIG_REG 						0x30D4
+		#define SIS3316_ADC_CH13_16_SHAPE_HISTOGRAM_X_CONFIG_REG						0x40D4
+
+		unsigned int uint_shapeHistogram_divider_x_val ;
+		unsigned int uint_shapeHistogram_select_x_val ;
+
+		uint_shapeHistogram_divider_x_val   = 1000 ; // quotient must be less or eaqual 511
+		uint_shapeHistogram_select_x_val    = 0 ; //  0: Gate1,  1: Gate2, 2: Gate3; 3: Timestamp
+
+		data = 0x1 ;  // enable
+		data = data + ((uint_shapeHistogram_select_x_val & 0x3) << 8) ;
+		data = data + ((uint_shapeHistogram_divider_x_val & 0xfff) << 16) ;
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_SHAPE_HISTOGRAM_X_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_SHAPE_HISTOGRAM_X_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_SHAPE_HISTOGRAM_X_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_SHAPE_HISTOGRAM_X_CONFIG_REG, data );
+
+		// Shape Histogram Configuration
+
+		#define SIS3316_ADC_CH1_4_SHAPE_HISTOGRAM_Y_CONFIG_REG 						0x10D8
+		#define SIS3316_ADC_CH5_8_SHAPE_HISTOGRAM_Y_CONFIG_REG  						0x20D8
+		#define SIS3316_ADC_CH9_12_SHAPE_HISTOGRAM_Y_CONFIG_REG 						0x30D8
+		#define SIS3316_ADC_CH13_16_SHAPE_HISTOGRAM_Y_CONFIG_REG						0x40D8
+
+		unsigned int uint_shapeHistogram_divider_y_val ;
+		unsigned int uint_shapeHistogram_select_y_val ;
+
+		uint_shapeHistogram_divider_y_val   = 1000 ; // quotient must be less or eaqual 511
+		uint_shapeHistogram_select_y_val    = 0 ; //  0: Gate1,  1: Gate2, 2: Gate3; 3: Timestamp
+
+		data = 0x0 ;  //
+		data = data + ((uint_shapeHistogram_select_y_val & 0x3) << 8) ;
+		data = data + ((uint_shapeHistogram_divider_y_val & 0xfff) << 16) ;
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_SHAPE_HISTOGRAM_Y_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_SHAPE_HISTOGRAM_Y_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_SHAPE_HISTOGRAM_Y_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_SHAPE_HISTOGRAM_Y_CONFIG_REG, data );
+
+/******************************************/
+		// Charge Histogram Configuration
+
+		#define SIS3316_ADC_CH1_4_CHARGE_HISTOGRAM_CONFIG_REG 						0x10DC
+		#define SIS3316_ADC_CH5_8_CHARGE_HISTOGRAM_CONFIG_REG  						0x20DC
+		#define SIS3316_ADC_CH9_12_CHARGE_HISTOGRAM_CONFIG_REG 						0x30DC
+		#define SIS3316_ADC_CH13_16_CHARGE_HISTOGRAM_CONFIG_REG						0x40DC
+
+		unsigned int uint_chargeHistogram_divider_val ;
+		uint_chargeHistogram_divider_val    = 25 ; //
+
+		data = 0x1 ;  // enable
+		data = data + ((uint_chargeHistogram_divider_val & 0xfff) << 16) ;
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_CHARGE_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_CHARGE_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_CHARGE_HISTOGRAM_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_CHARGE_HISTOGRAM_CONFIG_REG, data );
+
+
+/******************************************/
+
+		unsigned int i_gate ;
+		unsigned int gate_length[3] ;
+		unsigned int gate_start_index[3] ;
+
+		gate_start_index[0] = 4 ;
+		gate_length[0]      = 8 ;
+
+		gate_start_index[1] = 12 ;
+		gate_length[1]      = 8 ;
+
+		gate_start_index[2] = 4 ;
+		gate_length[2]      = 16 ;
+
+		i_gate = 0 ;
+		data = (gate_start_index[i_gate] & 0xffff) + ( ((gate_length[i_gate] - 1) & 0xffff) << 16 );
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_ACCUMULATOR_GATE1_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_ACCUMULATOR_GATE1_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_ACCUMULATOR_GATE1_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_ACCUMULATOR_GATE1_CONFIG_REG, data );
+
+
+		i_gate = 1 ;
+		data = (gate_start_index[i_gate] & 0xffff) + ( ((gate_length[i_gate] - 1) & 0xffff) << 16 );
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_ACCUMULATOR_GATE2_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_ACCUMULATOR_GATE2_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_ACCUMULATOR_GATE2_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_ACCUMULATOR_GATE2_CONFIG_REG, data );
+
+
+		i_gate = 2 ;
+		data = (gate_start_index[i_gate] & 0xffff) + ( ((gate_length[i_gate] - 1) & 0xffff) << 16 );
+
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_ACCUMULATOR_GATE3_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_ACCUMULATOR_GATE3_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_ACCUMULATOR_GATE3_CONFIG_REG, data );
+		return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_ACCUMULATOR_GATE3_CONFIG_REG, data );
+
+
+
+
+/******************************************/
+	event_length = header_length + (sample_length / 2)  ;
+
+	//address_threshold = 200;
+	address_threshold = (nof_events * event_length) - 1 ;  //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH1_4_ADDRESS_THRESHOLD_REG, address_threshold ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH5_8_ADDRESS_THRESHOLD_REG, address_threshold); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH9_12_ADDRESS_THRESHOLD_REG, address_threshold ); //
+	return_code = sis3316_adc1->register_write(SIS3316_ADC_CH13_16_ADDRESS_THRESHOLD_REG, address_threshold ); //
+
+/******************************************************************************************/
+
+	gl_graph_raw->sis3316_draw_XYaxis (sample_length); // clear and draw X/Y
+	//gl_graph_raw->sis3316_draw_XYaxis (20); // clear and draw X/Y
+
+
+
+/******************************************************************************************/
+
+	unsigned int poll_counter;
+	unsigned int plot_counter;
+	unsigned int loop_counter;
+	unsigned int timeout_counter;
+	unsigned int bank1_armed_flag;
+	plot_counter=0;
+	loop_counter=0;
+	timeout_counter = 0 ;
+
+	printf("Start Multievent \n");
+
+	unsigned int bank_buffer_counter ;
+	bank_buffer_counter = 0 ;
+
+	// enbale external (global) functions
+	data = 0x200 ; // enable "external Trigger function"  as Veto (NIM In, if enabled and VME key write)
+	data = data + 0x400 ; // enable "external Timestamp clear function" (NIM In, if enabled and VME key write)
+	return_code = sis3316_adc1->register_write(SIS3316_ACQUISITION_CONTROL_STATUS, data );
+
+	// Clear Timestamp  */
+	//return_code = sis3316_adc1->register_write(SIS3316_KEY_TIMESTAMP_CLEAR , 0);  //
+
+
+	// Clear Histograms (40ms) */
+	return_code = sis3316_adc1->register_write(SIS3316_KEY_HISTOGRAMS_CLEAR , 0);  //
+	usleep(40000) ; // 40 ms
+
+	// Start Readout Loop  */
+	return_code = sis3316_adc1->register_write(SIS3316_KEY_DISARM_AND_ARM_BANK1 , 0);  //  Arm Bank1
+	bank1_armed_flag = 1; // start condition
+	printf("SIS3316_KEY_DISARM_AND_ARM_BANK1 \n");
+
+
+	unsigned int ch_event_counter = 0;
+
+
+	gl_graph_raw->sis3316_draw_XYaxis (sample_length); // clear and draw X/Y
+
+	//uint_nim_input_ctrl = uint_nim_input_ctrl | 0x8 ; // set Histogram Clear
+	//return_code = sis3316_adc1->register_write(SIS3316_NIM_INPUT_CONTROL_REG, uint_nim_input_ctrl ); //
+
+	do {
+
+		poll_counter = 0 ;
+		sis3316_adc1->register_read(SIS3316_ACQUISITION_CONTROL_STATUS, &data);
+		do {
+			poll_counter++;
+			if (poll_counter == 100) {
+				gSystem->ProcessEvents();  // handle GUI events
+				poll_counter = 0 ;
+    		}
+			sis3316_adc1->register_read(SIS3316_ACQUISITION_CONTROL_STATUS, &data);
+			//usleep(500000); //500ms
+			//printf("in Loop:   SIS3316_ACQUISITION_CONTROL_STATUS = 0x%08x     \n", data);
+		} while ((data & 0x80000) == 0x0) ; // Address Threshold reached ?
+
+
+		if (bank1_armed_flag == 1) {
+			return_code = sis3316_adc1->register_write(SIS3316_KEY_DISARM_AND_ARM_BANK2 , 0);  //  Arm Bank2
+			bank1_armed_flag = 0; // bank 2 is armed
+			printf("SIS3316_KEY_DISARM_AND_ARM_BANK2 \n");
+		}
+		else {
+			return_code = sis3316_adc1->register_write(SIS3316_KEY_DISARM_AND_ARM_BANK1 , 0);  //  Arm Bank1
+			bank1_armed_flag = 1; // bank 1 is armed
+			printf("SIS3316_KEY_DISARM_AND_ARM_BANK1 \n");
+		}
+
+		// file write
+		if (uint_DataEvent_OpenFlag == 1) {   ; // Open
+			sprintf(filename,"sis3316_test_data_%d.dat",bank_buffer_counter ) ;
+			printf("%s\n",filename) ;
+			gl_FILE_DataEvenFilePointer = fopen(filename,"wb") ;
+			//gl_FILE_DataEvenFilePointer = fopen("sis3316_test_data.dat","wb") ;
+		}
+
+
+		gl_graph_raw->sis3316_draw_XYaxis (sample_length); // clear and draw X/Y
+		unsigned int i_ch;
+		unsigned int got_nof_32bit_words;
+		for (i_ch=0; i_ch<16; i_ch++) {
+		//for (i_ch=0; i_ch<16; i_ch=i_ch+4) {
+		//for (i_ch=0; i_ch<1; i_ch++) {
+			// read channel events
+			return_code = sis3316_adc1->read_DMA_Channel_PreviousBankDataBuffer(bank1_armed_flag /*bank2_read_flag*/, i_ch /* 0 to 15 */, nof_events * event_length, &got_nof_32bit_words, gl_rblt_data ) ;
+			//return_code = sis3316_adc1->read_MBLT64_Channel_PreviousBankDataBuffer(bank1_armed_flag /*bank2_read_flag*/, i_ch /* 0 to 15 */,  &got_nof_32bit_words, gl_rblt_data ) ;
+			printf("read_MBLT64_Channel_PreviousBankDataBuffer: i_ch %d  got_nof_32bit_words = 0x%08x  return_code = 0x%08x\n",i_ch,  got_nof_32bit_words, return_code);
+			//if (return_code != 0) {
+				//printf("read_MBLT64_Channel_PreviousBankDataBuffer: return_code = 0x%08x\n", return_code);
+				//gl_stopReq = TRUE;
+			//}
+			ch_event_counter = (got_nof_32bit_words  / event_length) ;
+			if (ch_event_counter > 0) {
+
+				// plot events
+				for (i=0; i<ch_event_counter; i++) {
+					//if (i==0) { // plot only 1. event
+						gl_graph_raw->sis3316_draw_chN (sample_length, &gl_rblt_data[i*(event_length) + header_length], i_ch); //
+					//}
+
+					unsigned int uint_peak_height_val ;
+					unsigned int uint_peak_height_index ;
+					unsigned int uint_lemo_ti_latch_flag ;
+					unsigned int uint_ch_id ;
+					unsigned int uint_information ;
+					unsigned int uint_timestamp ;
+
+					unsigned int uint_gate1_sum ;
+					unsigned int uint_gate2_sum ;
+					unsigned int uint_gate3_sum ;
+					unsigned int uint_baseline  ;
+
+					if (i<< 4) { //
+						uint_peak_height_val     =  (gl_rblt_data[i*(event_length)] & 0xffff0000) >> 16 ;
+						uint_peak_height_index   =  (gl_rblt_data[i*(event_length)] & 0xfc) >> 2 ;
+						uint_lemo_ti_latch_flag  =  (gl_rblt_data[i*(event_length)] & 0x2) >> 1 ;
+						uint_ch_id               =  (gl_rblt_data[i*(event_length)] & 0xf) >> 12 ;
+						uint_information         =  (gl_rblt_data[i*(event_length)] & 0xf) >> 8 ;
+
+						uint_timestamp           =   gl_rblt_data[i*(event_length) + 1]  ;
+						uint_gate1_sum           =   gl_rblt_data[i*(event_length) + 2] & 0xffffff ;
+						uint_gate2_sum           =   gl_rblt_data[i*(event_length) + 3] & 0xffffff;
+						uint_gate3_sum           =   gl_rblt_data[i*(event_length) + 4] & 0xffffff;
+
+						uint_baseline           =   ((gl_rblt_data[i*(event_length) + 2] & 0xff000000) >> 16) +  ((gl_rblt_data[i*(event_length) + 3] & 0xff000000) >> 24);
+
+						printf(" \n");
+						printf(" \n");
+						printf("uint_peak_height_val     %d  \n",uint_peak_height_val);
+						printf("uint_peak_height_index   %d  \n",uint_peak_height_index);
+						printf("uint_lemo_ti_latch_flag  %d  \n",uint_lemo_ti_latch_flag);
+						printf("uint_ch_id               %d  \n",uint_ch_id);
+						printf("uint_information         %d  \n",uint_information);
+						printf(" \n");
+
+						printf("uint_timestamp          %d  \n",uint_timestamp);
+						printf("uint_gate1_sum          %d  \n",uint_gate1_sum);
+						printf("uint_gate2_sum          %d  \n",uint_gate2_sum);
+						printf("uint_gate3_sum          %d  \n",uint_gate3_sum);
+						printf("uint_baseline           %d  \n",uint_baseline);
+
+						printf(" \n");
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 0] );
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 1] );
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 2] );
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 3] );
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 4] );
+						printf("data = 0x%08x  \n",gl_rblt_data[i*(event_length) + 5] );
+						printf(" \n");
+
+					}
+
+				}
+
+
+
+
+				if (uint_DataEvent_OpenFlag == 1) {   ; // Open
+					WriteBufferHeaderCounterNofChannelToDataFile (bank_buffer_counter, ch_event_counter , got_nof_32bit_words) ;
+					WriteEventsToDataFile (gl_rblt_data, got_nof_32bit_words)  ;
+    			}
+
+
+			}
+		}
+		if (uint_DataEvent_OpenFlag == 1) {   ; // Open
+			fclose(gl_FILE_DataEvenFilePointer);
+		}
+
+		loop_counter++;
+		bank_buffer_counter++;
+
+		printf("bank_buffer_counter = %d     \n",bank_buffer_counter);
+		printf("ch_event_counter    = %d     \n", ch_event_counter);
+		gSystem->ProcessEvents();  // handle GUI events
+
+	//} while((gl_stopReq == FALSE) );
+	} while((loop_counter < stop_after_loop_counts) );
+
+
+	return_code = sis3316_adc1->register_write(SIS3316_KEY_DISARM , 0);  //
+
+#ifdef raus
+	BOOL gl_stopReq = FALSE;
+	gl_stopReq = FALSE;
+	do {
+		gSystem->ProcessEvents();  // handle GUI events
+	} while((gl_stopReq == FALSE) );
+#endif
+
+	printf("sampling finished   \n");
+
+
+
+	do {
+		gSystem->ProcessEvents();  // handle GUI events
+
+	} while (1) ;
+
+
+
+	return 0;
+}
+
+
+
+
+/***********************************************************************************************************************************************/
+/***********************************************************************************************************************************************/
+/***********************************************************************************************************************************************/
+
+#define FILE_FORMAT_EVENT_HEADER        	0xDEADBEEF
+#define FILE_FORMAT_EOF_TRAILER        		0x0E0F0E0F
+
+int WriteBufferHeaderCounterNofChannelToDataFile (unsigned int buffer_no,unsigned int nof_events, unsigned int event_length)
+{
+int written ;
+int data ;
+  //header
+	data = FILE_FORMAT_EVENT_HEADER ;
+    written=fwrite(&data,0x4,0x1,gl_FILE_DataEvenFilePointer); // write one  uint word
+	//gl_uint_DataEvent_LWordCounter = gl_uint_DataEvent_LWordCounter + written ;
+  //Buffer No
+    written=fwrite(&buffer_no,0x4,0x1,gl_FILE_DataEvenFilePointer); // write one  uint word
+	//gl_uint_DataEvent_LWordCounter = gl_uint_DataEvent_LWordCounter + written ;
+  //nof events
+    written=fwrite(&nof_events,0x4,0x1,gl_FILE_DataEvenFilePointer); // write one  uint word
+	//gl_uint_DataEvent_LWordCounter = gl_uint_DataEvent_LWordCounter + written ;
+  //event length
+    written=fwrite(&event_length,0x4,0x1,gl_FILE_DataEvenFilePointer); // write one  uint word
+	//gl_uint_DataEvent_LWordCounter = gl_uint_DataEvent_LWordCounter + written ;
+
+	//gl_uint_DataEvent_RunFile_EventChannelSize =  event_length;
+	//gl_uint_DataEvent_RunFile_EventSize = nof_channels * gl_uint_DataEvent_RunFile_EventChannelSize ;
+
+ 	return 0;
+
+}
+
+
+//---------------------------------------------------------------------------
+int WriteEventsToDataFile (unsigned int* memory_data_array, unsigned int nof_write_length_lwords)
+{
+int nof_write_elements ;
+int written ;
+//int data ;
+//char messages_buffer[256] ;
+
+// gl_uint_DataEvent_RunFile_EvenSize : length
+
+		nof_write_elements = nof_write_length_lwords ;
+		written=fwrite(memory_data_array,0x4,nof_write_elements,gl_FILE_DataEvenFilePointer); // write 3 uint value
+		//gl_uint_DataEvent_LWordCounter = gl_uint_DataEvent_LWordCounter + written  ;
+		if(nof_write_elements != written) {
+    		printf ("Data File Write Error in  WriteEventToDataFile()  \n");
+ 		 }
+
+ 	return 0;
+
+}
+
+/***********************************************************************************************************************************************/
+/***********************************************************************************************************************************************/
+
