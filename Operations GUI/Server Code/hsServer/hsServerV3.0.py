@@ -33,6 +33,7 @@ while True:
 
     	if dbCommand == 'startHyperSpec':
             acquisitionStopped = False
+            stopped = False
             print "dbCommand = startHyperSpec"
             interfaceSocket.send("startHyperSpec Received - Wait 9 Seconds")
     	    if HyperSpecAcqStarted == False: #run HyperSpecAcq and verify
@@ -73,17 +74,17 @@ while True:
                 nirFile.close()
                 print "NIR Acquisition Stopped"
                 HyperSpecAcqStarted = False
-                time.sleep(6)
+                time.sleep(10) 
                 stopVerification = subprocess.Popen("E:\\ResononAPI_2.2_Beta\\bin\\hsStopVerificationScript.exe")
-                stopped = "%s" % pyperclip.paste()
-                print stopped
-                if (stopped.find('True') != -1):
+                stopped = "%s" % (pyperclip.paste()).encode('ascii')
+                print "stopped - %s" % stopped
+                if (stopped.find("True") != -1):
                     acquisitionStopped = True
                 print "acquisitionStopped % s" % acquisitionStopped
             else:
                 print "HyperSpec Acquisition already stopped"
 
-        if dbCommand == 'Started?':
+        if dbCommand == 'Started?': #Sleep on server side rather than client side
             time.sleep(9)
             interfaceSocket.send("HyperSpec Acquisition Starting")
             HyperSpecAcqStarted = True
@@ -136,8 +137,10 @@ while True:
     if hsVerificationSocket.poll(100) != 0:
         msg = hsVerificationSocket.recv()
         print "message - %s" % msg
+        print "acquisitionStopped - %s" % acquisitionStopped
         if not acquisitionStopped:
             hsVerificationMessage = "%s" % HyperSpecVerification
+            print hsVerificationMessage
             hsVerificationSocket.send(hsVerificationMessage)
         else:
             hsVerificationSocket.send("Closed")
